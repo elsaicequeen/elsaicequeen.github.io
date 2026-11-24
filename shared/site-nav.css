@@ -1,0 +1,29 @@
+/* Shared project navigation. Include on every project page:
+   <link rel="stylesheet" href="../shared/site-nav.css">
+   and paste the <nav class="site-nav"> block (see shared/site-nav.html) as the first child of <body>,
+   setting aria-current="page" on the current project's link.
+   Self-contained colours so it works on pages with different tokens; follows the page's theme
+   via prefers-color-scheme and [data-theme] on <html>. */
+.site-nav{
+  --sn-bg:#ECEDE8; --sn-ink:#14171C; --sn-muted:#5D6470; --sn-line:#CFD2CA; --sn-accent:#2E46D1;
+  position:relative; z-index:50; background:var(--sn-bg); border-bottom:1px solid var(--sn-line);
+  font:500 .9rem/1.2 "Instrument Sans",system-ui,-apple-system,"Segoe UI",sans-serif; color:var(--sn-ink);
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]) .site-nav{--sn-bg:#15171B; --sn-ink:#E6E7E3; --sn-muted:#9097A2; --sn-line:#2C3038; --sn-accent:#8A9BFF}
+}
+:root[data-theme="dark"] .site-nav{--sn-bg:#15171B; --sn-ink:#E6E7E3; --sn-muted:#9097A2; --sn-line:#2C3038; --sn-accent:#8A9BFF}
+.site-nav .sn-in{max-width:1180px; margin:0 auto; padding:0 16px; display:flex; align-items:center; gap:8px 24px; min-height:48px}
+.site-nav .sn-home{font-weight:600; color:var(--sn-ink); text-decoration:none; white-space:nowrap; letter-spacing:-.01em}
+.site-nav ul{list-style:none; margin:0 0 0 auto; padding:0; display:flex; gap:4px 18px; overflow-x:auto; scrollbar-width:none}
+.site-nav ul::-webkit-scrollbar{display:none}
+.site-nav li{flex:none}
+.site-nav ul a{display:block; padding:14px 0 12px; color:var(--sn-muted); text-decoration:none; border-bottom:2px solid transparent; white-space:nowrap}
+.site-nav ul a:hover{color:var(--sn-ink)}
+.site-nav ul a[aria-current="page"]{color:var(--sn-ink); border-bottom-color:var(--sn-accent)}
+.site-nav a:focus-visible{outline:2px solid var(--sn-accent); outline-offset:2px; border-radius:3px}
+@media (max-width:720px){
+  .site-nav .sn-in{flex-wrap:wrap; gap:0 18px; padding-top:10px}
+  .site-nav ul{margin:0; width:100%}
+  .site-nav ul a{padding:10px 0}
+}

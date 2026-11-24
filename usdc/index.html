@@ -4,6 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Where USDC stands</title>
+<link rel="stylesheet" href="../shared/site-nav.css">
 <meta name="description" content="Five findings about USDC's market share, chain spread, peg and CCTP transfer routes, computed from DefiLlama data and on-chain DepositForBurn events.">
 <link rel="icon" href="data:,">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -41,7 +42,7 @@ a:hover{color:var(--accent)}
 .wrap{max-width:880px; margin:0 auto; padding:0 16px}
 .mono{font-family:"Martian Mono",ui-monospace,monospace}
 
-header{padding:40px 0 8px}
+header.wrap{padding-top:56px; padding-bottom:8px}
 .crumb{margin:0 0 48px; font-size:.95rem; color:var(--muted)}
 h1{font-weight:600; font-size:clamp(2.2rem,5.5vw,3.4rem); line-height:1.02; letter-spacing:-.03em; margin:0 0 18px}
 .lede{font-size:1.2rem; line-height:1.5; margin:0; max-width:34em}
@@ -79,20 +80,35 @@ td.r,th.r{text-align:right}
 .methods{border-top:1px solid var(--line); margin-top:64px; padding:40px 0 24px}
 .methods h2{font-size:1.25rem; font-weight:600; margin:0 0 18px}
 .methods dl{margin:0; display:grid; grid-template-columns:minmax(0,11em) minmax(0,1fr); gap:14px 24px; font-size:.95rem}
-.methods dt{font-weight:500}
+.methods dt{font-weight:500; align-self:start}
+.methods dd{align-self:start}
 .methods dd{margin:0; color:var(--ink)}
 .methods code{font:400 .82em "Martian Mono",ui-monospace,monospace; overflow-wrap:anywhere}
 @media (max-width:620px){.methods dl{grid-template-columns:1fr; gap:4px} .methods dd{margin-bottom:14px}}
 footer{padding:8px 0 56px; font-size:.95rem}
+.jump{display:flex; flex-wrap:wrap; gap:6px 18px; margin:18px 0 0; font-size:.95rem; font-weight:500}
+.finding, #methods-h{scroll-margin-top:16px}
 noscript p{background:var(--warn-bg); padding:10px 12px}
 </style>
 </head>
 <body>
+<nav class="site-nav" aria-label="Projects">
+  <div class="sn-in">
+    <a class="sn-home" href="../">Anish Majumdar</a>
+    <ul>
+      <li><a href="../peel-chain/">Peel Chain</a></li>
+      <li><a href="../usdc/" aria-current="page">USDC</a></li>
+      <li><a href="../haircut/">Haircut</a></li>
+      <li><a href="../chain-hop/">Chain-Hop</a></li>
+      <li><a href="../enforcement-gap/">Enforcement gap</a></li>
+    </ul>
+  </div>
+</nav>
 <header class="wrap">
-  <p class="crumb"><a href="https://elsaicequeen.github.io/">Portfolio</a></p>
   <h1>Where USDC stands</h1>
   <p class="lede">Five readings on Circle's dollar stablecoin: its share of the market, where it sits across chains, where it moved this month, how tightly it held $1, and which routes its cross-chain transfers take. The sentences and charts are computed in your browser when the page loads, from DefiLlama's public data and from CCTP burn events read off the chains themselves.</p>
   <p class="status" id="status" role="status">Fetching DefiLlama data…</p>
+  <nav class="jump" aria-label="Findings on this page"><a href="#f-share">Market share</a><a href="#f-chains">Concentration</a><a href="#f-flows">30-day moves</a><a href="#f-peg">Peg</a><a href="#f-cctp">Cross-chain routes</a><a href="#methods-h">Method</a></nav>
   <noscript><p>This page computes its findings with JavaScript. The underlying snapshot is in <a href="data/latest.json">data/</a>.</p></noscript>
 </header>
 
@@ -150,7 +166,7 @@ noscript p{background:var(--warn-bg); padding:10px 12px}
   </section>
 
   <section class="finding pending" id="f-cctp" aria-labelledby="f-cctp-h">
-    <p class="n">5 · Cross-chain transfers</p>
+    <p class="n">Cross-chain transfers</p>
     <h2 id="f-cctp-h">Reading the baked CCTP burn data…</h2>
     <p class="detail"></p>
     <figure>
@@ -180,7 +196,7 @@ noscript p{background:var(--warn-bg); padding:10px 12px}
 </main>
 
 <footer class="wrap">
-  <a href="https://elsaicequeen.github.io/">Back to elsaicequeen.github.io</a>
+  <a href="https://github.com/elsaicequeen/elsaicequeen.github.io/tree/main/usdc">Source for this page</a>
 </footer>
 
 <script src="https://cdn.jsdelivr.net/npm/d3@7.9.0/dist/d3.min.js"></script>

@@ -45,7 +45,8 @@ a:hover{color:var(--accent)}
 
 /* the console: results are the loudest thing in it */
 .console{background:var(--panel); border:1px solid var(--line); border-radius:10px; overflow:hidden}
-.presets{display:flex; flex-wrap:wrap; gap:6px; padding:12px 14px 0}
+.con-label{margin:0; padding:12px 18px 0; color:var(--muted); font-size:.9rem}
+.presets{display:flex; flex-wrap:wrap; gap:6px; padding:10px 14px 0}
 .presets button{
   font:500 .92rem/1 "Instrument Sans",sans-serif; color:var(--ink); background:transparent;
   border:1px solid var(--line); border-radius:999px; padding:8px 12px; cursor:pointer;
@@ -86,6 +87,7 @@ h2{font-weight:600; font-size:1.5rem; letter-spacing:-.015em; margin:0 0 8px}
 .lead{color:var(--muted); margin:0 0 36px; max-width:40em}
 .note{display:grid; grid-template-columns:minmax(0,3fr) minmax(0,7fr); gap:10px 56px; padding:34px 0; border-top:1px solid var(--line)}
 .note:last-child{border-bottom:1px solid var(--line)}
+.notes + .notes{border-top:0; padding-top:40px}
 @media (max-width:900px){.note{grid-template-columns:1fr}}
 .figure{font:500 clamp(1.7rem,3vw,2.3rem)/1.1 "Martian Mono",ui-monospace,monospace; letter-spacing:-.03em; margin:0 0 8px}
 .figcap{color:var(--muted); font-size:.95rem; margin:0; max-width:18em}
@@ -122,16 +124,17 @@ footer{color:var(--muted); padding:40px 0 80px; font-size:.98rem}
     </ul>
     <dl class="stack">
       <dt>Data</dt><dd>SQL (Spark SQL, Trino, DuckDB, DuneSQL), Python with pandas, Databricks, Superset, Mixpanel</dd>
-      <dt>On-chain</dt><dd>Arkham, block explorers</dd>
+      <dt>On-chain</dt><dd>Arkham, Dune, block explorers, decoding contract events over RPC, UTXO taint tracing</dd>
       <dt>AI and ops</dt><dd>Claude Code and Codex agents, n8n</dd>
     </dl>
   </div>
 
   <div class="console" id="console">
+    <p class="con-label">Live SQLite in your browser. Pick a question, or open the query and edit it.</p>
     <div class="presets" role="toolbar" aria-label="Questions to run" id="presets"></div>
     <div class="out" id="out" aria-live="polite"></div>
     <details class="sqlbox" id="sqlbox">
-      <summary>SQLite, running in your browser. Open to edit the query.</summary>
+      <summary>Edit the SQL</summary>
       <label class="sr-only" for="q">SQL query</label>
       <textarea id="q" wrap="off" spellcheck="false" autocapitalize="off" autocomplete="off"></textarea>
       <div class="bar-row">
@@ -143,14 +146,13 @@ footer{color:var(--muted); padding:40px 0 80px; font-size:.98rem}
 </section>
 
 <section class="notes" aria-labelledby="notes-h">
-  <h2 id="notes-h">Case notes</h2>
-  <p class="lead">Three pieces of work from my job and six I built on my own. Work figures are rounded or relative.</p>
+  <h2 id="notes-h">At work</h2>
+  <p class="lead">Three pieces of work from CoinDCX. Figures are rounded or relative.</p>
 
   <article class="note">
     <div><p class="figure">4–5 h → ~1 h</p><p class="figcap">hands-on listing review per day, my estimate</p></div>
     <div class="body">
       <h3>A listing desk run by an AI agent, approved by a person</h3>
-      <p class="where">CoinDCX</p>
       <p>The agent prepares each token-listing pass. Deterministic checks confirm the exact contract and screen for sell-blocks, freeze or confiscation rights and punitive taxes. A person approves every production write after a dry run, and each write is read back and saved as an audit receipt. Each of four listing incidents became a permanent guard.</p>
       <p class="sowhat">From November 2026 the desk ran this way, from a runbook I wrote.</p>
       <div class="actions"><button class="ask" data-preset="desk">See who decides what</button></div>
@@ -161,40 +163,51 @@ footer{color:var(--muted); padding:40px 0 80px; font-size:.98rem}
     <div><p class="figure">57.7%</p><p class="figcap">of a weekly volume drop came from fewer traders</p></div>
     <div class="body">
       <h3>Why volume fell</h3>
-      <p class="where">CoinDCX</p>
       <p>I split the drop into trader count, orders per trader and order size, reconciled the split to cohort movements and checked it against six other venues on matched days. Most of the fall was traders leaving, not less trading by the ones who stayed.</p>
       <div class="actions"><button class="ask" data-preset="volume">Run the breakdown</button></div>
     </div>
   </article>
 
   <article class="note">
-    <div><p class="figure">5.5 h</p><p class="figcap">how far off a peak-hours plan was</p></div>
+    <div><p class="figure">53–68%</p><p class="figcap">of monthly volume came from the heaviest 1% of traders</p></div>
     <div class="body">
       <h3>Two numbers that looked fine</h3>
-      <p class="where">CoinDCX</p>
-      <p>Order times were stored in local time but labelled UTC, which had put the growth plan’s peak-activity window 5.5 hours off. I corrected it and wrote down the timestamp basis so the next analysis starts from it.</p>
-      <p>Separately, the trading fee rose in steps and revenue went up, so the headline said it worked. Split by trader segment, the heaviest 1% of traders made 53–68% of monthly volume, and they had cheaper venues to move to.</p>
+      <p>The trading fee rose in steps and revenue went up, so the headline said it worked. Split by trader segment, the heaviest 1% of traders made 53–68% of monthly volume, and they had cheaper venues to move to.</p>
       <p class="sowhat">I recommended holdout tests before any further fee change.</p>
+      <p>The other one: order times were stored in local time but labelled UTC, which had put the growth plan’s peak-activity window 5.5 hours off. I corrected it and wrote down the timestamp basis.</p>
       <div class="actions"><button class="ask" data-preset="fees">See the fee steps</button></div>
     </div>
   </article>
+</section>
 
-  <article class="note">
-    <div><p class="figure">~2,700</p><p class="figcap">Steam wishlists for a game I built alone</p></div>
-    <div class="body">
-      <h3>An educational coding game, built solo</h3>
-      <p class="where">Own project</p>
-      <p>A free demo is live on Steam. Every answer is graded against hidden datasets the player never sees, so an answer that only fits the example fails, and about 14,000 automated tests keep the grader honest. Anonymous event telemetry showed 30 of 112 first-session players quitting at the first question, which led to six fixes.</p>
-    </div>
-  </article>
+<section class="notes" aria-labelledby="proj-h">
+  <h2 id="proj-h">Projects</h2>
+  <p class="lead">Built on my own, from public data. Each page shows its sources and method, and the code is public.</p>
 
   <article class="note">
     <div><p class="figure">4 hacks</p><p class="figcap">laundering trails rebuilt from the public record</p></div>
     <div class="body">
       <h3>Peel Chain</h3>
-      <p class="where">Own project</p>
       <p>Laundering trails from the Bitfinex, Ronin, Bybit and Poly Network hacks as interactive exhibits, built from court records, agency releases and public reporting, with every source listed. Watch the walkthrough, then switch to investigate mode: the labels disappear, you tag the exchanges, mixers and cash-out points yourself, and the page grades you against the record. Intermediate hops are stylised, and the title card says so.</p>
       <div class="actions"><a href="peel-chain/">Open the exhibit</a><a href="https://github.com/elsaicequeen/elsaicequeen.github.io/tree/main/peel-chain">Source</a></div>
+    </div>
+  </article>
+
+  <article class="note">
+    <div><p class="figure">Live</p><p class="figcap">recomputed from DefiLlama on every visit</p></div>
+    <div class="body">
+      <h3>Where USDC stands</h3>
+      <p>A rebuild of my older Circle Intel dashboard as an analyst’s page: five findings on USDC’s share of the stablecoin market, how concentrated it is across chains, where supply moved in the last 30 days, how tightly it held $1, and which routes Circle’s cross-chain transfer protocol carries. For that last one I decoded a week of burn events, 132,545 transfers worth $4.62B, straight from six chains’ public nodes and checked a sample against the transaction receipts. The first four are computed in your browser from DefiLlama on every visit.</p>
+      <div class="actions"><a href="usdc/">Open the page</a><a href="https://github.com/elsaicequeen/elsaicequeen.github.io/tree/main/usdc">Source</a></div>
+    </div>
+  </article>
+
+  <article class="note">
+    <div><p class="figure">16 months</p><p class="figcap">from the Tornado Cash designation to Tether’s policy of freezing sanctioned addresses</p></div>
+    <div class="body">
+      <h3>Enforcement-Gap Tracker</h3>
+      <p>A dated reconciliation of three public lists: OFAC’s sanctioned crypto addresses, Tether’s USDT blacklist and Circle’s USDC blacklist. It sets out eight sourced findings on where sanctions listings and issuer freezes diverge. It is a snapshot from July 2026; a live version would need an on-chain event indexer, and the page says so.</p>
+      <div class="actions"><a href="enforcement-gap/">Open the tracker</a><a href="https://github.com/elsaicequeen/elsaicequeen.github.io/tree/main/enforcement-gap">Source</a></div>
     </div>
   </article>
 
@@ -202,7 +215,6 @@ footer{color:var(--muted); padding:40px 0 80px; font-size:.98rem}
     <div><p class="figure">16.8×</p><p class="figcap">spread between four tracing methods on the same theft</p></div>
     <div class="body">
       <h3>Haircut</h3>
-      <p class="where">Own project</p>
       <p>The 2019 Binance hot-wallet theft traced through one transaction graph under four published taint conventions: poison, haircut, FIFO and LIFO. At five hops they flag anywhere from 352 to 5,928 addresses. Poison measures exposure, not stolen coin, and none of the four says who controls an address. The page sets out where each method’s limits are.</p>
       <div class="actions"><a href="haircut/">Open the comparison</a><a href="https://github.com/elsaicequeen/elsaicequeen.github.io/tree/main/haircut">Source</a></div>
     </div>
@@ -212,29 +224,16 @@ footer{color:var(--muted); padding:40px 0 80px; font-size:.98rem}
     <div><p class="figure">0.31</p><p class="figcap">pair precision at 87% recall, scored on held-out hours</p></div>
     <div class="body">
       <h3>Chain-Hop</h3>
-      <p class="where">Own project</p>
       <p>Can you pair a bridge deposit on one chain with its withdrawal on another using only amount and timing? A 14-hour window of real traffic across Across, CCTP, Celer and Tether: 9,697 deposits, 10,305 withdrawals, scored against 3,624 pairs the protocols label themselves. The setting is chosen on the first four hours and tested once on the last four, where you would review about three candidates for each true pair. Linking two transactions does not say who sent them, and the page lists what the labels miss.</p>
       <div class="actions"><a href="chain-hop/">Open the analysis</a><a href="https://github.com/elsaicequeen/elsaicequeen.github.io/tree/main/chain-hop">Source</a></div>
     </div>
   </article>
 
   <article class="note">
-    <div><p class="figure">16 months</p><p class="figcap">from the Tornado Cash designation to Tether’s policy of freezing sanctioned addresses</p></div>
+    <div><p class="figure">~2,700</p><p class="figcap">Steam wishlists for a game I built alone</p></div>
     <div class="body">
-      <h3>Enforcement-Gap Tracker</h3>
-      <p class="where">Own project</p>
-      <p>A dated reconciliation of three public lists: OFAC’s sanctioned crypto addresses, Tether’s USDT blacklist and Circle’s USDC blacklist. It sets out eight sourced findings on where sanctions listings and issuer freezes diverge. It is a snapshot from July 2026; a live version would need an on-chain event indexer, and the page says so.</p>
-      <div class="actions"><a href="enforcement-gap/">Open the tracker</a><a href="https://github.com/elsaicequeen/elsaicequeen.github.io/tree/main/enforcement-gap">Source</a></div>
-    </div>
-  </article>
-
-  <article class="note">
-    <div><p class="figure">Live</p><p class="figcap">recomputed from DefiLlama on every visit</p></div>
-    <div class="body">
-      <h3>Where USDC stands</h3>
-      <p class="where">Own project</p>
-      <p>A rebuild of my older Circle Intel dashboard as an analyst’s page: five findings on USDC’s share of the stablecoin market, how concentrated it is across chains, where supply moved in the last 30 days, how tightly it held $1, and which routes Circle’s cross-chain transfer protocol carries. For that last one I decoded a week of burn events, 132,545 transfers worth $4.62B, straight from six chains’ public nodes and checked a sample against the transaction receipts. The first four are computed in your browser from DefiLlama on every visit.</p>
-      <div class="actions"><a href="usdc/">Open the page</a><a href="https://github.com/elsaicequeen/elsaicequeen.github.io/tree/main/usdc">Source</a></div>
+      <h3>An educational coding game, built solo</h3>
+      <p>A free demo is live on Steam. Every answer is graded against hidden datasets the player never sees, so an answer that only fits the example fails, and about 14,000 automated tests keep the grader honest. Anonymous event telemetry showed 30 of 112 first-session players quitting at the first question, which led to six fixes.</p>
     </div>
   </article>
 </section>
