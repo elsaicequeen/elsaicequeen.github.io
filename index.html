@@ -4,204 +4,177 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Anish Majumdar</title>
-<meta name="description" content="Anish Majumdar: data and risk analyst. Finds out why the numbers moved and builds the checks that keep them honest.">
+<meta name="description" content="Anish Majumdar: data and risk analyst. This page is a small database of my work; query it.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=Public+Sans:wght@400;600;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600&family=Martian+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
 :root{
-  --paper:#F3F5F1;
-  --ink:#16233A;
-  --muted:#556275;
-  --rule:#C9D6E2;
-  --red:#A8322D;
-  --tick:#2F6B4F;
-  --code-bg:#FBFCFA;
+  --paper:#ECEDE8; --ink:#14171C; --muted:#5D6470; --line:#CFD2CA;
+  --accent:#2E46D1; --accent-ink:#FFFFFF; --panel:#FAFAF7; --sel:#DCE1FA; --err:#A3302A;
 }
 @media (prefers-color-scheme: dark){
   :root:not([data-theme="light"]){
-    --paper:#141B26; --ink:#E4E9EF; --muted:#9AA7B8; --rule:#2A3646;
-    --red:#E0726B; --tick:#7CC3A0; --code-bg:#0F151F;
+    --paper:#15171B; --ink:#E6E7E3; --muted:#9097A2; --line:#2C3038;
+    --accent:#8A9BFF; --accent-ink:#0E1120; --panel:#1C1F25; --sel:#2A3160; --err:#F08A84;
   }
 }
 :root[data-theme="dark"]{
-  --paper:#141B26; --ink:#E4E9EF; --muted:#9AA7B8; --rule:#2A3646;
-  --red:#E0726B; --tick:#7CC3A0; --code-bg:#0F151F;
+  --paper:#15171B; --ink:#E6E7E3; --muted:#9097A2; --line:#2C3038;
+  --accent:#8A9BFF; --accent-ink:#0E1120; --panel:#1C1F25; --sel:#2A3160; --err:#F08A84;
 }
 *{box-sizing:border-box}
 html{-webkit-text-size-adjust:100%}
-body{
-  margin:0; background:var(--paper); color:var(--ink);
-  font:400 1.0625rem/1.6 "Public Sans",system-ui,sans-serif;
-}
-/* the ledger page: a red double margin rule down the left on wide screens */
-.page{
-  max-width:880px; margin:0 auto; padding:72px 16px 96px;
-  position:relative;
-}
-@media (min-width:900px){
-  .page{padding-left:120px}
-  .page::before,.page::after{
-    content:""; position:absolute; top:0; bottom:0; width:1px; background:var(--red); opacity:.55;
-  }
-  .page::before{left:88px} .page::after{left:92px}
-}
-a{color:inherit; text-decoration-color:var(--red); text-decoration-thickness:1.5px; text-underline-offset:3px}
-a:hover{color:var(--red)}
-a:focus-visible{outline:2px solid var(--red); outline-offset:3px; border-radius:2px}
+body{margin:0; background:var(--paper); color:var(--ink); font:400 1.0625rem/1.6 "Instrument Sans",system-ui,sans-serif}
+::selection{background:var(--sel)}
+a{color:inherit; text-decoration-color:var(--accent); text-decoration-thickness:1.5px; text-underline-offset:3px}
+a:hover{color:var(--accent)}
+:focus-visible{outline:2px solid var(--accent); outline-offset:2px; border-radius:3px}
+.sr-only{position:absolute; width:1px; height:1px; overflow:hidden; clip:rect(0 0 0 0); white-space:nowrap}
+.mono{font-family:"Martian Mono",ui-monospace,monospace}
 
-header h1{
-  font-weight:800; font-size:clamp(2.6rem,7vw,4.25rem); line-height:1.02;
-  letter-spacing:-.025em; margin:0 0 20px;
-}
-.lede{font-size:1.25rem; line-height:1.5; max-width:34em; margin:0 0 28px}
-.contact{display:flex; flex-wrap:wrap; gap:8px 24px; margin:0; padding:0; list-style:none; font-weight:600}
+.wrap{max-width:1180px; margin:0 auto; padding:0 16px}
 
-/* the hero exhibit: a real query and its result, reconciled */
-.exhibit{margin:56px 0 0; max-width:640px}
-.exhibit figcaption{color:var(--muted); font-size:.95rem; margin-top:12px; max-width:36em}
-.sql{
-  background:var(--code-bg); border:1px solid var(--rule); border-left:3px solid var(--red);
-  font:400 .9rem/1.55 "IBM Plex Mono",ui-monospace,monospace; padding:18px 20px; overflow-x:auto;
+/* hero: who on the left, the database on the right */
+.hero{display:grid; grid-template-columns:minmax(0,5fr) minmax(0,7fr); gap:56px; padding:88px 0 72px; align-items:start}
+@media (max-width:900px){.hero{grid-template-columns:1fr; gap:36px; padding-top:56px}}
+.who h1{font-weight:600; font-size:clamp(2.5rem,5.4vw,4rem); line-height:1; letter-spacing:-.035em; margin:0 0 22px}
+.who p{font-size:1.2rem; line-height:1.5; margin:0 0 18px; max-width:26em}
+.who .hint{color:var(--muted); font-size:1rem}
+.contact{list-style:none; padding:0; margin:28px 0 0; display:flex; flex-wrap:wrap; gap:6px 22px; font-weight:500}
+
+/* the console */
+.console{background:var(--panel); border:1px solid var(--line); border-radius:10px; overflow:hidden}
+.presets{display:flex; flex-wrap:wrap; gap:6px; padding:12px 12px 0}
+.presets button{
+  font:500 .9rem/1 "Instrument Sans",sans-serif; color:var(--ink); background:transparent;
+  border:1px solid var(--line); border-radius:999px; padding:8px 12px; cursor:pointer;
 }
-.sql .c{color:var(--muted)}
-.sql .k{font-weight:500}
-.result{width:100%; border-collapse:collapse; margin-top:14px; font-variant-numeric:tabular-nums}
-.result th{font-weight:500; text-align:left; color:var(--muted); border-bottom:1px solid var(--rule); padding:2px 0 6px}
-.result td{padding:5px 0; border-bottom:1px solid var(--rule)}
-.result td:last-child,.result th:last-child{text-align:right}
-.result tfoot td{border-bottom:0; color:var(--tick); font-weight:500}
-.result tbody tr{opacity:1}
+.presets button:hover{border-color:var(--accent)}
+.presets button[aria-pressed="true"]{background:var(--accent); color:var(--accent-ink); border-color:var(--accent)}
+textarea{
+  display:block; width:100%; min-height:200px; resize:vertical; white-space:pre; overflow-x:auto; margin:0; border:0; border-bottom:1px solid var(--line);
+  background:transparent; color:var(--ink); padding:16px 18px; font:400 .86rem/1.65 "Martian Mono",ui-monospace,monospace;
+  tab-size:2;
+}
+textarea:focus-visible{outline:none; box-shadow:inset 3px 0 0 var(--accent)}
+.bar{display:flex; justify-content:space-between; align-items:center; gap:12px; padding:10px 12px 10px 18px; border-bottom:1px solid var(--line)}
+.status{color:var(--muted); font-size:.92rem}
+.status.err{color:var(--err)}
+.run{font:600 .95rem/1 "Instrument Sans",sans-serif; background:var(--ink); color:var(--paper); border:0; border-radius:7px; padding:10px 14px; cursor:pointer; white-space:nowrap}
+.run kbd{font:inherit; opacity:.6; margin-left:6px; font-weight:500}
+.run:disabled{opacity:.45; cursor:default}
+.out{overflow-x:auto; max-height:360px}
+.out table{border-collapse:collapse; width:100%; font:400 .84rem/1.4 "Martian Mono",ui-monospace,monospace; font-variant-numeric:tabular-nums}
+.out th{position:sticky; top:0; background:var(--panel); text-align:left; font-weight:500; color:var(--muted); padding:10px 18px 8px; border-bottom:1px solid var(--line); white-space:nowrap}
+.out td{padding:9px 18px; border-bottom:1px solid var(--line); vertical-align:top}
+.out tr:last-child td{border-bottom:0}
+.out .num{text-align:right}
+.out .null{color:var(--muted); font-style:italic}
 @media (prefers-reduced-motion:no-preference){
-  .result tbody tr,.result tfoot tr{animation:post .45s ease-out both}
-  .result tbody tr:nth-child(1){animation-delay:.5s}
-  .result tbody tr:nth-child(2){animation-delay:.85s}
-  .result tbody tr:nth-child(3){animation-delay:1.2s}
-  .result tfoot tr{animation-delay:1.7s}
-  @keyframes post{from{opacity:0}to{opacity:1}}
+  .out tbody tr{animation:in .3s ease-out both}
+  @keyframes in{from{opacity:0}to{opacity:1}}
 }
 
-section{margin-top:96px}
-h2{font-weight:800; font-size:1.6rem; letter-spacing:-.01em; margin:0 0 8px}
-.section-note{color:var(--muted); margin:0 0 28px; max-width:36em}
+/* case notes */
+.notes{border-top:1px solid var(--line); padding:72px 0 24px}
+.notes > h2,.roles-wrap > h2{font-weight:600; font-size:1.5rem; letter-spacing:-.015em; margin:0 0 8px}
+.lead{color:var(--muted); margin:0 0 40px; max-width:40em}
+.note{display:grid; grid-template-columns:minmax(0,4fr) minmax(0,8fr); gap:8px 56px; padding:32px 0; border-top:1px solid var(--line)}
+@media (max-width:900px){.note{grid-template-columns:1fr}}
+.note h3{font-weight:600; font-size:1.3rem; line-height:1.25; letter-spacing:-.01em; margin:0 0 6px}
+.note .where{color:var(--muted); margin:0}
+.note .body p{margin:0 0 12px; max-width:40em}
+.note .proof{font-weight:600}
+.actions{display:flex; flex-wrap:wrap; gap:8px 22px; align-items:center; margin-top:4px; font-weight:500}
+.ask{font:500 .95rem/1 "Instrument Sans",sans-serif; color:var(--accent); background:transparent; border:0; padding:6px 0; cursor:pointer; text-decoration:underline; text-decoration-thickness:1.5px; text-underline-offset:3px}
 
-/* ledger entries: where the work happened on the left, the work on the right */
-.entry{
-  display:grid; grid-template-columns:140px 1fr; gap:4px 28px;
-  padding:26px 0; border-top:1px solid var(--rule);
-}
-.entry:last-child{border-bottom:1px solid var(--rule)}
-.where{color:var(--muted); font-size:.95rem; padding-top:5px}
-.entry h3{font-size:1.25rem; font-weight:600; margin:0 0 6px; letter-spacing:-.005em}
-.entry p{margin:0 0 10px; max-width:38em}
-.proof{color:var(--tick); font-weight:600}
-.links{display:flex; flex-wrap:wrap; gap:4px 20px; font-weight:600; font-size:.98rem}
-@media (max-width:620px){
-  .entry{grid-template-columns:1fr}
-  .where{padding-top:0}
-}
-
-.roles{list-style:none; margin:0; padding:0}
-.roles li{display:grid; grid-template-columns:1fr auto; gap:2px 20px; padding:12px 0; border-top:1px solid var(--rule)}
-.roles li:last-child{border-bottom:1px solid var(--rule)}
+.roles-wrap{padding:56px 0 24px}
+.roles{list-style:none; margin:24px 0 0; padding:0}
+.roles li{display:grid; grid-template-columns:minmax(0,4fr) minmax(0,6fr) auto; gap:4px 56px; padding:12px 0; border-top:1px solid var(--line)}
+.roles li:last-child{border-bottom:1px solid var(--line)}
 .roles .org{font-weight:600}
-.roles .title{color:var(--muted)}
-.roles .yrs{font-variant-numeric:tabular-nums; color:var(--muted); white-space:nowrap}
-@media (max-width:620px){.roles li{grid-template-columns:1fr}}
-
-footer{margin-top:96px; color:var(--muted); font-size:.95rem}
+.roles .t{color:var(--muted)}
+.roles .y{color:var(--muted); font-variant-numeric:tabular-nums; white-space:nowrap}
+@media (max-width:700px){.roles li{grid-template-columns:1fr auto}.roles .t{grid-column:1/-1; grid-row:2}}
+footer{color:var(--muted); padding:40px 0 80px; font-size:.98rem}
 </style>
 </head>
 <body>
-<main class="page">
+<div class="wrap">
 
-<header>
-  <h1>Anish Majumdar</h1>
-  <p class="lede">I work out why the numbers moved, and I build the checks that keep them honest: SQL, on-chain data, and AI workflows that a person still signs off.</p>
-  <ul class="contact">
-    <li><a href="mailto:anish.majumdar123@gmail.com">anish.majumdar123@gmail.com</a></li>
-    <li><a href="https://www.linkedin.com/in/anish-majumdar-615633187">LinkedIn</a></li>
-  </ul>
+<section class="hero">
+  <div class="who">
+    <h1>Anish Majumdar</h1>
+    <p>I work out why the numbers moved, and I build the checks that keep them honest: SQL, on-chain data, and AI workflows that a person still signs off.</p>
+    <p class="hint">This page is a small SQLite database of my work, running in your browser. Pick a question or write your own query.</p>
+    <ul class="contact">
+      <li><a href="mailto:anish.majumdar123@gmail.com">anish.majumdar123@gmail.com</a></li>
+      <li><a href="https://www.linkedin.com/in/anish-majumdar-615633187">LinkedIn</a></li>
+    </ul>
+  </div>
 
-  <figure class="exhibit">
-    <pre class="sql" aria-label="SQL query"><span class="c">-- Weekly trading volume fell. Which lever moved?</span>
-<span class="k">SELECT</span> driver, share_of_change
-<span class="k">FROM</span>   decompose(volume = traders × orders_per_trader × order_size)
-<span class="k">ORDER BY</span> share_of_change <span class="k">DESC</span>;</pre>
-    <table class="result">
-      <thead><tr><th scope="col">driver</th><th scope="col">share of change</th></tr></thead>
-      <tbody>
-        <tr><td>fewer traders</td><td>57.7%</td></tr>
-        <tr><td>fewer orders per trader</td><td>33.4%</td></tr>
-        <tr><td>smaller orders</td><td>8.9%</td></tr>
-      </tbody>
-      <tfoot><tr><td>reconciled to cohort movements</td><td>100.0%</td></tr></tfoot>
-    </table>
-    <figcaption>A volume drop at a crypto exchange, split into its three levers and checked against six other venues on matched days. Most of the drop was fewer traders, not less trading by the ones who stayed.</figcaption>
-  </figure>
-</header>
+  <div class="console" id="console">
+    <div class="presets" role="toolbar" aria-label="Example questions" id="presets"></div>
+    <label class="sr-only" for="q">SQL query</label>
+    <textarea id="q" wrap="off" spellcheck="false" autocapitalize="off" autocomplete="off"></textarea>
+    <div class="bar">
+      <span class="status" id="status" role="status">Loading SQLite…</span>
+      <button class="run" id="run" disabled>Run query<kbd id="kbd">⌘↵</kbd></button>
+    </div>
+    <div class="out" id="out" aria-live="polite"></div>
+  </div>
+</section>
 
-<section aria-labelledby="work">
-  <h2 id="work">Work</h2>
-  <p class="section-note">Two things from my job and three I built on my own. Figures from work are rounded or relative; the full versions are in my CV.</p>
+<section class="notes" aria-labelledby="notes-h">
+  <h2 id="notes-h">Case notes</h2>
+  <p class="lead">Two pieces of work from my job and two I built on my own. Work figures are rounded or relative; the full versions are in my CV.</p>
 
-  <article class="entry">
-    <div class="where">CoinDCX</div>
-    <div>
-      <h3>A listing desk run by an AI agent, approved by a person</h3>
+  <article class="note">
+    <div><h3>A listing desk run by an AI agent, approved by a person</h3><p class="where">CoinDCX</p></div>
+    <div class="body">
       <p>The agent prepares each token-listing pass. Deterministic checks confirm the exact contract and screen for sell-blocks, freeze or confiscation rights and punitive taxes. A person approves every production write after a dry run, and each write is read back and saved as an audit receipt. Each of four listing incidents became a permanent guard.</p>
       <p class="proof">Hands-on review went from 4–5 hours a day to about one, by my estimate.</p>
+      <div class="actions"><button class="ask" data-preset="desk">Query the desk</button></div>
     </div>
   </article>
 
-  <article class="entry">
-    <div class="where">CoinDCX</div>
-    <div>
-      <h3>Reading the numbers before trusting them</h3>
+  <article class="note">
+    <div><h3>Reading the numbers before trusting them</h3><p class="where">CoinDCX</p></div>
+    <div class="body">
+      <p>When weekly volume fell, I split the drop into trader count, orders per trader and order size, reconciled it to cohort movements and checked it against six other venues on matched days. Most of it was fewer traders, not less trading by the ones who stayed.</p>
       <p>When the trading fee went up in steps, revenue rose and the headline said it worked. Splitting by trader segment showed the heaviest 1% of traders made over half of each month’s volume, and they had cheaper venues to move to. I recommended holdout tests before any future fee change. Elsewhere I found order times stored in local time but labelled UTC, which had put a peak-hours plan several hours off.</p>
-      <p class="proof">Segment splits, cohort checks and a corrected time basis, written up as reusable SQL.</p>
+      <div class="actions"><button class="ask" data-preset="volume">Query the volume drop</button><button class="ask" data-preset="fees">Query the fee steps</button></div>
     </div>
   </article>
 
-  <article class="entry">
-    <div class="where">Own project</div>
-    <div>
-      <h3>TsundereSQL</h3>
-      <p>An anime visual novel that is also a full SQL course: 224 graded problems, run in the browser on DuckDB. Every answer is graded against hidden datasets the player never sees, so a query that only fits the sample fails. A read-only guard mirrors DuckDB’s own parser and held up to 50,000 fuzzed queries with no bypass. When an answer is wrong, the checker reruns one-edit variants of it on the data and shows the one to three rows that caused the miss.</p>
-      <p class="proof">Free demo on Steam, about 2,700 wishlists, around 14,000 automated tests.</p>
-      <p class="links"><a href="https://store.steampowered.com/app/5168090/">Steam page</a><a href="https://tsunderesql.com">tsunderesql.com</a></p>
-    </div>
-  </article>
-
-  <article class="entry">
-    <div class="where">Own project</div>
-    <div>
-      <h3>Peel Chain</h3>
+  <article class="note">
+    <div><h3>Peel Chain</h3><p class="where">Own project</p></div>
+    <div class="body">
       <p>Laundering trails from four major crypto hacks (Bitfinex, Ronin, Bybit, Poly Network), rebuilt from public court records and press releases as interactive exhibits. Watch the walkthrough, then switch to investigate mode: the labels disappear and you tag the exchanges, mixers and cash-out points yourself. Intermediate hops are stylised, and the title card says so.</p>
-      <p class="links"><a href="https://peel-chain.vercel.app/">Open the exhibit</a></p>
+      <div class="actions"><a href="https://peel-chain.vercel.app/">Open the exhibit</a></div>
     </div>
   </article>
 
-  <article class="entry">
-    <div class="where">Own project</div>
-    <div>
-      <h3>Circle Intel</h3>
+  <article class="note">
+    <div><h3>Circle Intel</h3><p class="where">Own project</p></div>
+    <div class="body">
       <p>A dashboard of USDC supply and the wider Circle ecosystem, built in Next.js.</p>
-      <p class="links"><a href="https://circle-intel-taupe.vercel.app">Open the dashboard</a><a href="https://github.com/elsaicequeen/circle-intel">Source</a></p>
+      <div class="actions"><a href="https://circle-intel-taupe.vercel.app">Open the dashboard</a><a href="https://github.com/elsaicequeen/circle-intel">Source</a></div>
     </div>
   </article>
 </section>
 
-<section aria-labelledby="roles">
-  <h2 id="roles">Roles</h2>
+<section class="roles-wrap" aria-labelledby="roles-h">
+  <h2 id="roles-h">Roles</h2>
   <ul class="roles">
-    <li><div><span class="org">CoinDCX</span> <span class="title">Founder’s Office, Assistant Manager</span></div><span class="yrs">2026–now</span></li>
-    <li><div><span class="org">CoinDCX</span> <span class="title">Specialist, Web3</span></div><span class="yrs">2024–2026</span></li>
-    <li><div><span class="org">QuantixLabs</span> <span class="title">Web3 specialist consultant, part-time</span></div><span class="yrs">2026–now</span></li>
-    <li><div><span class="org">Neevilas Ventures</span> <span class="title">Investment analyst, part-time</span></div><span class="yrs">2024–2026</span></li>
-    <li><div><span class="org">Bitquery</span> <span class="title">Technical writer, part-time</span></div><span class="yrs">2023–2025</span></li>
-    <li><div><span class="org">Centron Technical Services</span> <span class="title">Blockchain developer</span></div><span class="yrs">2023–2024</span></li>
-    <li><div><span class="org">Prarang</span> <span class="title">Data analyst</span></div><span class="yrs">2019–2023</span></li>
+    <li><span class="org">CoinDCX</span><span class="t">Founder’s Office, Assistant Manager</span><span class="y">2026–now</span></li>
+    <li><span class="org">CoinDCX</span><span class="t">Specialist, Web3</span><span class="y">2024–2026</span></li>
+    <li><span class="org">QuantixLabs</span><span class="t">Web3 specialist consultant, part-time</span><span class="y">2026–now</span></li>
+    <li><span class="org">Neevilas Ventures</span><span class="t">Investment analyst, part-time</span><span class="y">2024–2026</span></li>
+    <li><span class="org">Bitquery</span><span class="t">Technical writer, part-time</span><span class="y">2023–2025</span></li>
+    <li><span class="org">Centron Technical Services</span><span class="t">Blockchain developer</span><span class="y">2023–2024</span></li>
+    <li><span class="org">Prarang</span><span class="t">Data analyst</span><span class="y">2019–2023</span></li>
   </ul>
 </section>
 
@@ -209,6 +182,120 @@ footer{margin-top:96px; color:var(--muted); font-size:.95rem}
   <p>B.Tech in Computer Science, Shiv Nadar University. CV on request by <a href="mailto:anish.majumdar123@gmail.com">email</a>.</p>
 </footer>
 
-</main>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/sql.js/1.10.3/sql-wasm.js"></script>
+<script>
+(function(){
+  var SCHEMA = [
+    "CREATE TABLE volume_change(driver TEXT, share_of_change_pct REAL);",
+    "INSERT INTO volume_change VALUES ('fewer traders',57.7),('fewer orders per trader',33.4),('smaller orders',8.9);",
+    "CREATE TABLE desk(step INTEGER, task TEXT, done_by TEXT);",
+    "INSERT INTO desk VALUES (1,'prepare the listing pass','AI agent'),(2,'confirm the exact contract','deterministic check'),(3,'screen sell-blocks, freeze rights, taxes','deterministic check'),(4,'dry run of the write','system'),(5,'approve the production write','a person'),(6,'read back and save audit receipt','system');",
+    "CREATE TABLE fee_steps(step INTEGER, effective_fee_pct REAL, what_it_hid TEXT);",
+    "INSERT INTO fee_steps VALUES (1,0.57,NULL),(2,0.89,NULL),(3,1.50,'top 1% of traders = 53–68% of volume');",
+    "CREATE TABLE work(title TEXT, kind TEXT, link TEXT);",
+    "INSERT INTO work VALUES ('AI listing desk with human sign-off','at CoinDCX',NULL),('Volume, fee and timestamp reviews','at CoinDCX',NULL),('Peel Chain','own project','https://peel-chain.vercel.app/'),('Circle Intel','own project','https://circle-intel-taupe.vercel.app');",
+    "CREATE TABLE roles(org TEXT, title TEXT, from_year INTEGER, to_year INTEGER);",
+    "INSERT INTO roles VALUES ('CoinDCX','Founder''s Office, Assistant Manager',2026,NULL),('CoinDCX','Specialist, Web3',2024,2026),('QuantixLabs','Web3 specialist consultant',2026,NULL),('Neevilas Ventures','Investment analyst',2024,2026),('Bitquery','Technical writer',2023,2025),('Centron Technical Services','Blockchain developer',2023,2024),('Prarang','Data analyst',2019,2023);"
+  ].join("\n");
+
+  var PRESETS = [
+    {id:"volume", label:"Why did volume fall?", sql:
+"-- Weekly trading volume fell. Which lever moved?\nSELECT driver,\n       share_of_change_pct,\n       round(sum(share_of_change_pct)\n             OVER (ORDER BY share_of_change_pct DESC), 1) AS running_total\nFROM volume_change\nORDER BY share_of_change_pct DESC;"},
+    {id:"desk", label:"Who does what on the listing desk?", sql:
+"-- An AI agent proposes; checks and a person decide.\nSELECT step, task, done_by\nFROM desk\nORDER BY step;"},
+    {id:"fees", label:"Did the fee rise work?", sql:
+"SELECT step,\n       effective_fee_pct,\n       round(effective_fee_pct / 0.57, 2) AS vs_first_step,\n       what_it_hid\nFROM fee_steps\nORDER BY step;"},
+    {id:"work", label:"What has he built?", sql:
+"SELECT title, kind, coalesce(link, 'internal') AS link\nFROM work;"},
+    {id:"roles", label:"Where has he worked?", sql:
+"SELECT org, title, from_year,\n       coalesce(to_year, 'now') AS to_year\nFROM roles\nORDER BY from_year DESC;"}
+  ];
+
+  var q = document.getElementById("q"), out = document.getElementById("out"),
+      status = document.getElementById("status"), run = document.getElementById("run"),
+      presetsEl = document.getElementById("presets");
+  var db = null, typing = null;
+  var reduce = window.matchMedia && matchMedia("(prefers-reduced-motion: reduce)").matches;
+  if (!/Mac|iPhone|iPad/.test(navigator.platform || "")) document.getElementById("kbd").textContent = "Ctrl↵";
+
+  PRESETS.forEach(function(p){
+    var b = document.createElement("button");
+    b.type = "button"; b.textContent = p.label; b.dataset.id = p.id; b.setAttribute("aria-pressed","false");
+    b.addEventListener("click", function(){ load(p.id, true); });
+    presetsEl.appendChild(b);
+  });
+  document.querySelectorAll(".ask").forEach(function(b){
+    b.addEventListener("click", function(){
+      document.getElementById("console").scrollIntoView({behavior: reduce ? "auto" : "smooth", block:"center"});
+      load(b.dataset.preset, false);
+    });
+  });
+
+  function mark(id){
+    presetsEl.querySelectorAll("button").forEach(function(b){ b.setAttribute("aria-pressed", String(b.dataset.id === id)); });
+  }
+  function load(id, instant){
+    var p = PRESETS.filter(function(x){ return x.id === id; })[0]; if (!p) return;
+    mark(id);
+    if (typing) { clearInterval(typing); typing = null; }
+    if (instant || reduce) { q.value = p.sql; exec(); return; }
+    var i = 0; q.value = "";
+    typing = setInterval(function(){
+      i += 3; q.value = p.sql.slice(0, i);
+      if (i >= p.sql.length) { clearInterval(typing); typing = null; exec(); }
+    }, 16);
+  }
+
+  function esc(s){ return String(s).replace(/[&<>"]/g, function(c){ return {"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;"}[c]; }); }
+  function cell(v, dp){
+    if (v === null) return '<td class="null">null</td>';
+    if (typeof v === "number") return '<td class="num">' + esc(dp ? v.toFixed(dp) : v) + '</td>';
+    if (/^https:\/\//.test(v)) return '<td><a href="' + esc(v) + '">' + esc(v.replace(/^https:\/\//,"").replace(/\/$/,"")) + '</a></td>';
+    return '<td>' + esc(v) + '</td>';
+  }
+  function exec(){
+    if (!db) return;
+    var sql = q.value.trim(); if (!sql) return;
+    var t0 = performance.now();
+    try {
+      var res = db.exec(sql);
+      var ms = (performance.now() - t0).toFixed(1);
+      if (!res.length) { out.innerHTML = ""; status.className = "status"; status.textContent = "Done in " + ms + " ms. The query returned no rows."; return; }
+      var r = res[res.length - 1];
+      var h = "<table><thead><tr>" + r.columns.map(function(c){ return '<th scope="col">' + esc(c) + "</th>"; }).join("") + "</tr></thead><tbody>";
+      var dps = r.columns.map(function(_, j){
+        return r.values.reduce(function(m, row){
+          var v = row[j]; if (typeof v !== "number" || Number.isInteger(v)) return m;
+          var d = (String(v).split(".")[1] || "").length; return Math.max(m, Math.min(d, 4));
+        }, 0);
+      });
+      r.values.forEach(function(row){ h += "<tr>" + row.map(function(v, j){ return cell(v, dps[j]); }).join("") + "</tr>"; });
+      out.innerHTML = h + "</tbody></table>";
+      status.className = "status";
+      status.textContent = r.values.length + (r.values.length === 1 ? " row" : " rows") + " in " + ms + " ms";
+    } catch (e) {
+      out.innerHTML = "";
+      status.className = "status err";
+      status.textContent = String(e.message || e) + ". Tables: volume_change, desk, fee_steps, work, roles.";
+    }
+  }
+  run.addEventListener("click", exec);
+  q.addEventListener("keydown", function(e){
+    if ((e.metaKey || e.ctrlKey) && e.key === "Enter") { e.preventDefault(); exec(); }
+  });
+  q.addEventListener("input", function(){ if (!typing) mark(null); });
+
+  if (typeof initSqlJs !== "function") { status.className = "status err"; status.textContent = "SQLite could not load. Check your connection and reload."; return; }
+  initSqlJs({ locateFile: function(f){ return "https://cdnjs.cloudflare.com/ajax/libs/sql.js/1.10.3/" + f; } })
+    .then(function(SQL){
+      db = new SQL.Database(); db.run(SCHEMA);
+      run.disabled = false; status.textContent = "Ready";
+      load("volume", false);
+    })
+    .catch(function(){ status.className = "status err"; status.textContent = "SQLite could not load. Check your connection and reload."; });
+})();
+</script>
 </body>
 </html>
