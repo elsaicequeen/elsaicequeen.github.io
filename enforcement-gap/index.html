@@ -1,257 +1,139 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Enforcement-Gap Tracker — Snapshot 2026-07-12</title>
-<!-- ===========================================================================
-  ENFORCEMENT-GAP TRACKER — static snapshot page.
-
-  DATA: the script#snapshot-data JSON block below is the byte-for-byte
-  contents of enforcement-gap/data/snapshot.json, injected at
-  build time. The page renders ONLY from that block; there are no numbers in
-  the markup that do not come from the JSON. snapshot.json stays the source of
-  record — regenerate this page if it changes.
-
-  HONESTY: this is a dated snapshot, not a live tracker. The banner says so.
-  Anything the researcher could not retrieve is listed under Coverage Notes
-  rather than approximated. See README.md for what the live version needs.
-============================================================================ -->
+<title>Enforcement-gap tracker</title>
+<meta name="description" content="OFAC SDN digital-currency addresses reconciled against Tether's USDT freezes and Circle's USDC blacklist, as a dated snapshot from 12 July 2026.">
+<link rel="icon" href="data:,">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600&family=Martian+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../shared/site-nav.css">
+<!--
+  Static snapshot page. The script#snapshot-data block below is byte-for-byte
+  data/snapshot.json (published next to this page). Every figure is read from
+  that block at load; snapshot.json stays the source of record, so regenerate
+  this page if it changes. Nothing the research pass could not retrieve is
+  approximated; it is listed under the coverage notes instead.
+-->
 <style>
-  :root{
-    --paper:#f1ece0;
-    --paper-hi:#f6f2e8;
-    --ink:#211d16;
-    --ink-faint:#5c554a;
-    --rule:#b9b09d;
-    --rule-soft:#d5cdba;
-    --red:#8f1d14;
-    --serif:Georgia,'Charter','Iowan Old Style','Times New Roman',serif;
-    --mono:'SF Mono',Menlo,Consolas,'Liberation Mono',monospace;
+:root{
+  color-scheme:light;
+  --paper:#ECEDE8; --ink:#14171C; --muted:#5D6470; --line:#CFD2CA;
+  --accent:#2E46D1; --sel:#DCE1FA; --warn-bg:#F3E7D3; --warn-line:#B98A45;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    color-scheme:dark;
+    --paper:#15171B; --ink:#E6E7E3; --muted:#9097A2; --line:#2C3038;
+    --accent:#8A9BFF; --sel:#2A3160; --warn-bg:#2A2419; --warn-line:#8C6F3E;
   }
-  @media (prefers-color-scheme: dark){
-    :root{
-      --paper:#1b1712;
-      --paper-hi:#221d17;
-      --ink:#d9d1c0;
-      --ink-faint:#93897a;
-      --rule:#4a4335;
-      --rule-soft:#352f26;
-      --red:#d4695c;
-    }
-  }
-  :root[data-theme="light"]{
-    --paper:#f1ece0; --paper-hi:#f6f2e8; --ink:#211d16; --ink-faint:#5c554a;
-    --rule:#b9b09d; --rule-soft:#d5cdba; --red:#8f1d14;
-  }
-  :root[data-theme="dark"]{
-    --paper:#1b1712; --paper-hi:#221d17; --ink:#d9d1c0; --ink-faint:#93897a;
-    --rule:#4a4335; --rule-soft:#352f26; --red:#d4695c;
-  }
-  *{box-sizing:border-box;margin:0;padding:0}
-  html{background:var(--paper)}
-  body{
-    font-family:var(--serif);
-    color:var(--ink);
-    background-color:var(--paper);
-    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='240'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0.35 0 0 0 0 0.32 0 0 0 0 0.26 0 0 0 0.05 0'/%3E%3C/filter%3E%3Crect width='240' height='240' filter='url(%23n)'/%3E%3C/svg%3E");
-    line-height:1.5;
-    -webkit-font-smoothing:antialiased;
-  }
-  .sheet{max-width:64rem;margin:0 auto;padding:0 1.4rem 4rem}
+}
+:root[data-theme="dark"]{
+  color-scheme:dark;
+  --paper:#15171B; --ink:#E6E7E3; --muted:#9097A2; --line:#2C3038;
+  --accent:#8A9BFF; --sel:#2A3160; --warn-bg:#2A2419; --warn-line:#8C6F3E;
+}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0; background:var(--paper); color:var(--ink); font:400 1.0625rem/1.6 "Instrument Sans",system-ui,sans-serif; overflow-wrap:break-word}
+::selection{background:var(--sel)}
+a{color:inherit; text-decoration-color:var(--accent); text-decoration-thickness:1.5px; text-underline-offset:3px}
+a:hover{color:var(--accent)}
+:focus-visible{outline:2px solid var(--accent); outline-offset:2px; border-radius:3px}
+.wrap{max-width:880px; margin:0 auto; padding:0 16px}
+.mono{font-family:"Martian Mono",ui-monospace,monospace}
+p,li,dd,figcaption{max-width:66ch}
 
-  a{color:inherit;text-decoration-color:var(--rule);text-underline-offset:2px}
-  a:hover{text-decoration-color:var(--red)}
+header.wrap{padding-top:44px; padding-bottom:8px}
+h1{font-weight:600; font-size:clamp(2.2rem,5.5vw,3.4rem); line-height:1.02; letter-spacing:-.03em; margin:0 0 18px}
+.lede{font-size:1.2rem; line-height:1.5; margin:0}
+.status{margin:22px 0 0; font:400 .78rem/1.6 "Martian Mono",ui-monospace,monospace; color:var(--muted)}
 
-  .num, .mono{
-    font-family:var(--mono);
-    font-variant-numeric:tabular-nums;
-    font-size:.92em;
-  }
-  .caption-line{
-    font-size:.66rem;letter-spacing:.14em;color:var(--ink-faint);
-    text-transform:uppercase;
-  }
+section{border-top:1px solid var(--line); margin-top:44px; padding-top:36px}
+h2{font-weight:600; font-size:clamp(1.35rem,3.2vw,1.75rem); line-height:1.22; letter-spacing:-.015em; margin:0 0 12px; text-wrap:balance}
+h3{font-weight:600; font-size:1.15rem; line-height:1.3; letter-spacing:-.01em; margin:36px 0 8px}
+.intro{margin:0 0 8px; color:var(--ink)}
+.muted{color:var(--muted)}
 
-  /* ---------- masthead ---------- */
-  header.masthead{
-    display:flex;align-items:flex-end;justify-content:space-between;gap:1rem;
-    padding:1.6rem 0 .7rem;border-bottom:2px solid var(--ink);
-    box-shadow:0 2px 0 var(--paper), 0 3px 0 var(--rule);
-    margin-bottom:1.1rem;
-  }
-  header.masthead h1{
-    font-size:1.45rem;font-weight:600;letter-spacing:.04em;text-transform:uppercase;
-    margin-top:.2rem;
-  }
-  header.masthead .subtitle{
-    font-size:.86rem;font-style:italic;color:var(--ink-faint);margin-top:.25rem;
-    max-width:38rem;
-  }
-  .snapshot-stamp{
-    flex:none;font-size:.64rem;letter-spacing:.18em;text-transform:uppercase;
-    color:var(--red);border:1.5px solid var(--red);padding:.34rem .6rem;
-    transform:rotate(-1.2deg);user-select:none;white-space:nowrap;text-align:center;
-    line-height:1.6;
-  }
-  .snapshot-stamp .num{font-size:.72rem}
+/* scale comparison: one series, one scale, direct labels */
+.scale{margin:28px 0 0}
+.srow{display:grid; grid-template-columns:minmax(0,15em) minmax(0,1fr); gap:6px 24px; align-items:center; padding:12px 0; border-bottom:1px solid var(--line)}
+.srow:first-child{border-top:1px solid var(--line)}
+.sname{display:block; font-weight:600; line-height:1.3}
+.ssub{display:block; font-size:.86rem; line-height:1.45; color:var(--muted); margin-top:2px}
+.nw{white-space:nowrap}
+.strack{display:flex; align-items:center; gap:10px; min-width:0}
+.sbar{display:block; height:18px; min-width:4px; background:var(--accent); border-radius:0 4px 4px 0}
+.sval{font:500 1.05rem/1 "Martian Mono",ui-monospace,monospace; font-variant-numeric:tabular-nums; white-space:nowrap}
+.scale figcaption{margin-top:12px; font-size:.9rem; line-height:1.5; color:var(--muted)}
+@media (max-width:620px){.srow{grid-template-columns:1fr}}
 
-  /* ---------- honesty banner ---------- */
-  .banner{
-    border:1.5px solid var(--red);
-    border-left-width:6px;
-    background:var(--paper-hi);
-    padding:.7rem 1rem .75rem;
-    margin:0 0 1.6rem;
-  }
-  .banner .lead{
-    font-size:1.02rem;font-weight:600;letter-spacing:.01em;
-  }
-  .banner .lead .num{font-weight:400}
-  .banner p{font-size:.8rem;color:var(--ink-faint);margin-top:.35rem;line-height:1.55}
+/* findings: the figure on the left rail, the recorded claim on the right */
+.gap{display:grid; grid-template-columns:minmax(0,3fr) minmax(0,7fr); gap:8px 40px; padding:30px 0; border-top:1px solid var(--line)}
+.gap:first-of-type{margin-top:28px}
+.gap:last-of-type{border-bottom:1px solid var(--line)}
+@media (max-width:760px){.gap{grid-template-columns:1fr}}
+.measure{font:500 1.15rem/1.3 "Martian Mono",ui-monospace,monospace; letter-spacing:-.02em; margin:2px 0 0; font-variant-numeric:tabular-nums}
+.gap h3{margin:0 0 8px; font-size:1.2rem; text-wrap:balance}
+.claim{margin:0 0 12px}
+.claim::first-letter{text-transform:uppercase}
+.evidence{margin:0 0 10px; color:var(--muted); font-size:.95rem; line-height:1.55}
+.lbl{font-weight:600; color:var(--ink)}
+.srcs{margin:0; font-size:.88rem; color:var(--muted); line-height:1.7}
+.srcs a{color:var(--ink)}
 
-  /* ---------- sections ---------- */
-  section{margin:2.4rem 0 0}
-  h2.sec{
-    font-size:.78rem;letter-spacing:.18em;text-transform:uppercase;font-weight:600;
-    border-bottom:1.5px solid var(--ink);padding-bottom:.3rem;margin-bottom:.9rem;
-    display:flex;justify-content:space-between;align-items:baseline;gap:1rem;
-  }
-  h2.sec .sec-no{color:var(--red)}
-  h2.sec .sec-note{
-    font-weight:400;letter-spacing:.05em;text-transform:none;font-style:italic;
-    font-size:.74rem;color:var(--ink-faint);
-  }
-  .sec-intro{font-size:.88rem;line-height:1.6;max-width:44rem;margin-bottom:1.1rem}
-  .sec-intro em{color:var(--ink)}
+.policy{margin:16px 0 6px}
+.note-warn{margin:16px 0 0; padding:10px 14px; background:var(--warn-bg); border-left:3px solid var(--warn-line); font-size:.95rem; line-height:1.55}
 
-  /* ---------- findings (gaps) ---------- */
-  .finding{
-    border-top:1px solid var(--rule);
-    padding:.85rem 0 1rem;
-  }
-  .finding:last-of-type{border-bottom:1px solid var(--rule)}
-  .finding .f-head{
-    display:flex;align-items:baseline;gap:.8rem;flex-wrap:wrap;margin-bottom:.35rem;
-  }
-  .finding .f-no{
-    font-family:var(--mono);font-size:.68rem;letter-spacing:.14em;color:var(--red);
-    text-transform:uppercase;flex:none;
-  }
-  .finding .f-title{font-size:1rem;font-weight:600;letter-spacing:.01em}
-  .finding .f-measure{
-    margin-left:auto;flex:none;
-    font-family:var(--mono);font-variant-numeric:tabular-nums;font-size:.72rem;
-    color:var(--red);border:1px solid var(--red);padding:.12rem .45rem;
-    white-space:nowrap;
-  }
-  .finding .f-claim{font-size:.88rem;line-height:1.62;max-width:46rem}
-  .finding .f-evidence{
-    font-size:.8rem;line-height:1.58;color:var(--ink-faint);
-    border-left:3px solid var(--rule);padding-left:.8rem;margin-top:.5rem;max-width:44rem;
-  }
-  .finding .f-evidence .lbl{
-    font-size:.6rem;letter-spacing:.16em;text-transform:uppercase;display:block;
-    margin-bottom:.15rem;color:var(--ink-faint);
-  }
-  .srcs{margin-top:.45rem;font-size:.68rem;line-height:1.9}
-  .srcs .lbl{
-    font-size:.58rem;letter-spacing:.16em;text-transform:uppercase;color:var(--ink-faint);
-    margin-right:.4rem;
-  }
-  .srcs a{
-    font-family:var(--mono);font-size:.66rem;color:var(--ink-faint);
-    text-decoration:none;border-bottom:1px dotted var(--rule);
-    margin-right:.55rem;white-space:nowrap;
-  }
-  .srcs a:hover{color:var(--red);border-bottom-color:var(--red)}
+ul.plain,ol.plain{margin:12px 0 0; padding-left:1.2em}
+ul.plain li,ol.plain li{margin:0 0 10px; font-size:.97rem; line-height:1.55}
 
-  /* ---------- tables ---------- */
-  .tblwrap{overflow-x:auto;margin:.4rem 0 .9rem}
-  table{
-    border-collapse:collapse;width:100%;font-size:.8rem;
-    background:var(--paper-hi);
-  }
-  th{
-    font-size:.6rem;letter-spacing:.14em;text-transform:uppercase;font-weight:600;
-    color:var(--ink-faint);text-align:left;padding:.4rem .6rem;
-    border-bottom:1.5px solid var(--ink);white-space:nowrap;
-  }
-  td{
-    padding:.4rem .6rem;border-bottom:1px dotted var(--rule);
-    vertical-align:top;
-  }
-  tr:last-child td{border-bottom:1px solid var(--rule)}
-  td.num, th.num{text-align:right}
-  td.date{font-family:var(--mono);font-variant-numeric:tabular-nums;font-size:.72rem;white-space:nowrap}
-  td .srcs{margin-top:.15rem}
-  .tbl-note{font-size:.74rem;font-style:italic;color:var(--ink-faint);max-width:44rem;line-height:1.55;margin:-.3rem 0 .9rem}
+/* tables: scroll inside their own box, first column stays put */
+details{margin-top:16px; font-size:.95rem}
+summary{cursor:pointer; color:var(--muted); width:max-content; max-width:100%}
+summary:hover{color:var(--ink)}
+.tablewrap{overflow-x:auto; margin-top:10px; -webkit-overflow-scrolling:touch}
+table{border-collapse:separate; border-spacing:0; font-variant-numeric:tabular-nums; min-width:100%; font-size:.92rem; line-height:1.45}
+th,td{padding:8px 14px; border-bottom:1px solid var(--line); text-align:left; vertical-align:top; white-space:nowrap}
+th{font:500 .74rem/1.3 "Martian Mono",ui-monospace,monospace; color:var(--muted)}
+th:first-child,td:first-child{position:sticky; left:0; z-index:1; background:var(--paper); padding-left:0; box-shadow:inset -1px 0 0 var(--line)}
+td.long{white-space:normal; min-width:16em; max-width:30em}
+td.first-wrap{white-space:normal; min-width:9em; max-width:12em}
+td.num,th.num{text-align:right}
+td.date{font-family:"Martian Mono",ui-monospace,monospace; font-size:.82rem}
+tfoot td{font-weight:600; border-bottom:0; white-space:normal}
+tfoot td:first-child{min-width:12em}
+td .srcs{font-size:.86rem}
+td.src{white-space:normal; min-width:9em}
+td.src a{white-space:nowrap}
 
-  /* per-tag counts: compact grid table */
-  table.tags td, table.tags th{padding:.3rem .55rem}
-  table.tags tfoot td{
-    border-top:1.5px solid var(--ink);border-bottom:none;font-weight:600;
-  }
-
-  /* ---------- notes lists ---------- */
-  ol.notes{list-style:none;counter-reset:note}
-  ol.notes li{
-    counter-increment:note;position:relative;padding:.5rem 0 .55rem 2.3rem;
-    border-top:1px dotted var(--rule);font-size:.82rem;line-height:1.6;max-width:46rem;
-  }
-  ol.notes li:last-child{border-bottom:1px dotted var(--rule)}
-  ol.notes li::before{
-    content:"N." counter(note,decimal-leading-zero);
-    position:absolute;left:0;top:.62rem;
-    font-family:var(--mono);font-size:.62rem;letter-spacing:.08em;color:var(--red);
-  }
-
-  /* ---------- policy block ---------- */
-  .policy{
-    border-left:3px solid var(--ink);padding:.1rem 0 .1rem .85rem;
-    font-size:.84rem;line-height:1.6;max-width:44rem;margin:.2rem 0 1rem;
-  }
-  .policy .lbl{
-    font-size:.6rem;letter-spacing:.16em;text-transform:uppercase;color:var(--ink-faint);
-    display:block;margin-bottom:.2rem;
-  }
-
-  /* ---------- source register ---------- */
-  ol.register{list-style:none}
-  ol.register li{
-    display:flex;gap:.7rem;align-items:baseline;
-    padding:.32rem 0;border-bottom:1px dotted var(--rule-soft);
-    font-size:.78rem;line-height:1.5;
-  }
-  ol.register .r-no{
-    flex:none;font-family:var(--mono);font-size:.62rem;color:var(--ink-faint);width:2.2rem;
-    font-variant-numeric:tabular-nums;
-  }
-  ol.register .r-name{min-width:0}
-  ol.register .r-name a{word-break:break-word}
-  ol.register .r-date{
-    flex:none;margin-left:auto;font-family:var(--mono);font-size:.64rem;
-    color:var(--ink-faint);font-variant-numeric:tabular-nums;white-space:nowrap;
-  }
-
-  /* ---------- footer ---------- */
-  footer.colophon{
-    margin-top:3rem;border-top:2px solid var(--ink);padding-top:.7rem;
-    font-size:.72rem;color:var(--ink-faint);line-height:1.7;max-width:46rem;
-  }
-  footer.colophon .mono{font-size:.68rem}
-
-  @media print{
-    body{background-image:none}
-    .tblwrap{overflow-x:visible}
-  }
-  @media (max-width:640px){
-    header.masthead{flex-direction:column;align-items:flex-start;gap:.6rem}
-    .finding .f-measure{margin-left:0}
-  }
+.methods dl{margin:0; display:grid; grid-template-columns:minmax(0,11em) minmax(0,1fr); gap:14px 24px; font-size:.95rem}
+.methods dt{font-weight:500}
+.methods dd{margin:0}
+.methods code{font:400 .84em "Martian Mono",ui-monospace,monospace; overflow-wrap:anywhere}
+@media (max-width:620px){.methods dl{grid-template-columns:1fr; gap:4px} .methods dd{margin-bottom:14px}}
+.register{margin:12px 0 0; padding-left:2.2em; font-size:.92rem; line-height:1.5}
+.register li{margin:0 0 8px}
+.register .ret{color:var(--muted)}
+main.wrap{padding-bottom:72px}
+noscript p{background:var(--warn-bg); padding:10px 12px}
 </style>
 </head>
 <body>
+<nav class="site-nav" aria-label="Projects">
+  <div class="sn-in">
+    <a class="sn-home" href="../">Anish Majumdar</a>
+    <ul>
+      <li><a href="../peel-chain/">Peel Chain</a></li>
+      <li><a href="../usdc/">USDC</a></li>
+      <li><a href="../haircut/">Haircut</a></li>
+      <li><a href="../chain-hop/">Chain-Hop</a></li>
+      <li><a href="../enforcement-gap/" aria-current="page">Enforcement gap</a></li>
+    </ul>
+  </div>
+</nav>
 <script type="application/json" id="snapshot-data">{
   "asOf": "2026-07-12",
   "disclaimer": "Every figure in this file carries a source URL. Nothing here is stylized or estimated. Where a list or count could not be retrieved, that is stated in coverageNotes rather than approximated. Third-party aggregates (AMLBot/Dune, BlockSec) are labeled as such and are not directly comparable to issuer press-release figures; see coverageNotes.",
@@ -412,102 +294,122 @@
 }
 </script>
 
-<div class="sheet">
-  <header class="masthead">
-    <div>
-      <div class="caption-line">Working paper &middot; sanctions-vs-issuer reconciliation</div>
-      <h1>Enforcement-Gap Tracker</h1>
-      <p class="subtitle">OFAC SDN digital-currency addresses, reconciled against Tether's USDT freezes and Circle's USDC blacklist. All three lists are public; this sheet dates the gaps and lag between them.</p>
-    </div>
-    <div class="snapshot-stamp">Snapshot<br><span class="num" id="stamp-date"></span></div>
-  </header>
+<header class="wrap">
+  <h1>Enforcement-gap tracker</h1>
+  <p class="lede">OFAC SDN digital-currency addresses, reconciled against Tether's USDT freezes and Circle's USDC blacklist. All three lists are public; this page dates the gaps and lag between them.</p>
+  <p class="status" id="status">Snapshot as of 12 Jul 2026; nothing on this page updates.</p>
+  <noscript><p>This page renders its figures with JavaScript from <a href="data/snapshot.json">data/snapshot.json</a>.</p></noscript>
+</header>
 
-  <div class="banner">
-    <div class="lead">Snapshot as of <span class="num" id="banner-date"></span> &mdash; the live version requires an event indexer.</div>
-    <p>Nothing on this page updates. OFAC counts reflect a mirror last updated <span class="num" id="banner-mirror"></span>; issuer-blacklist totals are third-party snapshots (freshest: 2025-10-07). A real tracker needs an on-chain indexer for Tether <span class="mono">AddedBlackList</span> and Circle <span class="mono">Blacklisted</span> events plus an SDN diff cron. See the coverage notes (&sect; VI) for exactly what this pass could not retrieve.</p>
-    <p id="banner-disclaimer"></p>
-  </div>
+<main class="wrap">
+  <section id="lists" aria-labelledby="lists-h">
+    <h2 id="lists-h">The three lists, side by side</h2>
+    <p class="intro">Address counts on the OFAC sanctions list and on each issuer's blacklist, drawn to one scale.</p>
+    <figure class="scale">
+      <div id="scale-rows"></div>
+      <figcaption>The counts are built differently and are not directly comparable: OFAC entries are designations, and the issuer counts are third-party on-chain tallies. The basis for each row is in the full comparison.</figcaption>
+    </figure>
+    <details>
+      <summary>Show the full comparison, with basis and sources</summary>
+      <div class="tablewrap"><table id="recon-table">
+        <thead><tr><th>List</th><th class="num">Addresses</th><th>Value frozen</th><th>As of</th><th>Basis</th><th>Source</th></tr></thead>
+        <tbody></tbody>
+      </table></div>
+      <p class="muted" id="recon-caveat" style="font-size:.9rem;line-height:1.5"></p>
+    </details>
+  </section>
 
-  <section id="sec-findings">
-    <h2 class="sec"><span><span class="sec-no">I.</span> Documented gaps</span><span class="sec-note">the thesis &mdash; sourced findings, most with dated lag</span></h2>
-    <p class="sec-intro">All three lists are public. Nobody reconciles them. Read down this ledger and the pattern is consistent: <em>designation, issuer action, and actual enforcement move on different clocks</em>, and the spread between those clocks is where money moves. Each finding below carries its own sources; claim and evidence text is rendered verbatim from the snapshot file.</p>
+  <section id="findings-sec" aria-labelledby="findings-h">
+    <h2 id="findings-h">Documented gaps</h2>
+    <p class="intro">Designation, issuer action and enforcement run on different clocks; each finding dates one gap and carries its own sources. Each heading and the text under it are one claim from the snapshot file, split at its first colon and otherwise verbatim, as is the evidence.</p>
     <div id="findings"></div>
   </section>
 
-  <section id="sec-recon">
-    <h2 class="sec"><span><span class="sec-no">II.</span> The three lists, side by side</span><span class="sec-note">counts are not directly comparable &mdash; see basis column and &sect; VI</span></h2>
-    <div class="tblwrap"><table id="recon-table">
-      <thead><tr><th>List</th><th class="num">Addresses</th><th>Value frozen</th><th>As of</th><th>Basis</th><th>Source</th></tr></thead>
-      <tbody></tbody>
-    </table></div>
-    <p class="tbl-note" id="recon-caveat"></p>
-  </section>
+  <section id="ofac" aria-labelledby="ofac-h">
+    <h2 id="ofac-h">OFAC SDN digital-currency addresses</h2>
+    <p class="intro muted" id="ofac-src-note"></p>
+    <ul class="plain" id="ofac-notes"></ul>
+    <details id="ofac-tags-details">
+      <summary id="ofac-tags-summary">Show the per-asset breakdown</summary>
+      <div class="tablewrap"><table id="ofac-tags">
+        <thead><tr><th>Asset tag</th><th class="num">Entries</th><th>Raw list</th></tr></thead>
+        <tbody></tbody>
+        <tfoot></tfoot>
+      </table></div>
+    </details>
+    <div id="ofac-disc"></div>
 
-  <section id="sec-ofac">
-    <h2 class="sec"><span><span class="sec-no">III.</span> OFAC SDN digital-currency addresses</span><span class="sec-note" id="ofac-src-note"></span></h2>
-    <div class="tblwrap"><table class="tags" id="ofac-tags">
-      <thead><tr><th>Asset tag</th><th class="num">Entries</th><th>Asset tag</th><th class="num">Entries</th><th>Asset tag</th><th class="num">Entries</th></tr></thead>
-      <tbody></tbody>
-      <tfoot></tfoot>
-    </table></div>
-    <ol class="notes" id="ofac-notes"></ol>
-
-    <h2 class="sec" style="margin-top:2rem"><span><span class="sec-no">III-a.</span> Notable designations, dated</span><span class="sec-note">the timeline the gaps are measured against</span></h2>
-    <div class="tblwrap"><table id="designations">
+    <h3 id="desig-h">Notable designations, dated</h3>
+    <p class="muted" style="margin:0">The timeline the gaps are measured against.</p>
+    <div class="tablewrap"><table id="designations" aria-labelledby="desig-h">
       <thead><tr><th>Date</th><th>Entity</th><th>Note</th><th>Source</th></tr></thead>
       <tbody></tbody>
     </table></div>
   </section>
 
-  <section id="sec-tether">
-    <h2 class="sec"><span><span class="sec-no">IV.</span> Tether (USDT)</span><span class="sec-note">proactive since 2023-12; the far larger blacklist</span></h2>
-    <div class="policy" id="tether-policy"></div>
-    <div class="tblwrap"><table id="tether-totals">
+  <section id="tether" aria-labelledby="tether-h">
+    <h2 id="tether-h">Tether (USDT)</h2>
+    <p class="intro muted">Proactive since 2023-12; the far larger blacklist.</p>
+    <div id="tether-policy"></div>
+    <h3 id="tether-totals-h">Totals</h3>
+    <div class="tablewrap"><table id="tether-totals" aria-labelledby="tether-totals-h">
       <thead><tr><th>Metric</th><th>Value</th><th>As of</th><th>Source</th></tr></thead>
       <tbody></tbody>
     </table></div>
-    <h3 class="caption-line" style="margin:1.2rem 0 .4rem">Documented freeze events</h3>
-    <div class="tblwrap"><table id="tether-events">
-      <thead><tr><th>Date</th><th>Event</th><th>Sources</th></tr></thead>
-      <tbody></tbody>
-    </table></div>
+    <h3 id="tether-events-h">Documented freeze events</h3>
+    <details>
+      <summary id="tether-events-summary">Show the freeze events</summary>
+      <div class="tablewrap"><table id="tether-events" aria-labelledby="tether-events-h">
+        <thead><tr><th>Date</th><th>Event</th><th>Sources</th></tr></thead>
+        <tbody></tbody>
+      </table></div>
+    </details>
   </section>
 
-  <section id="sec-circle">
-    <h2 class="sec"><span><span class="sec-no">V.</span> Circle (USDC)</span><span class="sec-note">court-order-only; the far smaller blacklist</span></h2>
-    <div class="policy" id="circle-policy"></div>
-    <div class="tblwrap"><table id="circle-totals">
+  <section id="circle" aria-labelledby="circle-h">
+    <h2 id="circle-h">Circle (USDC)</h2>
+    <p class="intro muted">Court-order-only; the far smaller blacklist.</p>
+    <div id="circle-policy"></div>
+    <h3 id="circle-totals-h">Totals</h3>
+    <div class="tablewrap"><table id="circle-totals" aria-labelledby="circle-totals-h">
       <thead><tr><th>Metric</th><th>Value</th><th>As of</th><th>Source</th></tr></thead>
       <tbody></tbody>
     </table></div>
-    <h3 class="caption-line" style="margin:1.2rem 0 .4rem">Documented blacklist events</h3>
-    <div class="tblwrap"><table id="circle-events">
-      <thead><tr><th>Date</th><th>Event</th><th>Sources</th></tr></thead>
-      <tbody></tbody>
-    </table></div>
+    <h3 id="circle-events-h">Documented blacklist events</h3>
+    <details>
+      <summary id="circle-events-summary">Show the blacklist events</summary>
+      <div class="tablewrap"><table id="circle-events" aria-labelledby="circle-events-h">
+        <thead><tr><th>Date</th><th>Event</th><th>Sources</th></tr></thead>
+        <tbody></tbody>
+      </table></div>
+    </details>
   </section>
 
-  <section id="sec-coverage">
-    <h2 class="sec"><span><span class="sec-no">VI.</span> Coverage notes &mdash; what this snapshot does not know</span><span class="sec-note">rendered verbatim; an honest hole beats a fabricated fill</span></h2>
-    <ol class="notes" id="coverage-notes"></ol>
+  <section class="methods" id="method" aria-labelledby="method-h">
+    <h2 id="method-h">Method and sources</h2>
+    <dl>
+      <dt>Snapshot</dt>
+      <dd id="m-snapshot"></dd>
+      <dt>Data</dt>
+      <dd>Every figure on this page is read at load from <a href="data/snapshot.json"><code>data/snapshot.json</code></a>, which is the source of record and is embedded in this file byte-for-byte. The raw per-asset OFAC lists are in <code>data/ofac_lists/</code>, one text file per asset tag, linked from the per-asset breakdown above. No wallet addresses, per-hop flows, or intra-window dates were invented; where sources gave only month-level precision, only that precision is shown.</dd>
+      <dt>File disclaimer</dt>
+      <dd id="m-disclaimer"></dd>
+    </dl>
+    <h3 id="coverage-h">Coverage notes: what this snapshot does not know</h3>
+    <ul class="plain" id="coverage-notes" aria-labelledby="coverage-h"></ul>
+    <h3 id="sources-h">Source register</h3>
+    <details>
+      <summary id="sources-summary">Show all sources</summary>
+      <ol class="register" id="source-register" aria-labelledby="sources-h"></ol>
+    </details>
   </section>
-
-  <section id="sec-sources">
-    <h2 class="sec"><span><span class="sec-no">VII.</span> Source register</span><span class="sec-note" id="sources-count"></span></h2>
-    <ol class="register" id="source-register"></ol>
-  </section>
-
-  <footer class="colophon">
-    <p>Rendered entirely from <span class="mono">enforcement-gap/data/snapshot.json</span>, which is the source of record; the JSON is embedded in this file byte-for-byte and every figure above is read from it at load. No wallet addresses, per-hop flows, or intra-window dates were invented; where sources gave only month-level precision, only that precision is shown. Static snapshot &mdash; see <span class="mono">README.md</span> for the indexer the live version needs.</p>
-  </footer>
-</div>
+</main>
 
 <script>
 (function(){
   "use strict";
   var D = JSON.parse(document.getElementById("snapshot-data").textContent);
 
-  /* ---------- helpers ---------- */
   function el(tag, cls, text){
     var e = document.createElement(tag);
     if(cls) e.className = cls;
@@ -515,18 +417,20 @@
     return e;
   }
   function domainOf(url){
-    try{
-      var h = new URL(url).hostname.replace(/^www\./,"");
-      return h;
-    }catch(e){ return url; }
+    try{ return new URL(url).hostname.replace(/^www\./,""); }catch(e){ return url; }
   }
+  function link(url, text){
+    var a = el("a", null, text);
+    a.href = url; a.rel = "noopener noreferrer";
+    return a;
+  }
+  // "Sources: a.com, b.com" with each domain linked to its full URL
   function srcLinks(sources, label){
-    var wrap = el("span","srcs");
-    wrap.appendChild(el("span","lbl", label || "Sources"));
-    (sources||[]).forEach(function(u){
-      var a = el("a", null, domainOf(u));
-      a.href = u; a.target = "_blank"; a.rel = "noopener noreferrer";
-      wrap.appendChild(a);
+    var wrap = el("p","srcs");
+    if(label) wrap.appendChild(document.createTextNode(label + ": "));
+    (sources||[]).forEach(function(u, i){
+      if(i) wrap.appendChild(document.createTextNode(", "));
+      wrap.appendChild(link(u, domainOf(u)));
     });
     return wrap;
   }
@@ -535,214 +439,288 @@
     if(obj.source) return [obj.source];
     return [];
   }
+  function cell(tr, cls, text){ var td = el("td", cls, text); tr.appendChild(td); return td; }
+  var MONTHS = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+  function longDate(iso){
+    var p = iso.split("-");
+    return (+p[2]) + " " + MONTHS[(+p[1]) - 1] + " " + p[0];
+  }
 
-  /* ---------- masthead / banner ---------- */
-  document.getElementById("stamp-date").textContent = D.asOf;
-  document.getElementById("banner-date").textContent = D.asOf;
-  document.getElementById("banner-mirror").textContent = D.ofac.mirrorLastUpdatedUTC;
-  document.getElementById("banner-disclaimer").textContent = "Snapshot file disclaimer: " + D.disclaimer;
+  /* ---------- status strip ---------- */
+  document.getElementById("status").textContent =
+    "Snapshot as of " + longDate(D.asOf) + "; nothing on this page updates.";
 
-  /* ---------- I. findings ---------- */
-  // Short titles + measure callouts are editorial labels for the 8 gap entries
-  // in snapshot.json (in file order). Claim and evidence text below each title
-  // is rendered verbatim from the file. If the file changes shape, labels
-  // fall back to generic numbering.
-  var GAP_LABELS = [
-    { t:"Tornado Cash: Circle froze same-cycle, Tether waited for a policy", m:"lag ≈ 16 months" },
-    { t:"Garantex: designated 2022, still growing until the 2025 freeze",    m:"lag ≈ 3 years" },
-    { t:"Most Tether freezes have no OFAC designation behind them",          m:">90% off-list" },
-    { t:"Same illicit flow: frozen in USDT, still moving in USDC",           m:"≈30× scale gap" },
-    { t:"The multisig delay window is a documented exit",                    m:"≈$78M withdrawn" },
-    { t:"eXch laundered $200M+ of Bybit and was never designated",           m:"no designation" },
-    { t:"The strictest freeze rested on a designation later withdrawn",      m:"≈2.5 yr on delisted basis" },
-    { t:"Counterpoint: coordination can close the gap to hours",             m:"hours — but $1.4M pre-designation" }
-  ];
-  var findingsWrap = document.getElementById("findings");
-  (D.gaps||[]).forEach(function(g, i){
-    var lab = (D.gaps.length === GAP_LABELS.length) ? GAP_LABELS[i] : null;
-    var f = el("div","finding");
-    var head = el("div","f-head");
-    head.appendChild(el("span","f-no","Finding " + String(i+1).padStart(2,"0")));
-    head.appendChild(el("span","f-title", lab ? lab.t : "Documented gap"));
-    if(lab) head.appendChild(el("span","f-measure", lab.m));
-    f.appendChild(head);
-    f.appendChild(el("p","f-claim", g.claim));
-    var ev = el("div","f-evidence");
-    ev.appendChild(el("span","lbl","Evidence"));
-    ev.appendChild(document.createTextNode(g.evidence));
-    f.appendChild(ev);
-    f.appendChild(srcLinks(g.sources));
-    findingsWrap.appendChild(f);
-  });
-
-  /* ---------- II. reconciliation table ---------- */
-  // Rows are drawn from ofac.totalAddressEntriesAcrossAssetTags, tether.totals
-  // and circle.totals. "Addresses" and "value" strings are shown as recorded.
+  /* ---------- the three lists ---------- */
   var amlbotTether = D.tether.totals.filter(function(t){ return t.metric.indexOf("Blacklisted") === 0; })[0];
   var issuerTether = D.tether.totals[0];
   var blocksec     = D.tether.totals.filter(function(t){ return t.metric.indexOf("2025") !== -1; })[0];
   var amlbotCircle = D.circle.totals[0];
+
+  // Address and value strings are shown as recorded.
   var reconRows = [
-    { list:"OFAC SDN — digital-currency address entries (all 18 asset tags)",
+    { list:"OFAC SDN digital-currency address entries (all 18 asset tags)",
       addr: String(D.ofac.totalAddressEntriesAcrossAssetTags),
-      val:"— (designations, not freezes)",
+      val:"n/a (designations, not freezes)",
       asOf:"mirror " + D.ofac.mirrorLastUpdatedUTC,
-      basis:"per-asset-tag entry count from the 0xB10C sdn.xml mirror; ≤4 cross-tag duplicates checked (see § VI)",
+      basis:"per-asset-tag entry count from the 0xB10C sdn.xml mirror; ≤4 cross-tag duplicates checked (see coverage notes)",
       srcs:[D.sources[0].url] },
-    { list:"Tether USDT blacklist — third-party on-chain count",
+    { list:"Tether USDT blacklist, third-party on-chain count",
       addr:"7,268", val:"$3.29 billion ($1.75B on TRON)",
       asOf: amlbotTether ? amlbotTether.asOf : "",
       basis:"AMLBot via Dune; Tether publishes no canonical blacklist count",
       srcs: amlbotTether ? [amlbotTether.source] : [] },
-    { list:"Tether — issuer's own cumulative figure",
+    { list:"Tether, issuer's own cumulative figure",
       addr:"—", val: issuerTether.value,
       asOf: issuerTether.asOf,
-      basis:"includes non-USDT assets and law-enforcement cooperation beyond blacklisting; NOT comparable to the row above",
+      basis:"includes non-USDT assets and law-enforcement cooperation beyond blacklisting; not comparable to the row above",
       srcs:[issuerTether.source] },
-    { list:"Tether — frozen during calendar 2025",
+    { list:"Tether, frozen during calendar 2025",
       addr:"—", val: blocksec ? blocksec.value : "",
       asOf: blocksec ? blocksec.asOf : "",
       basis:"BlockSec on-chain analysis, Ethereum + TRON",
       srcs: blocksec ? [blocksec.source] : [] },
-    { list:"Circle USDC blacklist — third-party on-chain count",
+    { list:"Circle USDC blacklist, third-party on-chain count",
       addr:"372", val:"$109 million",
       asOf: amlbotCircle.asOf,
       basis:"AMLBot via Dune; Circle publishes no official count",
       srcs:[amlbotCircle.source] }
   ];
+
+  // Bar rows: the three address-count rows only.
+  var scaleRows = [
+    { name:"OFAC SDN", sub:["Address entries across all 18 asset tags; designations, not freezes. Mirror ", {nw:D.ofac.mirrorLastUpdatedUTC}, "."], r:reconRows[0] },
+    { name:"Tether USDT blacklist", sub:["Value frozen " + reconRows[1].val + ". As of ", {nw:reconRows[1].asOf}, "."], r:reconRows[1] },
+    { name:"Circle USDC blacklist", sub:["Value frozen " + reconRows[4].val + ". As of ", {nw:reconRows[4].asOf}, "."], r:reconRows[4] }
+  ];
+  var nums = scaleRows.map(function(s){ return parseInt(s.r.addr.replace(/,/g,""), 10); });
+  var max = Math.max.apply(null, nums);
+  var scaleWrap = document.getElementById("scale-rows");
+  scaleRows.forEach(function(s, i){
+    var row = el("div","srow");
+    var lab = el("div","slabel");
+    lab.appendChild(el("span","sname", s.name));
+    var sub = el("span","ssub");
+    s.sub.forEach(function(part){
+      if(typeof part === "string") sub.appendChild(document.createTextNode(part));
+      else sub.appendChild(el("span","nw", part.nw));
+    });
+    lab.appendChild(sub);
+    row.appendChild(lab);
+    var track = el("div","strack");
+    var bar = el("span","sbar");
+    // leave room for the value label at the end of the longest bar
+    bar.style.width = "calc((100% - 5.5em) * " + (nums[i] / max).toFixed(4) + ")";
+    track.appendChild(bar);
+    track.appendChild(el("span","sval", s.r.addr));
+    row.appendChild(track);
+    scaleWrap.appendChild(row);
+  });
+
   var reconBody = document.querySelector("#recon-table tbody");
   reconRows.forEach(function(r){
     var tr = el("tr");
-    tr.appendChild(el("td", null, r.list));
-    tr.appendChild(el("td","num", r.addr));
-    tr.appendChild(el("td", null, r.val));
-    tr.appendChild(el("td","date", r.asOf));
-    tr.appendChild(el("td", null, r.basis));
-    var td = el("td"); td.appendChild(srcLinks(r.srcs,"")); tr.appendChild(td);
+    cell(tr, "first-wrap", r.list);
+    cell(tr, "num", r.addr);
+    cell(tr, "long", r.val);
+    cell(tr, "date", r.asOf);
+    cell(tr, "long", r.basis);
+    cell(tr, "src").appendChild(srcLinks(r.srcs));
     reconBody.appendChild(tr);
   });
-  // caveat: the coverage note that governs comparability, verbatim
+  // the coverage note that governs comparability, verbatim
   var comparabilityNote = (D.coverageNotes||[]).filter(function(n){ return n.indexOf("NOT directly comparable") !== -1; })[0];
   if(comparabilityNote) document.getElementById("recon-caveat").textContent = comparabilityNote;
 
-  /* ---------- III. OFAC ---------- */
+  /* ---------- findings ---------- */
+  // The figure on each finding's rail is an editorial label for the 8 gap
+  // entries in snapshot.json (file order). The heading and body are the
+  // entry's claim text, split at its first ": "; nothing is reworded.
+  var GAP_MEASURES = [
+    "Lag ≈ 16 months",
+    "Lag ≈ 3 years",
+    ">90% off-list",
+    "≈30× scale gap",
+    "≈$78M withdrawn",
+    "No designation",
+    "≈2.5 yr on delisted basis",
+    "Hours, but $1.4M pre-designation"
+  ];
+  var findingsWrap = document.getElementById("findings");
+  var gapTitles = [];
+  (D.gaps||[]).forEach(function(g, i){
+    var measure = (D.gaps.length === GAP_MEASURES.length) ? GAP_MEASURES[i] : null;
+    var cut = g.claim.indexOf(": ");
+    var head = cut > 0 ? g.claim.slice(0, cut) : null;
+    var body = cut > 0 ? g.claim.slice(cut + 2) : g.claim;
+    gapTitles.push(head);
+
+    var art = el("article","gap");
+    art.id = "gap-" + (i + 1);
+    var rail = el("div","rail");
+    if(measure) rail.appendChild(el("p","measure", measure));
+    art.appendChild(rail);
+    var main = el("div","gbody");
+    if(head) main.appendChild(el("h3", null, head));
+    main.appendChild(el("p","claim", body));
+    var ev = el("p","evidence");
+    ev.appendChild(el("span","lbl","Evidence: "));
+    ev.appendChild(document.createTextNode(g.evidence));
+    main.appendChild(ev);
+    main.appendChild(srcLinks(g.sources, "Sources"));
+    art.appendChild(main);
+    findingsWrap.appendChild(art);
+  });
+
+  /* ---------- OFAC ---------- */
   document.getElementById("ofac-src-note").textContent =
-    D.ofac.source + " — last updated " + D.ofac.mirrorLastUpdatedUTC;
-  var tags = Object.keys(D.ofac.addressCountsPerAssetTag);
+    D.ofac.source + ", last updated " + D.ofac.mirrorLastUpdatedUTC + ".";
+  var ofacNotes = document.getElementById("ofac-notes");
+  (D.ofac.countNotes||[]).forEach(function(n){ ofacNotes.appendChild(el("li", null, n)); });
+
+  var counts = D.ofac.addressCountsPerAssetTag;
+  var tags = Object.keys(counts);
+  var tagSum = tags.reduce(function(s,k){ return s + counts[k]; }, 0);
+  document.getElementById("ofac-tags-summary").textContent =
+    "Show the per-asset breakdown (" + tags.length + " asset tags)";
   var tagsBody = document.querySelector("#ofac-tags tbody");
-  var perRow = 3;
-  var rows = Math.ceil(tags.length / perRow);
-  for(var r = 0; r < rows; r++){
+  tags.forEach(function(k){
     var tr = el("tr");
-    for(var c = 0; c < perRow; c++){
-      var k = tags[c*rows + r];
-      if(k === undefined){
-        tr.appendChild(el("td")); tr.appendChild(el("td","num"));
-      }else{
-        tr.appendChild(el("td","mono", k));
-        tr.appendChild(el("td","num", String(D.ofac.addressCountsPerAssetTag[k])));
-      }
-    }
+    cell(tr, "mono", k);
+    cell(tr, "num", String(counts[k]));
+    var file = "sanctioned_addresses_" + k + ".txt";
+    cell(tr).appendChild(link("data/ofac_lists/" + file, file));
     tagsBody.appendChild(tr);
-  }
-  var tagSum = tags.reduce(function(s,k){ return s + D.ofac.addressCountsPerAssetTag[k]; }, 0);
+  });
   var tfoot = document.querySelector("#ofac-tags tfoot");
   function tfootRow(label, value){
     var ftr = el("tr");
-    var ftd = el("td", null, label);
-    ftd.colSpan = 5;
-    ftr.appendChild(ftd);
-    ftr.appendChild(el("td","num", String(value)));
+    cell(ftr, null, label);
+    cell(ftr, "num", String(value));
+    cell(ftr);
     tfoot.appendChild(ftr);
   }
   tfootRow("Sum of per-tag entries above (computed)", tagSum);
   if(tagSum !== D.ofac.totalAddressEntriesAcrossAssetTags){
     tfootRow("Total recorded in snapshot.json", D.ofac.totalAddressEntriesAcrossAssetTags);
-    var disc = el("p","tbl-note",
-      "Discrepancy, flagged rather than silently corrected: the per-tag counts above (which match the raw per-asset lists archived in data/ofac_lists/) sum to " +
-      tagSum + ", but snapshot.json records a total of " +
-      D.ofac.totalAddressEntriesAcrossAssetTags +
-      ". The “928” figure quoted in Finding 03 and the coverage notes inherits the recorded total.");
-    disc.style.color = "var(--red)";
-    document.querySelector("#ofac-tags").closest(".tblwrap").after(disc);
+    var disc = el("p","note-warn");
+    disc.appendChild(el("span","lbl","Discrepancy, flagged rather than silently corrected: "));
+    disc.appendChild(document.createTextNode(
+      "the per-tag counts (which match the raw per-asset lists archived in data/ofac_lists/) sum to " +
+      tagSum + ", but "));
+    disc.appendChild(link("data/snapshot.json", "snapshot.json"));
+    disc.appendChild(document.createTextNode(" records a total of " +
+      D.ofac.totalAddressEntriesAcrossAssetTags + ". The “" +
+      D.ofac.totalAddressEntriesAcrossAssetTags + "” figure quoted in the finding "));
+    var gi = gapTitles[2] ? 2 : -1;
+    if(gi >= 0){
+      var ga = link("#gap-3", gapTitles[2]);
+      ga.removeAttribute("rel");
+      disc.appendChild(ga);
+    }else{
+      disc.appendChild(document.createTextNode("on Tether freezes"));
+    }
+    disc.appendChild(document.createTextNode(" and in the coverage notes inherits the recorded total."));
+    document.getElementById("ofac-disc").appendChild(disc);
   }
-
-  var ofacNotes = document.getElementById("ofac-notes");
-  (D.ofac.countNotes||[]).forEach(function(n){
-    ofacNotes.appendChild(el("li", null, n));
-  });
 
   var desigBody = document.querySelector("#designations tbody");
   (D.ofac.notableDesignations||[]).forEach(function(d){
     var tr = el("tr");
-    tr.appendChild(el("td","date", d.date));
-    tr.appendChild(el("td", null, d.entity));
-    tr.appendChild(el("td", null, d.note));
-    var td = el("td"); td.appendChild(srcLinks(sourcesOf(d),"")); tr.appendChild(td);
+    cell(tr, "date", d.date);
+    cell(tr, "first-wrap", d.entity);
+    cell(tr, "long", d.note);
+    cell(tr, "src").appendChild(srcLinks(sourcesOf(d)));
     desigBody.appendChild(tr);
   });
 
-  /* ---------- IV / V. issuers ---------- */
-  function fillPolicy(id, label, text, srcs){
+  /* ---------- issuers ---------- */
+  function fillPolicy(id, text, srcs){
     var box = document.getElementById(id);
-    box.appendChild(el("span","lbl", label));
-    box.appendChild(document.createTextNode(text));
-    box.appendChild(el("br"));
-    box.appendChild(srcLinks(srcs));
+    var p = el("p","policy");
+    p.appendChild(el("span","lbl","Stated policy: "));
+    p.appendChild(document.createTextNode(text));
+    box.appendChild(p);
+    box.appendChild(srcLinks(srcs, "Sources"));
   }
-  fillPolicy("tether-policy","Stated policy", D.tether.policy, D.tether.policySources);
-  fillPolicy("circle-policy","Stated policy", D.circle.policy, D.circle.policySources);
+  fillPolicy("tether-policy", D.tether.policy, D.tether.policySources);
+  fillPolicy("circle-policy", D.circle.policy, D.circle.policySources);
 
   function fillTotals(tableId, totals){
     var body = document.querySelector("#" + tableId + " tbody");
     totals.forEach(function(t){
       var tr = el("tr");
-      tr.appendChild(el("td", null, t.metric));
-      tr.appendChild(el("td", null, t.value));
-      tr.appendChild(el("td","date", t.asOf));
-      var td = el("td"); td.appendChild(srcLinks([t.source],"")); tr.appendChild(td);
+      cell(tr, "first-wrap", t.metric);
+      cell(tr, "long", t.value);
+      cell(tr, "date", t.asOf);
+      cell(tr, "src").appendChild(srcLinks([t.source]));
       body.appendChild(tr);
     });
   }
   fillTotals("tether-totals", D.tether.totals);
   fillTotals("circle-totals", D.circle.totals);
 
-  function fillEvents(tableId, events){
+  function fillEvents(tableId, events, summaryId, noun){
     var body = document.querySelector("#" + tableId + " tbody");
     events.forEach(function(e){
       var tr = el("tr");
-      tr.appendChild(el("td","date", e.date));
-      tr.appendChild(el("td", null, e.event));
-      var td = el("td"); td.appendChild(srcLinks(sourcesOf(e),"")); tr.appendChild(td);
+      cell(tr, "date", e.date);
+      cell(tr, "long", e.event);
+      cell(tr, "src").appendChild(srcLinks(sourcesOf(e)));
       body.appendChild(tr);
     });
+    document.getElementById(summaryId).textContent =
+      "Show the " + events.length + " " + noun;
   }
-  fillEvents("tether-events", D.tether.documentedFreezeEvents);
-  fillEvents("circle-events", D.circle.documentedBlacklistEvents);
+  fillEvents("tether-events", D.tether.documentedFreezeEvents, "tether-events-summary", "freeze events");
+  fillEvents("circle-events", D.circle.documentedBlacklistEvents, "circle-events-summary", "blacklist events");
 
-  /* ---------- VI. coverage notes ---------- */
+  /* ---------- method ---------- */
+  var ms = document.getElementById("m-snapshot");
+  ms.appendChild(document.createTextNode(
+    "Snapshot as of " + D.asOf + "; the live version requires an event indexer. Nothing on this page updates. OFAC counts reflect a mirror last updated " +
+    D.ofac.mirrorLastUpdatedUTC +
+    "; issuer-blacklist totals are third-party snapshots (freshest: 2025-10-07). A real tracker needs an on-chain indexer for Tether "));
+  ms.appendChild(el("code", null, "AddedBlackList"));
+  ms.appendChild(document.createTextNode(" and Circle "));
+  ms.appendChild(el("code", null, "Blacklisted"));
+  ms.appendChild(document.createTextNode(" events plus an SDN diff cron. The coverage notes below list exactly what this pass could not retrieve."));
+  document.getElementById("m-disclaimer").textContent = D.disclaimer;
+
   var cov = document.getElementById("coverage-notes");
-  (D.coverageNotes||[]).forEach(function(n){
-    cov.appendChild(el("li", null, n));
+  (D.coverageNotes||[]).forEach(function(n){ cov.appendChild(el("li", null, n)); });
+
+  var allSame = D.sources.every(function(s){ return s.retrieved === D.asOf; });
+  document.getElementById("sources-summary").textContent =
+    "Show all " + D.sources.length + " sources" + (allSame ? ", all retrieved " + D.asOf : "");
+  var reg = document.getElementById("source-register");
+  D.sources.forEach(function(s){
+    var li = el("li");
+    li.appendChild(link(s.url, s.name));
+    if(!allSame) li.appendChild(el("span","ret", " (retrieved " + s.retrieved + ")"));
+    reg.appendChild(li);
   });
 
-  /* ---------- VII. source register ---------- */
-  document.getElementById("sources-count").textContent =
-    D.sources.length + " sources, all retrieved " + D.asOf;
-  var reg = document.getElementById("source-register");
-  D.sources.forEach(function(s, i){
-    var li = el("li");
-    li.appendChild(el("span","r-no", String(i+1).padStart(2,"0")));
-    var name = el("span","r-name");
-    var a = el("a", null, s.name);
-    a.href = s.url; a.target = "_blank"; a.rel = "noopener noreferrer";
-    name.appendChild(a);
-    li.appendChild(name);
-    li.appendChild(el("span","r-date","ret. " + s.retrieved));
-    reg.appendChild(li);
+  /* ---------- keep ISO dates on one line (text itself unchanged) ---------- */
+  var DATE_RE = /\d{4}-\d{2}(?:-\d{2})?(?:T[\d:]+Z)?(?!\d)/g;
+  var walker = document.createTreeWalker(document.querySelector("main"), NodeFilter.SHOW_TEXT);
+  var textNodes = [];
+  while(walker.nextNode()){
+    var t = walker.currentNode;
+    DATE_RE.lastIndex = 0;
+    if(DATE_RE.test(t.nodeValue) && !(t.parentNode.closest && t.parentNode.closest(".nw,td.date"))) textNodes.push(t);
+  }
+  textNodes.forEach(function(t){
+    var frag = document.createDocumentFragment(), s = t.nodeValue, last = 0, m;
+    DATE_RE.lastIndex = 0;
+    while((m = DATE_RE.exec(s))){
+      if(m.index > last) frag.appendChild(document.createTextNode(s.slice(last, m.index)));
+      frag.appendChild(el("span","nw", m[0]));
+      last = m.index + m[0].length;
+    }
+    if(last < s.length) frag.appendChild(document.createTextNode(s.slice(last)));
+    t.parentNode.replaceChild(frag, t);
   });
 })();
 </script>
-<p style="max-width:960px;margin:40px auto 56px;padding:0 16px;font:14px/1.5 system-ui,sans-serif;opacity:.75"><a href="https://elsaicequeen.github.io/" style="color:inherit">Back to Anish Majumdar's portfolio</a></p>
 </body>
 </html>
