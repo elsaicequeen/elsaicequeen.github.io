@@ -1,0 +1,214 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Anish Majumdar</title>
+<meta name="description" content="Anish Majumdar: data and risk analyst. Finds out why the numbers moved and builds the checks that keep them honest.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=Public+Sans:wght@400;600;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --paper:#F3F5F1;
+  --ink:#16233A;
+  --muted:#556275;
+  --rule:#C9D6E2;
+  --red:#A8322D;
+  --tick:#2F6B4F;
+  --code-bg:#FBFCFA;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --paper:#141B26; --ink:#E4E9EF; --muted:#9AA7B8; --rule:#2A3646;
+    --red:#E0726B; --tick:#7CC3A0; --code-bg:#0F151F;
+  }
+}
+:root[data-theme="dark"]{
+  --paper:#141B26; --ink:#E4E9EF; --muted:#9AA7B8; --rule:#2A3646;
+  --red:#E0726B; --tick:#7CC3A0; --code-bg:#0F151F;
+}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{
+  margin:0; background:var(--paper); color:var(--ink);
+  font:400 1.0625rem/1.6 "Public Sans",system-ui,sans-serif;
+}
+/* the ledger page: a red double margin rule down the left on wide screens */
+.page{
+  max-width:880px; margin:0 auto; padding:72px 16px 96px;
+  position:relative;
+}
+@media (min-width:900px){
+  .page{padding-left:120px}
+  .page::before,.page::after{
+    content:""; position:absolute; top:0; bottom:0; width:1px; background:var(--red); opacity:.55;
+  }
+  .page::before{left:88px} .page::after{left:92px}
+}
+a{color:inherit; text-decoration-color:var(--red); text-decoration-thickness:1.5px; text-underline-offset:3px}
+a:hover{color:var(--red)}
+a:focus-visible{outline:2px solid var(--red); outline-offset:3px; border-radius:2px}
+
+header h1{
+  font-weight:800; font-size:clamp(2.6rem,7vw,4.25rem); line-height:1.02;
+  letter-spacing:-.025em; margin:0 0 20px;
+}
+.lede{font-size:1.25rem; line-height:1.5; max-width:34em; margin:0 0 28px}
+.contact{display:flex; flex-wrap:wrap; gap:8px 24px; margin:0; padding:0; list-style:none; font-weight:600}
+
+/* the hero exhibit: a real query and its result, reconciled */
+.exhibit{margin:56px 0 0; max-width:640px}
+.exhibit figcaption{color:var(--muted); font-size:.95rem; margin-top:12px; max-width:36em}
+.sql{
+  background:var(--code-bg); border:1px solid var(--rule); border-left:3px solid var(--red);
+  font:400 .9rem/1.55 "IBM Plex Mono",ui-monospace,monospace; padding:18px 20px; overflow-x:auto;
+}
+.sql .c{color:var(--muted)}
+.sql .k{font-weight:500}
+.result{width:100%; border-collapse:collapse; margin-top:14px; font-variant-numeric:tabular-nums}
+.result th{font-weight:500; text-align:left; color:var(--muted); border-bottom:1px solid var(--rule); padding:2px 0 6px}
+.result td{padding:5px 0; border-bottom:1px solid var(--rule)}
+.result td:last-child,.result th:last-child{text-align:right}
+.result tfoot td{border-bottom:0; color:var(--tick); font-weight:500}
+.result tbody tr{opacity:1}
+@media (prefers-reduced-motion:no-preference){
+  .result tbody tr,.result tfoot tr{animation:post .45s ease-out both}
+  .result tbody tr:nth-child(1){animation-delay:.5s}
+  .result tbody tr:nth-child(2){animation-delay:.85s}
+  .result tbody tr:nth-child(3){animation-delay:1.2s}
+  .result tfoot tr{animation-delay:1.7s}
+  @keyframes post{from{opacity:0}to{opacity:1}}
+}
+
+section{margin-top:96px}
+h2{font-weight:800; font-size:1.6rem; letter-spacing:-.01em; margin:0 0 8px}
+.section-note{color:var(--muted); margin:0 0 28px; max-width:36em}
+
+/* ledger entries: where the work happened on the left, the work on the right */
+.entry{
+  display:grid; grid-template-columns:140px 1fr; gap:4px 28px;
+  padding:26px 0; border-top:1px solid var(--rule);
+}
+.entry:last-child{border-bottom:1px solid var(--rule)}
+.where{color:var(--muted); font-size:.95rem; padding-top:5px}
+.entry h3{font-size:1.25rem; font-weight:600; margin:0 0 6px; letter-spacing:-.005em}
+.entry p{margin:0 0 10px; max-width:38em}
+.proof{color:var(--tick); font-weight:600}
+.links{display:flex; flex-wrap:wrap; gap:4px 20px; font-weight:600; font-size:.98rem}
+@media (max-width:620px){
+  .entry{grid-template-columns:1fr}
+  .where{padding-top:0}
+}
+
+.roles{list-style:none; margin:0; padding:0}
+.roles li{display:grid; grid-template-columns:1fr auto; gap:2px 20px; padding:12px 0; border-top:1px solid var(--rule)}
+.roles li:last-child{border-bottom:1px solid var(--rule)}
+.roles .org{font-weight:600}
+.roles .title{color:var(--muted)}
+.roles .yrs{font-variant-numeric:tabular-nums; color:var(--muted); white-space:nowrap}
+@media (max-width:620px){.roles li{grid-template-columns:1fr}}
+
+footer{margin-top:96px; color:var(--muted); font-size:.95rem}
+</style>
+</head>
+<body>
+<main class="page">
+
+<header>
+  <h1>Anish Majumdar</h1>
+  <p class="lede">I work out why the numbers moved, and I build the checks that keep them honest: SQL, on-chain data, and AI workflows that a person still signs off.</p>
+  <ul class="contact">
+    <li><a href="mailto:anish.majumdar123@gmail.com">anish.majumdar123@gmail.com</a></li>
+    <li><a href="https://www.linkedin.com/in/anish-majumdar-615633187">LinkedIn</a></li>
+  </ul>
+
+  <figure class="exhibit">
+    <pre class="sql" aria-label="SQL query"><span class="c">-- Weekly trading volume fell. Which lever moved?</span>
+<span class="k">SELECT</span> driver, share_of_change
+<span class="k">FROM</span>   decompose(volume = traders × orders_per_trader × order_size)
+<span class="k">ORDER BY</span> share_of_change <span class="k">DESC</span>;</pre>
+    <table class="result">
+      <thead><tr><th scope="col">driver</th><th scope="col">share of change</th></tr></thead>
+      <tbody>
+        <tr><td>fewer traders</td><td>57.7%</td></tr>
+        <tr><td>fewer orders per trader</td><td>33.4%</td></tr>
+        <tr><td>smaller orders</td><td>8.9%</td></tr>
+      </tbody>
+      <tfoot><tr><td>reconciled to cohort movements</td><td>100.0%</td></tr></tfoot>
+    </table>
+    <figcaption>A volume drop at a crypto exchange, split into its three levers and checked against six other venues on matched days. Most of the drop was fewer traders, not less trading by the ones who stayed.</figcaption>
+  </figure>
+</header>
+
+<section aria-labelledby="work">
+  <h2 id="work">Work</h2>
+  <p class="section-note">Two things from my job and three I built on my own. Figures from work are rounded or relative; the full versions are in my CV.</p>
+
+  <article class="entry">
+    <div class="where">CoinDCX</div>
+    <div>
+      <h3>A listing desk run by an AI agent, approved by a person</h3>
+      <p>The agent prepares each token-listing pass. Deterministic checks confirm the exact contract and screen for sell-blocks, freeze or confiscation rights and punitive taxes. A person approves every production write after a dry run, and each write is read back and saved as an audit receipt. Each of four listing incidents became a permanent guard.</p>
+      <p class="proof">Hands-on review went from 4–5 hours a day to about one, by my estimate.</p>
+    </div>
+  </article>
+
+  <article class="entry">
+    <div class="where">CoinDCX</div>
+    <div>
+      <h3>Reading the numbers before trusting them</h3>
+      <p>When the trading fee went up in steps, revenue rose and the headline said it worked. Splitting by trader segment showed the heaviest 1% of traders made over half of each month’s volume, and they had cheaper venues to move to. I recommended holdout tests before any future fee change. Elsewhere I found order times stored in local time but labelled UTC, which had put a peak-hours plan several hours off.</p>
+      <p class="proof">Segment splits, cohort checks and a corrected time basis, written up as reusable SQL.</p>
+    </div>
+  </article>
+
+  <article class="entry">
+    <div class="where">Own project</div>
+    <div>
+      <h3>TsundereSQL</h3>
+      <p>An anime visual novel that is also a full SQL course: 224 graded problems, run in the browser on DuckDB. Every answer is graded against hidden datasets the player never sees, so a query that only fits the sample fails. A read-only guard mirrors DuckDB’s own parser and held up to 50,000 fuzzed queries with no bypass. When an answer is wrong, the checker reruns one-edit variants of it on the data and shows the one to three rows that caused the miss.</p>
+      <p class="proof">Free demo on Steam, about 2,700 wishlists, around 14,000 automated tests.</p>
+      <p class="links"><a href="https://store.steampowered.com/app/5168090/">Steam page</a><a href="https://tsunderesql.com">tsunderesql.com</a></p>
+    </div>
+  </article>
+
+  <article class="entry">
+    <div class="where">Own project</div>
+    <div>
+      <h3>Peel Chain</h3>
+      <p>Laundering trails from four major crypto hacks (Bitfinex, Ronin, Bybit, Poly Network), rebuilt from public court records and press releases as interactive exhibits. Watch the walkthrough, then switch to investigate mode: the labels disappear and you tag the exchanges, mixers and cash-out points yourself. Intermediate hops are stylised, and the title card says so.</p>
+      <p class="links"><a href="https://peel-chain.vercel.app/">Open the exhibit</a></p>
+    </div>
+  </article>
+
+  <article class="entry">
+    <div class="where">Own project</div>
+    <div>
+      <h3>Circle Intel</h3>
+      <p>A dashboard of USDC supply and the wider Circle ecosystem, built in Next.js.</p>
+      <p class="links"><a href="https://circle-intel-taupe.vercel.app">Open the dashboard</a><a href="https://github.com/elsaicequeen/circle-intel">Source</a></p>
+    </div>
+  </article>
+</section>
+
+<section aria-labelledby="roles">
+  <h2 id="roles">Roles</h2>
+  <ul class="roles">
+    <li><div><span class="org">CoinDCX</span> <span class="title">Founder’s Office, Assistant Manager</span></div><span class="yrs">2026–now</span></li>
+    <li><div><span class="org">CoinDCX</span> <span class="title">Specialist, Web3</span></div><span class="yrs">2024–2026</span></li>
+    <li><div><span class="org">QuantixLabs</span> <span class="title">Web3 specialist consultant, part-time</span></div><span class="yrs">2026–now</span></li>
+    <li><div><span class="org">Neevilas Ventures</span> <span class="title">Investment analyst, part-time</span></div><span class="yrs">2024–2026</span></li>
+    <li><div><span class="org">Bitquery</span> <span class="title">Technical writer, part-time</span></div><span class="yrs">2023–2025</span></li>
+    <li><div><span class="org">Centron Technical Services</span> <span class="title">Blockchain developer</span></div><span class="yrs">2023–2024</span></li>
+    <li><div><span class="org">Prarang</span> <span class="title">Data analyst</span></div><span class="yrs">2019–2023</span></li>
+  </ul>
+</section>
+
+<footer>
+  <p>B.Tech in Computer Science, Shiv Nadar University. CV on request by <a href="mailto:anish.majumdar123@gmail.com">email</a>.</p>
+</footer>
+
+</main>
+</body>
+</html>
