@@ -1,5 +1,5 @@
 import {
-  ENDPOINTS, DUNE_QUERIES, tokensFromText,
+  ENDPOINTS, tokensFromText, cctpFinding,
   normaliseShare, normaliseChains, normalisePrices,
   shareFinding, chainFinding, flowFinding, pegFinding,
 } from "./model.js";
@@ -43,11 +43,11 @@ let snapshotPromise = null;
 function snapshot() {
   snapshotPromise ??= (async () => {
     const latest = await getJson("data/latest.json");
-    const [llama, dune] = await Promise.all([
+    const [llama, cctp] = await Promise.all([
       getJson(`data/${latest.defillama}`),
-      latest.dune ? getJson(`data/${latest.dune}`).catch(() => null) : null,
+      latest.cctp ? getJson(`data/${latest.cctp}`).catch(() => null) : null,
     ]);
-    return { latest, llama, dune };
+    return { latest, llama, cctp };
   })();
   return snapshotPromise;
 }
@@ -316,28 +316,66 @@ function updateStatus() {
 }
 
 async function methods() {
-  const note = $("#dune-note");
   const snapNote = $("#snapshot-note");
-  const ids = Object.values(DUNE_QUERIES).map((id) => `<a href="https://dune.com/queries/${id}">${id}</a>`).join(" and ");
   try {
     const snap = await snapshot();
     snapNote.innerHTML = `If DefiLlama doesn't answer, the page uses a snapshot baked ${fmtDate(snap.llama.bakedAt)} by <a href="bake/bake.mjs"><code>bake/bake.mjs</code></a> (<a href="data/${esc(snap.latest.defillama)}">${esc(snap.latest.defillama)}</a>) and says so at the top.`;
-    const d = snap.dune;
-    if (!d) { note.innerHTML = `The earlier version of this dashboard charted CCTP corridors from Dune queries ${ids}. Their status hasn't been checked, so CCTP is left out.`; return; }
-    const ok = d.queries.filter((q) => q.ok);
-    if (!ok.length) {
-      const why = d.queries.map((q) => `HTTP ${q.httpStatus}`).join(", ");
-      note.innerHTML = `The earlier version of this dashboard charted Circle's CCTP transfer corridors from Dune queries ${ids}. ` +
-        `When checked on ${fmtDate(d.checkedAt)}, Dune had no stored results for the current version of either query (${why}), and this page doesn't run queries, ` +
-        `so CCTP volumes are left out rather than estimated. The 30-day chain change in finding 3 is a different measure: net supply per chain, not transfers.`;
-    } else {
-      note.innerHTML = `Dune queries ${ids} returned stored results on ${fmtDate(d.checkedAt)} ` +
-        ok.map((q) => `(${q.id}: ${q.rowCount} rows, run ${q.executionEndedAt ? fmtDate(q.executionEndedAt) : "date unknown"})`).join(" ") +
-        `. They are saved in <a href="data/${esc(snap.latest.dune)}">${esc(snap.latest.dune)}</a> but not charted on this page yet.`;
-    }
-  } catch {
-    note.innerHTML = `CCTP corridors (Dune queries ${ids}) are left out; the saved status file couldn't be loaded.`;
-  }
+  } catch { /* the default text stays */ }
+}
+
+// ---------- finding 5: CCTP corridors (baked from chain logs) ----------
+function renderCctp(c, file) {
+  const sec = $("#f-cctp");
+  const f = cctpFinding(c);
+  const range = `${fmtDate(c.window.from)} to ${fmtDate(c.window.to)}`;
+  const covered = c.sourcesCovered;
+  const list = (a) => (a.length < 2 ? a.join("") : `${a.slice(0, -1).join(", ")} and ${a[a.length - 1]}`);
+  $("h2", sec).innerHTML =
+    `${esc(f.top.src)} to ${esc(f.top.dst)} was the largest CCTP route by value, carrying <span class="num">${pct(f.top.share, 0)}</span> of the ` +
+    `<span class="num">${usd(f.total)}</span> in USDC burned for transfers from ${covered.length} chains over ${c.window.days} days.`;
+  const b = f.busiest;
+  const byCount = b.label === f.top.label
+    ? `It was also the busiest by count, with <span class="num">${b.count.toLocaleString("en-US")}</span> transfers. `
+    : `By count the busiest route was ${esc(b.src)} to ${esc(b.dst)}: <span class="num">${b.count.toLocaleString("en-US")}</span> transfers averaging <span class="num">${usd(b.volume / b.count)}</span>, against <span class="num">${usd(f.top.volume / f.top.count)}</span> on the top route by value. `;
+  $(".detail", sec).innerHTML =
+    `The window holds <span class="num">${f.count.toLocaleString("en-US")}</span> transfers over <span class="num">${f.routes}</span> source-to-destination routes. ` + byCount +
+    `Fast transfers, which settle before the source chain reaches hard finality, were <span class="num">${pct(f.fast.countShare, 0)}</span> of transfers ` +
+    `but <span class="num">${pct(f.fast.volumeShare, 0)}</span> of the value.`;
+  const dropped = c.chains.filter((x) => !x.ok).map((x) => x.name);
+  $("figcaption", sec).textContent =
+    `Share of CCTP burn volume by route, ${range} (whole UTC days). Covers transfers that start on ${list(covered)} only; ` +
+    `transfers out of Solana and other chains are not counted.${dropped.length ? ` ${list(dropped)} could not be read and ${dropped.length === 1 ? "is" : "are"} left out.` : ""} ` +
+    `Source: DepositForBurn events read from public RPC nodes, baked ${fmtDate(c.bakedAt)} (${file}).`;
+  const days = [...new Set(c.daily.map((d) => d.day))].sort();
+  $("[data-table]", sec).innerHTML =
+    table([{ t: "Route" }, { t: "Volume", r: 1 }, { t: "Share", r: 1 }, { t: "Transfers", r: 1 }],
+      c.corridors.slice(0, 25).map((k) => [`${k.src} → ${k.dst}`, usd(k.volume), pct(k.volume / f.total), k.count.toLocaleString("en-US")])) +
+    table([{ t: "Day (UTC)" }, ...covered.map((n) => ({ t: n, r: 1 }))],
+      days.map((d) => [fmtDate(d), ...covered.map((n) => { const r = c.daily.find((x) => x.day === d && x.src === n); return r ? usd(r.volume) : "$0"; })]));
+
+  const draw = () => {
+    const el = $("[data-chart]", sec);
+    const w = widthOf(el);
+    const n = narrow(w);
+    const order = f.bars.map((b) => b.label);
+    const tip = (b) => `${b.label}\n${usd(b.volume)} · ${pct(b.share)} of volume\n${b.count.toLocaleString("en-US")} transfers`;
+    el.replaceChildren(Plot.plot({
+      width: w, height: order.length * 34 + 30,
+      marginLeft: n ? 150 : 190, marginRight: 52, marginTop: 4, marginBottom: 26,
+      style: FONT,
+      x: { domain: [0, Math.max(0.1, Math.ceil(f.bars.reduce((m, b) => Math.max(m, b.share), 0) * 10) / 10)], tickFormat: (v) => `${Math.round(v * 100)}%`, ticks: n ? 3 : 6, grid: true, label: null },
+      y: { domain: order, label: null, tickSize: 0, padding: 0.3 },
+      marks: [
+        Plot.gridX({ stroke: "var(--grid)", strokeOpacity: 1, ticks: n ? 3 : 6 }),
+        Plot.barX(f.bars, { x: "share", y: "label", fill: (b) => (b.other ? "var(--other)" : "var(--usdc)"), rx2y1: 4, rx2y2: 4 }),
+        Plot.ruleX([0], { stroke: "var(--line)" }),
+        Plot.text(f.bars, { x: "share", y: "label", text: (b) => pct(b.share), dx: 6, textAnchor: "start", fill: "var(--ink)" }),
+        Plot.tip(f.bars, Plot.pointerY({ x: "share", y: "label", title: tip, anchor: "left", fontSize: 12 })),
+      ],
+    }));
+  };
+  done(sec);
+  return draw;
 }
 
 // ---------- boot ----------
@@ -390,5 +428,12 @@ if (!Plot) {
   }
   chains.then((res) => { results.chains = res; updateStatus(); }, () => { results.chains = { source: "error" }; updateStatus(); });
   run("peg", async () => normalisePrices(await getJson(ENDPOINTS.prices, 25000)), renderPeg, "f-peg");
+  snapshot().then((snap) => {
+    if (!snap.cctp) throw new Error("no CCTP file");
+    const d = renderCctp(snap.cctp, snap.latest.cctp); draws.push(d); d();
+  }).catch((err) => {
+    console.error("[usdc] cctp:", err);
+    $("#f-cctp h2").textContent = "The baked CCTP file couldn't be loaded, so this finding is missing.";
+  });
   methods();
 }

@@ -1,0 +1,1507 @@
+{
+ "source": "DepositForBurn events (CCTP V1 TokenMessenger and V2 TokenMessengerV2), read with eth_getLogs from free public RPC endpoints",
+ "bakedAt": "2026-11-24T18:56:40.931Z",
+ "window": {
+  "from": "2026-11-17",
+  "to": "2026-11-23",
+  "days": 7,
+  "note": "whole UTC days; block boundaries found per chain by timestamp"
+ },
+ "eventTopics": {
+  "DepositForBurn(uint64,address,uint256,address,bytes32,uint32,bytes32,bytes32)": "0x2fa9ca894982930190727e75500a97d8dc500233a5065e0f3126c48fbe0343c0",
+  "DepositForBurn(address,uint256,address,bytes32,uint32,bytes32,bytes32,uint256,uint32,bytes)": "0x0c8c1cbdc5190613ebd485511d4e2812cfa45eecb79d845893331fedad5130a5"
+ },
+ "chains": [
+  {
+   "name": "Ethereum",
+   "domain": 0,
+   "rpc": "rpc.mevblocker.io",
+   "ok": true,
+   "fromBlock": 26431040,
+   "toBlock": 26481281,
+   "rpcCalls": 6,
+   "logs": 20397,
+   "usdcTransfers": 20395,
+   "burnTokens": {
+    "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48": 20395,
+    "0x136471a34f6ef19fe571effc1ca711fdb8e49f2b": 2
+   }
+  },
+  {
+   "name": "Base",
+   "domain": 6,
+   "rpc": "base-rpc.publicnode.com",
+   "ok": true,
+   "fromBlock": 58416122,
+   "toBlock": 61440121,
+   "rpcCalls": 61,
+   "logs": 33788,
+   "usdcTransfers": 33788,
+   "burnTokens": {
+    "0x833589fcd6edb6e08f4c7c32d4f71b54bda02913": 33788
+   }
+  },
+  {
+   "name": "Arbitrum",
+   "domain": 3,
+   "rpc": "arb1.arbitrum.io",
+   "ok": true,
+   "fromBlock": 524888869,
+   "toBlock": 526957746,
+   "rpcCalls": 21,
+   "logs": 53039,
+   "usdcTransfers": 53039,
+   "burnTokens": {
+    "0xaf88d065e77c8cc2239327c5edb3a432268e5831": 53039
+   }
+  },
+  {
+   "name": "OP Mainnet",
+   "domain": 2,
+   "rpc": "mainnet.optimism.io",
+   "ok": true,
+   "fromBlock": 159637412,
+   "toBlock": 159939811,
+   "rpcCalls": 31,
+   "logs": 5918,
+   "usdcTransfers": 5918,
+   "burnTokens": {
+    "0x0b2c639c533813f4aa9d7837caf62653d097ff85": 5918
+   }
+  },
+  {
+   "name": "Avalanche",
+   "domain": 1,
+   "rpc": "avalanche-c-chain-rpc.publicnode.com",
+   "ok": true,
+   "fromBlock": 100518221,
+   "toBlock": 101209389,
+   "rpcCalls": 14,
+   "logs": 9455,
+   "usdcTransfers": 9455,
+   "burnTokens": {
+    "0xb97ef9ef8734c71904d8002f8b6bc66dd9c48a6e": 9455
+   }
+  },
+  {
+   "name": "Polygon PoS",
+   "domain": 7,
+   "rpc": "polygon-bor-rpc.publicnode.com",
+   "ok": true,
+   "fromBlock": 97445421,
+   "toBlock": 97848620,
+   "rpcCalls": 41,
+   "logs": 9950,
+   "usdcTransfers": 9950,
+   "burnTokens": {
+    "0x3c499c542cef5e3811e1192ce70d8cc03d5c3359": 9950
+   }
+  }
+ ],
+ "sourcesCovered": [
+  "Ethereum",
+  "Base",
+  "Arbitrum",
+  "OP Mainnet",
+  "Avalanche",
+  "Polygon PoS"
+ ],
+ "totals": {
+  "volume": 4619985827.84,
+  "count": 132545
+ },
+ "modes": {
+  "v2-standard": {
+   "volume": 2448081628.68,
+   "count": 36751
+  },
+  "v2-fast": {
+   "volume": 1301930643.02,
+   "count": 86574
+  },
+  "v1": {
+   "volume": 869973556.14,
+   "count": 9220
+  }
+ },
+ "daily": [
+  {
+   "day": "2026-11-17",
+   "src": "Arbitrum",
+   "volume": 113480835.78,
+   "count": 6176
+  },
+  {
+   "day": "2026-11-17",
+   "src": "Avalanche",
+   "volume": 28362289.4,
+   "count": 1115
+  },
+  {
+   "day": "2026-11-17",
+   "src": "Base",
+   "volume": 65377543.52,
+   "count": 4459
+  },
+  {
+   "day": "2026-11-17",
+   "src": "Ethereum",
+   "volume": 368571322.83,
+   "count": 3658
+  },
+  {
+   "day": "2026-11-17",
+   "src": "OP Mainnet",
+   "volume": 3317495.61,
+   "count": 790
+  },
+  {
+   "day": "2026-11-17",
+   "src": "Polygon PoS",
+   "volume": 34117559.7,
+   "count": 1451
+  },
+  {
+   "day": "2026-11-18",
+   "src": "Arbitrum",
+   "volume": 146321952.52,
+   "count": 6054
+  },
+  {
+   "day": "2026-11-18",
+   "src": "Avalanche",
+   "volume": 29113442.84,
+   "count": 1901
+  },
+  {
+   "day": "2026-11-18",
+   "src": "Base",
+   "volume": 89601183.2,
+   "count": 4107
+  },
+  {
+   "day": "2026-11-18",
+   "src": "Ethereum",
+   "volume": 255560104.74,
+   "count": 3050
+  },
+  {
+   "day": "2026-11-18",
+   "src": "OP Mainnet",
+   "volume": 3003435.9,
+   "count": 825
+  },
+  {
+   "day": "2026-11-18",
+   "src": "Polygon PoS",
+   "volume": 36311501.7,
+   "count": 1397
+  },
+  {
+   "day": "2026-11-19",
+   "src": "Arbitrum",
+   "volume": 194191054.88,
+   "count": 7433
+  },
+  {
+   "day": "2026-11-19",
+   "src": "Avalanche",
+   "volume": 21667779.38,
+   "count": 1324
+  },
+  {
+   "day": "2026-11-19",
+   "src": "Base",
+   "volume": 350576994.57,
+   "count": 5613
+  },
+  {
+   "day": "2026-11-19",
+   "src": "Ethereum",
+   "volume": 491760506.1,
+   "count": 2842
+  },
+  {
+   "day": "2026-11-19",
+   "src": "OP Mainnet",
+   "volume": 2231704.02,
+   "count": 807
+  },
+  {
+   "day": "2026-11-19",
+   "src": "Polygon PoS",
+   "volume": 33370495.46,
+   "count": 1682
+  },
+  {
+   "day": "2026-11-20",
+   "src": "Arbitrum",
+   "volume": 274167281.35,
+   "count": 12419
+  },
+  {
+   "day": "2026-11-20",
+   "src": "Avalanche",
+   "volume": 24650331.73,
+   "count": 1413
+  },
+  {
+   "day": "2026-11-20",
+   "src": "Base",
+   "volume": 130864434.63,
+   "count": 4532
+  },
+  {
+   "day": "2026-11-20",
+   "src": "Ethereum",
+   "volume": 405873363.87,
+   "count": 3570
+  },
+  {
+   "day": "2026-11-20",
+   "src": "OP Mainnet",
+   "volume": 4024625.15,
+   "count": 982
+  },
+  {
+   "day": "2026-11-20",
+   "src": "Polygon PoS",
+   "volume": 41771100.59,
+   "count": 1523
+  },
+  {
+   "day": "2026-11-21",
+   "src": "Arbitrum",
+   "volume": 136918647.39,
+   "count": 8671
+  },
+  {
+   "day": "2026-11-21",
+   "src": "Avalanche",
+   "volume": 14725097.81,
+   "count": 1020
+  },
+  {
+   "day": "2026-11-21",
+   "src": "Base",
+   "volume": 143655378.84,
+   "count": 6797
+  },
+  {
+   "day": "2026-11-21",
+   "src": "Ethereum",
+   "volume": 306451881.08,
+   "count": 3227
+  },
+  {
+   "day": "2026-11-21",
+   "src": "OP Mainnet",
+   "volume": 3341656.27,
+   "count": 830
+  },
+  {
+   "day": "2026-11-21",
+   "src": "Polygon PoS",
+   "volume": 31913215.88,
+   "count": 1411
+  },
+  {
+   "day": "2026-11-22",
+   "src": "Arbitrum",
+   "volume": 74700707.08,
+   "count": 5044
+  },
+  {
+   "day": "2026-11-22",
+   "src": "Avalanche",
+   "volume": 14588021.3,
+   "count": 1198
+  },
+  {
+   "day": "2026-11-22",
+   "src": "Base",
+   "volume": 165947428.04,
+   "count": 4496
+  },
+  {
+   "day": "2026-11-22",
+   "src": "Ethereum",
+   "volume": 68934335.13,
+   "count": 1775
+  },
+  {
+   "day": "2026-11-22",
+   "src": "OP Mainnet",
+   "volume": 3677973.8,
+   "count": 699
+  },
+  {
+   "day": "2026-11-22",
+   "src": "Polygon PoS",
+   "volume": 26390111.89,
+   "count": 1086
+  },
+  {
+   "day": "2026-11-23",
+   "src": "Arbitrum",
+   "volume": 191320058.68,
+   "count": 7242
+  },
+  {
+   "day": "2026-11-23",
+   "src": "Avalanche",
+   "volume": 28208627.57,
+   "count": 1484
+  },
+  {
+   "day": "2026-11-23",
+   "src": "Base",
+   "volume": 30820055.77,
+   "count": 3784
+  },
+  {
+   "day": "2026-11-23",
+   "src": "Ethereum",
+   "volume": 192572449.68,
+   "count": 2273
+  },
+  {
+   "day": "2026-11-23",
+   "src": "OP Mainnet",
+   "volume": 3106165.76,
+   "count": 985
+  },
+  {
+   "day": "2026-11-23",
+   "src": "Polygon PoS",
+   "volume": 34425676.4,
+   "count": 1400
+  }
+ ],
+ "corridors": [
+  {
+   "src": "Base",
+   "dst": "Ethereum",
+   "volume": 856605072.53,
+   "count": 8288
+  },
+  {
+   "src": "Arbitrum",
+   "dst": "HyperEVM",
+   "volume": 819992329.92,
+   "count": 40708
+  },
+  {
+   "src": "Ethereum",
+   "dst": "Base",
+   "volume": 773366265.38,
+   "count": 6008
+  },
+  {
+   "src": "Ethereum",
+   "dst": "Arbitrum",
+   "volume": 255282777.63,
+   "count": 2514
+  },
+  {
+   "src": "Ethereum",
+   "dst": "Arc",
+   "volume": 249494548.1,
+   "count": 1660
+  },
+  {
+   "src": "Ethereum",
+   "dst": "Ink",
+   "volume": 233095902.62,
+   "count": 46
+  },
+  {
+   "src": "Arbitrum",
+   "dst": "Ethereum",
+   "volume": 175614861.63,
+   "count": 4413
+  },
+  {
+   "src": "Ethereum",
+   "dst": "Solana",
+   "volume": 169974262.43,
+   "count": 2476
+  },
+  {
+   "src": "Polygon PoS",
+   "dst": "Arc",
+   "volume": 113239609.97,
+   "count": 734
+  },
+  {
+   "src": "Ethereum",
+   "dst": "Polygon PoS",
+   "volume": 87922246.23,
+   "count": 873
+  },
+  {
+   "src": "Ethereum",
+   "dst": "X Layer",
+   "volume": 80110922.03,
+   "count": 138
+  },
+  {
+   "src": "Ethereum",
+   "dst": "Monad",
+   "volume": 68532151.15,
+   "count": 312
+  },
+  {
+   "src": "Avalanche",
+   "dst": "Injective",
+   "volume": 68268995.89,
+   "count": 6743
+  },
+  {
+   "src": "Ethereum",
+   "dst": "HyperEVM",
+   "volume": 67908014.81,
+   "count": 3900
+  },
+  {
+   "src": "Arbitrum",
+   "dst": "Arc",
+   "volume": 65086047.47,
+   "count": 1086
+  },
+  {
+   "src": "Ethereum",
+   "dst": "Avalanche",
+   "volume": 33336242.52,
+   "count": 490
+  },
+  {
+   "src": "Polygon PoS",
+   "dst": "Monad",
+   "volume": 33012275.3,
+   "count": 590
+  },
+  {
+   "src": "Base",
+   "dst": "Arc",
+   "volume": 32167261.51,
+   "count": 888
+  },
+  {
+   "src": "Arbitrum",
+   "dst": "Base",
+   "volume": 29230837.98,
+   "count": 2234
+  },
+  {
+   "src": "Polygon PoS",
+   "dst": "Ethereum",
+   "volume": 27765787.77,
+   "count": 1071
+  },
+  {
+   "src": "Avalanche",
+   "dst": "Base",
+   "volume": 27754340.04,
+   "count": 1016
+  },
+  {
+   "src": "Avalanche",
+   "dst": "Ethereum",
+   "volume": 27706828.81,
+   "count": 330
+  },
+  {
+   "src": "Base",
+   "dst": "Arbitrum",
+   "volume": 27385813.05,
+   "count": 3112
+  },
+  {
+   "src": "Polygon PoS",
+   "dst": "Aptos",
+   "volume": 26211153.94,
+   "count": 220
+  },
+  {
+   "src": "Ethereum",
+   "dst": "OP Mainnet",
+   "volume": 25186789.18,
+   "count": 911
+  },
+  {
+   "src": "Arbitrum",
+   "dst": "Solana",
+   "volume": 19990268,
+   "count": 1384
+  },
+  {
+   "src": "Base",
+   "dst": "Monad",
+   "volume": 16019342.2,
+   "count": 3522
+  },
+  {
+   "src": "Base",
+   "dst": "Avalanche",
+   "volume": 15901529.07,
+   "count": 407
+  },
+  {
+   "src": "Ethereum",
+   "dst": "Stellar",
+   "volume": 15183254.24,
+   "count": 206
+  },
+  {
+   "src": "Polygon PoS",
+   "dst": "Solana",
+   "volume": 13681836.32,
+   "count": 2108
+  },
+  {
+   "src": "OP Mainnet",
+   "dst": "Ethereum",
+   "volume": 12790966.42,
+   "count": 2611
+  },
+  {
+   "src": "Ethereum",
+   "dst": "Sonic",
+   "volume": 10693475.88,
+   "count": 36
+  },
+  {
+   "src": "Base",
+   "dst": "HyperEVM",
+   "volume": 10183495.96,
+   "count": 3552
+  },
+  {
+   "src": "Avalanche",
+   "dst": "Arc",
+   "volume": 9241930.31,
+   "count": 160
+  },
+  {
+   "src": "Polygon PoS",
+   "dst": "Arbitrum",
+   "volume": 7982306.95,
+   "count": 959
+  },
+  {
+   "src": "Ethereum",
+   "dst": "Plume",
+   "volume": 7142527.33,
+   "count": 16
+  },
+  {
+   "src": "Avalanche",
+   "dst": "Solana",
+   "volume": 6940562.88,
+   "count": 136
+  },
+  {
+   "src": "Avalanche",
+   "dst": "Arbitrum",
+   "volume": 6814813.5,
+   "count": 286
+  },
+  {
+   "src": "Base",
+   "dst": "Solana",
+   "volume": 6023645.97,
+   "count": 2286
+  },
+  {
+   "src": "Polygon PoS",
+   "dst": "HyperEVM",
+   "volume": 5689581.63,
+   "count": 1046
+  },
+  {
+   "src": "Base",
+   "dst": "OP Mainnet",
+   "volume": 5614044.06,
+   "count": 1199
+  },
+  {
+   "src": "Arbitrum",
+   "dst": "Monad",
+   "volume": 5596818.68,
+   "count": 199
+  },
+  {
+   "src": "Arbitrum",
+   "dst": "OP Mainnet",
+   "volume": 5001186.84,
+   "count": 884
+  },
+  {
+   "src": "Polygon PoS",
+   "dst": "Avalanche",
+   "volume": 4214833.73,
+   "count": 173
+  },
+  {
+   "src": "OP Mainnet",
+   "dst": "Arc",
+   "volume": 3846472.31,
+   "count": 178
+  },
+  {
+   "src": "Avalanche",
+   "dst": "Sui",
+   "volume": 3839273.41,
+   "count": 45
+  },
+  {
+   "src": "Arbitrum",
+   "dst": "Polygon PoS",
+   "volume": 3435840.1,
+   "count": 420
+  },
+  {
+   "src": "Arbitrum",
+   "dst": "Avalanche",
+   "volume": 3391105.34,
+   "count": 237
+  },
+  {
+   "src": "Ethereum",
+   "dst": "Injective",
+   "volume": 2965823.59,
+   "count": 125
+  },
+  {
+   "src": "Ethereum",
+   "dst": "Pharos",
+   "volume": 2937613.3,
+   "count": 189
+  },
+  {
+   "src": "Avalanche",
+   "dst": "Aptos",
+   "volume": 2728162.56,
+   "count": 134
+  },
+  {
+   "src": "Polygon PoS",
+   "dst": "Base",
+   "volume": 2638189.98,
+   "count": 1840
+  },
+  {
+   "src": "Base",
+   "dst": "Polygon PoS",
+   "volume": 2528954.29,
+   "count": 1656
+  },
+  {
+   "src": "OP Mainnet",
+   "dst": "Base",
+   "volume": 2262552.35,
+   "count": 1583
+  },
+  {
+   "src": "Avalanche",
+   "dst": "Monad",
+   "volume": 2182772.55,
+   "count": 72
+  },
+  {
+   "src": "Ethereum",
+   "dst": "Sui",
+   "volume": 1883330.77,
+   "count": 133
+  },
+  {
+   "src": "Ethereum",
+   "dst": "Starknet",
+   "volume": 1800290.6,
+   "count": 63
+  },
+  {
+   "src": "Avalanche",
+   "dst": "OP Mainnet",
+   "volume": 1561214.06,
+   "count": 111
+  },
+  {
+   "src": "Polygon PoS",
+   "dst": "Sonic",
+   "volume": 1438586.6,
+   "count": 16
+  },
+  {
+   "src": "Base",
+   "dst": "Stellar",
+   "volume": 1388542.23,
+   "count": 2657
+  },
+  {
+   "src": "Ethereum",
+   "dst": "World Chain",
+   "volume": 1343443.72,
+   "count": 93
+  },
+  {
+   "src": "Avalanche",
+   "dst": "HyperEVM",
+   "volume": 1265592.56,
+   "count": 64
+  },
+  {
+   "src": "OP Mainnet",
+   "dst": "Arbitrum",
+   "volume": 1226292.65,
+   "count": 932
+  },
+  {
+   "src": "Polygon PoS",
+   "dst": "Sei",
+   "volume": 1219854.74,
+   "count": 179
+  },
+  {
+   "src": "Avalanche",
+   "dst": "Polygon PoS",
+   "volume": 1051000.56,
+   "count": 137
+  },
+  {
+   "src": "Base",
+   "dst": "World Chain",
+   "volume": 1012616.07,
+   "count": 1175
+  },
+  {
+   "src": "Arbitrum",
+   "dst": "X Layer",
+   "volume": 946562.2,
+   "count": 57
+  },
+  {
+   "src": "Ethereum",
+   "dst": "Unichain",
+   "volume": 898603.42,
+   "count": 41
+  },
+  {
+   "src": "Arbitrum",
+   "dst": "Starknet",
+   "volume": 649472.35,
+   "count": 141
+  },
+  {
+   "src": "OP Mainnet",
+   "dst": "Monad",
+   "volume": 578856.48,
+   "count": 30
+  },
+  {
+   "src": "Arbitrum",
+   "dst": "Sonic",
+   "volume": 571815.03,
+   "count": 53
+  },
+  {
+   "src": "OP Mainnet",
+   "dst": "Avalanche",
+   "volume": 570308.15,
+   "count": 52
+  },
+  {
+   "src": "Avalanche",
+   "dst": "Sonic",
+   "volume": 569175.56,
+   "count": 47
+  },
+  {
+   "src": "Arbitrum",
+   "dst": "Injective",
+   "volume": 558946.3,
+   "count": 133
+  },
+  {
+   "src": "Base",
+   "dst": "Injective",
+   "volume": 542795.15,
+   "count": 700
+  },
+  {
+   "src": "OP Mainnet",
+   "dst": "Plume",
+   "volume": 532709.34,
+   "count": 2
+  },
+  {
+   "src": "Base",
+   "dst": "Pharos",
+   "volume": 451241.44,
+   "count": 3243
+  },
+  {
+   "src": "Base",
+   "dst": "X Layer",
+   "volume": 447329.73,
+   "count": 179
+  },
+  {
+   "src": "Avalanche",
+   "dst": "X Layer",
+   "volume": 382887.87,
+   "count": 12
+  },
+  {
+   "src": "OP Mainnet",
+   "dst": "Polygon PoS",
+   "volume": 378917.67,
+   "count": 86
+  },
+  {
+   "src": "Ethereum",
+   "dst": "Aptos",
+   "volume": 326154.17,
+   "count": 14
+  },
+  {
+   "src": "Polygon PoS",
+   "dst": "OP Mainnet",
+   "volume": 314216.19,
+   "count": 166
+  },
+  {
+   "src": "OP Mainnet",
+   "dst": "Solana",
+   "volume": 297394.69,
+   "count": 50
+  },
+  {
+   "src": "Avalanche",
+   "dst": "Stellar",
+   "volume": 277525.65,
+   "count": 32
+  },
+  {
+   "src": "Polygon PoS",
+   "dst": "Stellar",
+   "volume": 275068.9,
+   "count": 485
+  },
+  {
+   "src": "Base",
+   "dst": "Ink",
+   "volume": 261780.1,
+   "count": 131
+  },
+  {
+   "src": "Avalanche",
+   "dst": "Sei",
+   "volume": 233450.27,
+   "count": 11
+  },
+  {
+   "src": "Avalanche",
+   "dst": "Unichain",
+   "volume": 199490.3,
+   "count": 20
+  },
+  {
+   "src": "Ethereum",
+   "dst": "Linea",
+   "volume": 193547.48,
+   "count": 59
+  },
+  {
+   "src": "Arbitrum",
+   "dst": "World Chain",
+   "volume": 191554.32,
+   "count": 42
+  },
+  {
+   "src": "Polygon PoS",
+   "dst": "Plasma",
+   "volume": 177716.56,
+   "count": 41
+  },
+  {
+   "src": "Avalanche",
+   "dst": "Pharos",
+   "volume": 161613.32,
+   "count": 40
+  },
+  {
+   "src": "Arbitrum",
+   "dst": "Morph",
+   "volume": 135546.52,
+   "count": 16
+  },
+  {
+   "src": "Arbitrum",
+   "dst": "Ink",
+   "volume": 134138.91,
+   "count": 50
+  },
+  {
+   "src": "Ethereum",
+   "dst": "Noble",
+   "volume": 127615.61,
+   "count": 39
+  },
+  {
+   "src": "Arbitrum",
+   "dst": "Sui",
+   "volume": 123745.95,
+   "count": 112
+  },
+  {
+   "src": "Arbitrum",
+   "dst": "Plume",
+   "volume": 113074.99,
+   "count": 12
+  },
+  {
+   "src": "Polygon PoS",
+   "dst": "Linea",
+   "volume": 103212.54,
+   "count": 13
+  },
+  {
+   "src": "OP Mainnet",
+   "dst": "HyperEVM",
+   "volume": 92283.84,
+   "count": 220
+  },
+  {
+   "src": "Base",
+   "dst": "Sui",
+   "volume": 79993.31,
+   "count": 309
+  },
+  {
+   "src": "Polygon PoS",
+   "dst": "Cronos",
+   "volume": 79665.33,
+   "count": 24
+  },
+  {
+   "src": "Base",
+   "dst": "Unichain",
+   "volume": 79602.23,
+   "count": 197
+  },
+  {
+   "src": "Arbitrum",
+   "dst": "Pharos",
+   "volume": 78268.7,
+   "count": 323
+  },
+  {
+   "src": "OP Mainnet",
+   "dst": "Sonic",
+   "volume": 76010.03,
+   "count": 16
+  },
+  {
+   "src": "Avalanche",
+   "dst": "Cronos",
+   "volume": 72045.86,
+   "count": 16
+  },
+  {
+   "src": "Arbitrum",
+   "dst": "Aptos",
+   "volume": 71000.91,
+   "count": 178
+  },
+  {
+   "src": "Polygon PoS",
+   "dst": "Injective",
+   "volume": 70651.19,
+   "count": 27
+  },
+  {
+   "src": "Base",
+   "dst": "Sonic",
+   "volume": 55474.58,
+   "count": 62
+  },
+  {
+   "src": "Polygon PoS",
+   "dst": "Sui",
+   "volume": 54843.33,
+   "count": 62
+  },
+  {
+   "src": "Polygon PoS",
+   "dst": "X Layer",
+   "volume": 50179.64,
+   "count": 9
+  },
+  {
+   "src": "Arbitrum",
+   "dst": "Linea",
+   "volume": 44989.17,
+   "count": 24
+  },
+  {
+   "src": "Arbitrum",
+   "dst": "Stellar",
+   "volume": 40692.8,
+   "count": 118
+  },
+  {
+   "src": "Polygon PoS",
+   "dst": "Ink",
+   "volume": 33082.39,
+   "count": 9
+  },
+  {
+   "src": "Avalanche",
+   "dst": "Linea",
+   "volume": 27879.92,
+   "count": 15
+  },
+  {
+   "src": "Polygon PoS",
+   "dst": "Pharos",
+   "volume": 26978.28,
+   "count": 120
+  },
+  {
+   "src": "Arbitrum",
+   "dst": "XDC",
+   "volume": 24840.95,
+   "count": 71
+  },
+  {
+   "src": "Base",
+   "dst": "Noble",
+   "volume": 24792.49,
+   "count": 53
+  },
+  {
+   "src": "Arbitrum",
+   "dst": "Sei",
+   "volume": 24338.13,
+   "count": 36
+  },
+  {
+   "src": "Arbitrum",
+   "dst": "Noble",
+   "volume": 21387.81,
+   "count": 36
+  },
+  {
+   "src": "Arbitrum",
+   "dst": "Unichain",
+   "volume": 20320.65,
+   "count": 36
+  },
+  {
+   "src": "Base",
+   "dst": "Plasma",
+   "volume": 18072.08,
+   "count": 21
+  },
+  {
+   "src": "Avalanche",
+   "dst": "Plasma",
+   "volume": 16744.69,
+   "count": 4
+  },
+  {
+   "src": "Polygon PoS",
+   "dst": "Noble",
+   "volume": 14007.88,
+   "count": 35
+  },
+  {
+   "src": "Ethereum",
+   "dst": "Plasma",
+   "volume": 13687.9,
+   "count": 28
+  },
+  {
+   "src": "Base",
+   "dst": "Linea",
+   "volume": 12390.08,
+   "count": 37
+  },
+  {
+   "src": "Base",
+   "dst": "Cronos",
+   "volume": 11925.21,
+   "count": 21
+  },
+  {
+   "src": "Base",
+   "dst": "Sei",
+   "volume": 11000.38,
+   "count": 14
+  },
+  {
+   "src": "Avalanche",
+   "dst": "Noble",
+   "volume": 10850.21,
+   "count": 14
+  },
+  {
+   "src": "OP Mainnet",
+   "dst": "World Chain",
+   "volume": 10659.55,
+   "count": 14
+  },
+  {
+   "src": "OP Mainnet",
+   "dst": "Sui",
+   "volume": 10609.03,
+   "count": 11
+  },
+  {
+   "src": "Arbitrum",
+   "dst": "Plasma",
+   "volume": 8383.33,
+   "count": 27
+  },
+  {
+   "src": "OP Mainnet",
+   "dst": "Injective",
+   "volume": 7988.97,
+   "count": 14
+  },
+  {
+   "src": "Base",
+   "dst": "XDC",
+   "volume": 7759.79,
+   "count": 15
+  },
+  {
+   "src": "Base",
+   "dst": "Aptos",
+   "volume": 6742.76,
+   "count": 29
+  },
+  {
+   "src": "OP Mainnet",
+   "dst": "Plasma",
+   "volume": 6587.58,
+   "count": 71
+  },
+  {
+   "src": "OP Mainnet",
+   "dst": "Unichain",
+   "volume": 4847.99,
+   "count": 21
+  },
+  {
+   "src": "Avalanche",
+   "dst": "Ink",
+   "volume": 4439.25,
+   "count": 5
+  },
+  {
+   "src": "Avalanche",
+   "dst": "XDC",
+   "volume": 4000,
+   "count": 4
+  },
+  {
+   "src": "OP Mainnet",
+   "dst": "Stellar",
+   "volume": 3433.9,
+   "count": 3
+  },
+  {
+   "src": "Polygon PoS",
+   "dst": "Unichain",
+   "volume": 2933.48,
+   "count": 7
+  },
+  {
+   "src": "OP Mainnet",
+   "dst": "Aptos",
+   "volume": 2749.95,
+   "count": 3
+  },
+  {
+   "src": "Arbitrum",
+   "dst": "Cronos",
+   "volume": 2162.72,
+   "count": 8
+  },
+  {
+   "src": "OP Mainnet",
+   "dst": "X Layer",
+   "volume": 2005.18,
+   "count": 1
+  },
+  {
+   "src": "Polygon PoS",
+   "dst": "Plume",
+   "volume": 1724.03,
+   "count": 2
+  },
+  {
+   "src": "Ethereum",
+   "dst": "Sei",
+   "volume": 1715.69,
+   "count": 10
+  },
+  {
+   "src": "Ethereum",
+   "dst": "Morph",
+   "volume": 1529.47,
+   "count": 6
+  },
+  {
+   "src": "Polygon PoS",
+   "dst": "Morph",
+   "volume": 1272.83,
+   "count": 8
+  },
+  {
+   "src": "Ethereum",
+   "dst": "Cronos",
+   "volume": 1228.17,
+   "count": 9
+  },
+  {
+   "src": "Base",
+   "dst": "Starknet",
+   "volume": 1109.75,
+   "count": 11
+  },
+  {
+   "src": "OP Mainnet",
+   "dst": "Linea",
+   "volume": 903.87,
+   "count": 2
+  },
+  {
+   "src": "Base",
+   "dst": "Morph",
+   "volume": 691.9,
+   "count": 22
+  },
+  {
+   "src": "OP Mainnet",
+   "dst": "Ink",
+   "volume": 460.22,
+   "count": 10
+  },
+  {
+   "src": "Polygon PoS",
+   "dst": "World Chain",
+   "volume": 77.93,
+   "count": 3
+  },
+  {
+   "src": "OP Mainnet",
+   "dst": "Pharos",
+   "volume": 24.92,
+   "count": 3
+  },
+  {
+   "src": "OP Mainnet",
+   "dst": "Noble",
+   "volume": 19.46,
+   "count": 2
+  },
+  {
+   "src": "Polygon PoS",
+   "dst": "Starknet",
+   "volume": 14.17,
+   "count": 3
+  },
+  {
+   "src": "OP Mainnet",
+   "dst": "Starknet",
+   "volume": 1.99,
+   "count": 3
+  },
+  {
+   "src": "Base",
+   "dst": "Plume",
+   "volume": 0.68,
+   "count": 2
+  },
+  {
+   "src": "Avalanche",
+   "dst": "Plume",
+   "volume": 0.01,
+   "count": 1
+  },
+  {
+   "src": "Arbitrum",
+   "dst": "EDGE",
+   "volume": 0.01,
+   "count": 1
+  }
+ ],
+ "receiptSamples": [
+  {
+   "chain": "Ethereum",
+   "tx": "0xea76a3d177e3896aea94fcab3f113ae60b3ccddf99ff52a592c96c1c72b63189",
+   "block": 26478676,
+   "amountUSDC": 10000000,
+   "to": "Stellar",
+   "version": "v2",
+   "receiptBurnMatches": true
+  },
+  {
+   "chain": "Ethereum",
+   "tx": "0xea53d18d7dff366711531a6a9b61a91a06cdbba995c4f8c4e54837121ee043e2",
+   "block": 26450774,
+   "amountUSDC": 3811.25625,
+   "to": "Arbitrum",
+   "version": "v2",
+   "receiptBurnMatches": true
+  },
+  {
+   "chain": "Ethereum",
+   "tx": "0x8351c4e3634d9684e0b425d3964255fd4a4bdd361dd5cee888aa9b22a12ba71b",
+   "block": 26480761,
+   "amountUSDC": 0.000007,
+   "to": "Polygon PoS",
+   "version": "v2",
+   "receiptBurnMatches": true
+  },
+  {
+   "chain": "Avalanche",
+   "tx": "0xfc2e20cc34f385342de5bac10e61a960307e0078228e3563468fdae789c414d7",
+   "block": 100564802,
+   "amountUSDC": 989297.59,
+   "to": "Ethereum",
+   "version": "v2",
+   "receiptBurnMatches": true
+  },
+  {
+   "chain": "Avalanche",
+   "tx": "0x004ba9f647c6a53530811ae3ad67cb813143555c8b03d70dcb5c9761433606b4",
+   "block": 100912385,
+   "amountUSDC": 10944.694956,
+   "to": "Injective",
+   "version": "v2",
+   "receiptBurnMatches": true
+  },
+  {
+   "chain": "Avalanche",
+   "tx": "0x02bc0f7e5dac5ea1b3b482aefd7fca781018275bafe8bb16ed0d4eda1df6131a",
+   "block": 100968900,
+   "amountUSDC": 0.000048,
+   "to": "Monad",
+   "version": "v2",
+   "receiptBurnMatches": true
+  },
+  {
+   "chain": "OP Mainnet",
+   "tx": "0x64ee6429ec0ef2112678931d8f87278a99fcbf860b67d2bde2080cfe06c1daeb",
+   "block": 159923690,
+   "amountUSDC": 847111.063486,
+   "to": "Ethereum",
+   "version": "v2",
+   "receiptBurnMatches": true
+  },
+  {
+   "chain": "OP Mainnet",
+   "tx": "0xab4fa45acf4cfe536971bdfb481cef1aadf94e42307cef63f00adb9cb4ce4700",
+   "block": 159927244,
+   "amountUSDC": 100,
+   "to": "HyperEVM",
+   "version": "v2",
+   "receiptBurnMatches": true
+  },
+  {
+   "chain": "OP Mainnet",
+   "tx": "0x2a5f34232dc2f4a7c86eb348a4c23165420fe920979a139a12097b7e69cec540",
+   "block": 159800208,
+   "amountUSDC": 0.000001,
+   "to": "Base",
+   "version": "v2",
+   "receiptBurnMatches": true
+  },
+  {
+   "chain": "Arbitrum",
+   "tx": "0x408fa719a8c727f7149dbbf9f199badf78a684558fca270ccc926c95629206fa",
+   "block": 526659374,
+   "amountUSDC": 10000000,
+   "to": "Ethereum",
+   "version": "v2",
+   "receiptBurnMatches": true
+  },
+  {
+   "chain": "Arbitrum",
+   "tx": "0xdfb80d266057e1f0ae4be4bc51dbc41000b3a58c0ac0478fa8a92ee36136bb29",
+   "block": 525076950,
+   "amountUSDC": 500,
+   "to": "HyperEVM",
+   "version": "v2",
+   "receiptBurnMatches": true
+  },
+  {
+   "chain": "Arbitrum",
+   "tx": "0x7926b0d163abe21e41a0f9bb5dea0186075ccfec21bf49a8c8cd1e6a09952e25",
+   "block": 525076255,
+   "amountUSDC": 0.001,
+   "to": "X Layer",
+   "version": "v2",
+   "receiptBurnMatches": true
+  },
+  {
+   "chain": "Polygon PoS",
+   "tx": "0x07c5a6037652c6ded4ecacb34ede327c73a6fe28538f3e2f640c7a1727b3c5e6",
+   "block": 97676822,
+   "amountUSDC": 765259,
+   "to": "Ethereum",
+   "version": "v2",
+   "receiptBurnMatches": true
+  },
+  {
+   "chain": "Polygon PoS",
+   "tx": "0x94bf9807972f08d712176f4dd7f475e972eed5dd0f92ed7cb7c24584c5e680dd",
+   "block": 97758708,
+   "amountUSDC": 149.610037,
+   "to": "Pharos",
+   "version": "v2",
+   "receiptBurnMatches": true
+  },
+  {
+   "chain": "Polygon PoS",
+   "tx": "0x93d18323064301f347d655aee4b7ea41c8ea750d65626c629e0920affbab5c1a",
+   "block": 97593399,
+   "amountUSDC": 0.000001,
+   "to": "Solana",
+   "version": "v2",
+   "receiptBurnMatches": true
+  },
+  {
+   "chain": "Base",
+   "tx": "0x724b4ea20eebb743f277eeca19bd7aa5994f475ae27580e17680355dcb7e27a9",
+   "block": 60903617,
+   "amountUSDC": 10000000,
+   "to": "Ethereum",
+   "version": "v2",
+   "receiptBurnMatches": true
+  },
+  {
+   "chain": "Base",
+   "tx": "0x569b7f5649c564097dd1a6e1e1fe9eca40a68733b5c61373fe65c658a04b7cc4",
+   "block": 59718587,
+   "amountUSDC": 93.453617,
+   "to": "Ethereum",
+   "version": "v2",
+   "receiptBurnMatches": true
+  },
+  {
+   "chain": "Base",
+   "tx": "0xcbac1c0020badb67f42f662171c2758b14dfe7145a4d29359e5ac53042a140e8",
+   "block": 61210997,
+   "amountUSDC": 0.0001,
+   "to": "Monad",
+   "version": "v2",
+   "receiptBurnMatches": true
+  }
+ ]
+}

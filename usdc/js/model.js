@@ -13,7 +13,6 @@ export const ENDPOINTS = {
   assets: `${API}/stablecoins?includePrices=true`,
   prices: `${API}/stablecoinprices`,
 };
-export const DUNE_QUERIES = { corridors: 7345981, daily: 7345982 };
 
 const DAY = 86400;
 const SHARE_YEARS = 3;     // history kept for the share chart
@@ -156,4 +155,33 @@ export function pegFinding(g, band = PEG_BAND_BPS) {
     return { n: v.length, inBand, worst: { date: worst.date, bps: worst[key] } };
   };
   return { rows, band, usdc: stat("usdc"), usdt: stat("usdt"), from: rows[0].date, to: rows[rows.length - 1].date };
+}
+
+// CCTP burns baked from on-chain DepositForBurn events (see bake/cctp.mjs).
+export function cctpFinding(c, topN = 8) {
+  const total = c.totals.volume;
+  const corr = c.corridors.map((k) => ({ ...k, label: `${k.src} → ${k.dst}`, share: k.volume / total }));
+  const top = corr.slice(0, topN);
+  const rest = corr.slice(topN);
+  const bars = [...top];
+  if (rest.length) {
+    const v = rest.reduce((s, k) => s + k.volume, 0);
+    bars.push({ label: `${rest.length} other routes`, volume: v, count: rest.reduce((s, k) => s + k.count, 0), share: v / total, other: true });
+  }
+  const bySource = {};
+  for (const d of c.daily) {
+    bySource[d.src] ??= { src: d.src, volume: 0, count: 0 };
+    bySource[d.src].volume += d.volume; bySource[d.src].count += d.count;
+  }
+  const sources = Object.values(bySource).sort((a, b) => b.volume - a.volume).map((s) => ({ ...s, share: s.volume / total }));
+  const byDest = {};
+  for (const k of c.corridors) { byDest[k.dst] = (byDest[k.dst] ?? 0) + k.volume; }
+  const dests = Object.entries(byDest).map(([dst, volume]) => ({ dst, volume, share: volume / total })).sort((a, b) => b.volume - a.volume);
+  const fast = c.modes["v2-fast"] ?? { volume: 0, count: 0 };
+  return {
+    total, count: c.totals.count, top: corr[0], routes: corr.length, bars, sources, dests,
+    busiest: [...corr].sort((a, b) => b.count - a.count)[0],
+    fast: { countShare: fast.count / c.totals.count, volumeShare: fast.volume / total, avg: fast.count ? fast.volume / fast.count : 0 },
+    avg: total / c.totals.count,
+  };
 }

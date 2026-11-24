@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Where USDC stands</title>
-<meta name="description" content="Four findings about USDC's share, spread across chains and peg, computed in the browser from DefiLlama's public stablecoin data.">
+<meta name="description" content="Five findings about USDC's market share, chain spread, peg and CCTP transfer routes, computed from DefiLlama data and on-chain DepositForBurn events.">
 <link rel="icon" href="data:,">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -91,7 +91,7 @@ noscript p{background:var(--warn-bg); padding:10px 12px}
 <header class="wrap">
   <p class="crumb"><a href="https://elsaicequeen.github.io/">Portfolio</a></p>
   <h1>Where USDC stands</h1>
-  <p class="lede">Four readings on Circle's dollar stablecoin: its share of the market, where it sits across chains, where it moved this month, and how tightly it held $1. Every sentence and chart below is computed in your browser from DefiLlama's public data when the page loads.</p>
+  <p class="lede">Five readings on Circle's dollar stablecoin: its share of the market, where it sits across chains, where it moved this month, how tightly it held $1, and which routes its cross-chain transfers take. The sentences and charts are computed in your browser when the page loads, from DefiLlama's public data and from CCTP burn events read off the chains themselves.</p>
   <p class="status" id="status" role="status">Fetching DefiLlama data…</p>
   <noscript><p>This page computes its findings with JavaScript. The underlying snapshot is in <a href="data/latest.json">data/</a>.</p></noscript>
 </header>
@@ -149,6 +149,17 @@ noscript p{background:var(--warn-bg); padding:10px 12px}
     </figure>
   </section>
 
+  <section class="finding pending" id="f-cctp" aria-labelledby="f-cctp-h">
+    <p class="n">5 · Cross-chain transfers</p>
+    <h2 id="f-cctp-h">Reading the baked CCTP burn data…</h2>
+    <p class="detail"></p>
+    <figure>
+      <div class="chart" data-chart></div>
+      <figcaption></figcaption>
+      <details><summary>Show the numbers</summary><div class="tablewrap" data-table></div></details>
+    </figure>
+  </section>
+
   <section class="methods" aria-labelledby="methods-h">
     <h2 id="methods-h">Method and sources</h2>
     <dl>
@@ -159,7 +170,7 @@ noscript p{background:var(--warn-bg); padding:10px 12px}
       <dt>Peg</dt>
       <dd>Daily prices from <code>/stablecoinprices</code> (one reading per UTC day, the last 365 days). Deviation is (price − 1) × 10,000 in basis points. The 10 bps band is a working alert threshold chosen for this page, not an official one.</dd>
       <dt>Cross-chain transfers</dt>
-      <dd id="dune-note">Checking the saved Dune status…</dd>
+      <dd>Circle's CCTP moves USDC between chains by burning it on the source chain and minting it on the destination. Each burn emits a <code>DepositForBurn</code> event on the TokenMessenger contract (V1 and V2). <a href="bake/cctp.mjs"><code>bake/cctp.mjs</code></a> reads those events with <code>eth_getLogs</code> from free public RPC nodes, keeps USDC burns only, and decodes the amount (6 decimals) and the destination domain, which it names with Circle's domain table. Event layouts and addresses come from Circle's <a href="https://github.com/circlefin/evm-cctp-contracts">contract source</a> and <a href="https://developers.circle.com/cctp/evm-smart-contracts">developer docs</a>. A few decoded transfers per chain are checked against the same transaction's USDC burn. Fast means a V2 transfer with a finality threshold of 1000 or less. The page reads the baked file; it makes no RPC calls itself.</dd>
       <dt>Fallback snapshot</dt>
       <dd id="snapshot-note">If DefiLlama doesn't answer, the page uses a snapshot baked by <a href="bake/bake.mjs"><code>bake/bake.mjs</code></a> and says so at the top.</dd>
       <dt>Code</dt>
