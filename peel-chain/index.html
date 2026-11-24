@@ -1,0 +1,1940 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Peel Chain</title>
+<meta name="description" content="Interactive reconstructions of four crypto-hack laundering trails (Bitfinex, Ronin Bridge, Bybit, Poly Network) built from public court, agency and analytics records, with a walkthrough and a graded investigation mode.">
+<meta name="color-scheme" content="light dark">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='6' fill='%2314171C'/%3E%3Ccircle cx='9' cy='16' r='4' fill='none' stroke='%23F07B6E' stroke-width='2.4'/%3E%3Ccircle cx='23' cy='9' r='3' fill='none' stroke='%23E6E7E3' stroke-width='2'/%3E%3Ccircle cx='23' cy='23' r='3' fill='none' stroke='%23E6E7E3' stroke-width='2'/%3E%3Cpath d='M13 14l7-4M13 18l7 4' stroke='%23E6E7E3' stroke-width='2'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600&family=Martian+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#ECEDE8; --panel:#FAFAF7; --stage:#F4F4F0; --ink:#14171C; --muted:#5D6470; --line:#CFD2CA;
+  --accent:#2E46D1; --accent-ink:#FFFFFF; --accent-soft:#DCE1FA;
+  --theft:#B42318; --recover:#0E7468;
+  --node:#FFFFFF; --halo:rgba(244,244,240,.92); --grid:rgba(20,23,28,.07);
+  --scrim:rgba(20,23,28,.45);
+  --sans:"Instrument Sans",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --mono:"Martian Mono",ui-monospace,"SF Mono",Menlo,Consolas,monospace;
+  color-scheme:light;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#15171B; --panel:#1C1F25; --stage:#111317; --ink:#E6E7E3; --muted:#9097A2; --line:#2C3038;
+    --accent:#8A9BFF; --accent-ink:#0E1120; --accent-soft:#2A3160;
+    --theft:#F07B6E; --recover:#4CC2B1;
+    --node:#1C1F25; --halo:rgba(17,19,23,.9); --grid:rgba(230,231,227,.06);
+    --scrim:rgba(0,0,0,.6);
+    color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#15171B; --panel:#1C1F25; --stage:#111317; --ink:#E6E7E3; --muted:#9097A2; --line:#2C3038;
+  --accent:#8A9BFF; --accent-ink:#0E1120; --accent-soft:#2A3160;
+  --theft:#F07B6E; --recover:#4CC2B1;
+  --node:#1C1F25; --halo:rgba(17,19,23,.9); --grid:rgba(230,231,227,.06);
+  --scrim:rgba(0,0,0,.6);
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+html,body{margin:0}
+body{
+  background:var(--bg); color:var(--ink);
+  font:400 15px/1.5 var(--sans);
+  -webkit-font-smoothing:antialiased;
+  display:grid; grid-template-rows:auto auto minmax(0,1fr) auto;
+  height:100vh; height:100dvh; overflow:hidden;
+}
+a{color:inherit; text-decoration-color:var(--accent); text-decoration-thickness:1.5px; text-underline-offset:3px}
+button{font:inherit; color:inherit}
+:focus-visible{outline:2px solid var(--accent); outline-offset:2px; border-radius:4px}
+.skip{position:absolute; left:8px; top:-40px; z-index:100; background:var(--ink); color:var(--bg); padding:8px 12px; border-radius:6px}
+.skip:focus{top:8px}
+.sr{position:absolute; width:1px; height:1px; overflow:hidden; clip:rect(0 0 0 0); white-space:nowrap}
+.num,.mono{font-family:var(--mono); font-variant-numeric:tabular-nums}
+
+/* ---------- top bar ---------- */
+.top{display:flex; align-items:center; justify-content:space-between; gap:16px; padding:12px 20px; border-bottom:1px solid var(--line); background:var(--panel)}
+.brand{display:flex; align-items:baseline; gap:14px; min-width:0}
+.wordmark{font-weight:600; font-size:1.15rem; letter-spacing:-.01em; text-decoration:none; white-space:nowrap}
+.tagline{color:var(--muted); font-size:.92rem; white-space:nowrap; overflow:hidden; text-overflow:ellipsis}
+.top-controls{display:flex; align-items:center; gap:10px; flex:none}
+.seg{display:inline-flex; border:1px solid var(--line); border-radius:8px; padding:2px; background:var(--bg)}
+.seg button{border:0; background:transparent; padding:7px 14px; border-radius:6px; cursor:pointer; font-weight:500; font-size:.92rem; color:var(--muted)}
+.seg button[aria-pressed="true"]{background:var(--ink); color:var(--bg)}
+.icon-btn{display:inline-grid; place-items:center; width:36px; height:36px; border:1px solid var(--line); border-radius:8px; background:transparent; cursor:pointer; color:var(--ink)}
+.icon-btn svg{width:18px; height:18px}
+
+/* ---------- case selector ---------- */
+.cases{display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); border-bottom:1px solid var(--line); background:var(--panel)}
+.cases a{display:block; padding:10px 20px 11px; text-decoration:none; border-right:1px solid var(--line); min-width:0; position:relative}
+.cases a:last-child{border-right:0}
+.cases a:hover{background:var(--bg)}
+.cases a[aria-current="page"]{background:var(--bg)}
+.cases a[aria-current="page"]::after{content:""; position:absolute; left:0; right:0; bottom:-1px; height:3px; background:var(--accent)}
+.cases .cn{font-family:var(--mono); font-size:.72rem; color:var(--muted); margin-right:6px}
+.cases .ct{font-weight:600}
+.cases .cm{display:block; color:var(--muted); font-size:.85rem; white-space:nowrap; overflow:hidden; text-overflow:ellipsis}
+
+/* ---------- workspace ---------- */
+.workspace{display:grid; grid-template-columns:minmax(0,1fr) 380px; min-height:0}
+.stage-col{display:grid; grid-template-rows:minmax(0,1fr) auto; min-height:0; min-width:0}
+.stage{position:relative; min-height:0; overflow:hidden; background-color:var(--stage);
+  background-image:radial-gradient(var(--grid) 1px, transparent 1.2px); background-size:22px 22px}
+#cv{position:absolute; inset:0; width:100%; height:100%; display:block; cursor:grab; touch-action:none}
+#cv.dragging{cursor:grabbing}
+#cv.overnode{cursor:pointer}
+.stage-tools{position:absolute; right:12px; top:12px; display:flex; flex-direction:column; gap:6px}
+.stage-tools button{width:36px; height:36px; border:1px solid var(--line); border-radius:8px; background:var(--panel); cursor:pointer; font-size:1.05rem; line-height:1; display:grid; place-items:center}
+.stage-tools button:hover{border-color:var(--muted)}
+.stage-tools svg{width:16px; height:16px}
+#tip{position:absolute; z-index:5; pointer-events:none; background:var(--panel); border:1px solid var(--line); border-radius:6px; padding:6px 9px; font-size:.85rem; line-height:1.35; max-width:260px; box-shadow:0 2px 8px rgba(0,0,0,.08)}
+#tip .t2{color:var(--muted); font-size:.8rem}
+#selChip{position:absolute; left:12px; top:12px; right:60px; display:none; align-items:center; gap:8px; background:var(--panel); border:1px solid var(--line); border-radius:8px; padding:6px 6px 6px 10px; font-size:.88rem}
+#selChip span{flex:1; min-width:0; white-space:nowrap; overflow:hidden; text-overflow:ellipsis}
+#selChip button{border:1px solid var(--line); background:var(--bg); border-radius:6px; padding:5px 9px; cursor:pointer; font-size:.82rem; flex:none}
+#stageChapter{display:none}
+#legend{position:absolute; left:12px; bottom:12px; background:var(--panel); border:1px solid var(--line); border-radius:8px; font-size:.82rem; max-width:220px}
+#legend summary{cursor:pointer; padding:7px 11px; font-weight:500; list-style:none}
+#legend summary::-webkit-details-marker{display:none}
+#legend summary::after{content:" +"; color:var(--muted)}
+#legend[open] summary::after{content:" \2212"}
+#legend .rows{padding:0 11px 9px; display:grid; gap:3px}
+#legend .row{display:flex; align-items:center; gap:8px}
+#legend svg{flex:none}
+body.investigate #legend{display:none}
+
+/* ---------- timeline ---------- */
+.timeline{border-top:1px solid var(--line); background:var(--panel); padding:10px 20px 10px}
+.tl-row{display:flex; align-items:center; gap:14px}
+#playBtn{flex:none; width:40px; height:40px; border-radius:50%; border:1px solid var(--ink); background:var(--ink); color:var(--bg); cursor:pointer; display:grid; place-items:center}
+#playBtn svg{width:16px; height:16px}
+#dateRead{flex:none; min-width:7.6em; font-family:var(--mono); font-size:.86rem; font-variant-numeric:tabular-nums}
+#track{flex:1; position:relative; height:42px; cursor:ew-resize; user-select:none; touch-action:none; border-radius:4px; min-width:0}
+#track .rail{position:absolute; left:0; right:0; top:50%; height:4px; margin-top:-2px; background:var(--line); border-radius:2px}
+#track .rail-fill{position:absolute; left:0; top:50%; height:4px; margin-top:-2px; background:var(--ink); width:0; border-radius:2px}
+#track .head{position:absolute; top:50%; width:14px; height:14px; margin:-7px 0 0 -7px; background:var(--panel); border:2px solid var(--ink); border-radius:50%}
+#track .chmark{position:absolute; top:50%; width:1px; height:9px; margin-top:-13px; background:var(--muted)}
+#track .chnum{position:absolute; top:0; transform:translateX(-50%); font-size:.7rem; color:var(--muted); font-family:var(--mono)}
+#track .tick{position:absolute; bottom:0; transform:translateX(-50%); font-family:var(--mono); font-size:.66rem; color:var(--muted); white-space:nowrap}
+.tl-meta{margin-top:4px; color:var(--muted); font-size:.82rem; min-height:1.3em}
+.tl-meta .seized{color:var(--recover)}
+
+/* ---------- side panel ---------- */
+.panel{border-left:1px solid var(--line); background:var(--panel); overflow-y:auto; min-height:0; display:flex; flex-direction:column}
+.block{padding:16px 20px; border-bottom:1px solid var(--line)}
+.case-head h1{font-size:1.35rem; line-height:1.2; letter-spacing:-.015em; margin:0 0 4px; font-weight:600}
+.case-head .basis{margin:0 0 6px; color:var(--muted); font-size:.9rem}
+.case-head .sub{margin:0; font-size:.95rem}
+.case-head .quick{margin:10px 0 0; display:flex; flex-wrap:wrap; gap:6px 16px; font-size:.9rem}
+.linkbtn{background:none; border:0; padding:0; cursor:pointer; text-decoration:underline; text-decoration-color:var(--accent); text-decoration-thickness:1.5px; text-underline-offset:3px; font-weight:500}
+h2.bh{font-size:1.05rem; margin:0 0 6px; font-weight:600; letter-spacing:-.005em}
+.muted{color:var(--muted)}
+.small{font-size:.86rem}
+#chapterBox .ch-meta{display:flex; justify-content:space-between; gap:12px; color:var(--muted); font-size:.85rem; margin-bottom:4px}
+#chapterBox .ch-meta .num{font-size:.78rem}
+#chapterBox p{margin:0 0 12px}
+.ch-nav{display:flex; gap:8px}
+.btn{border:1px solid var(--line); background:var(--bg); border-radius:8px; padding:8px 12px; cursor:pointer; font-weight:500; font-size:.9rem}
+.btn:hover{border-color:var(--muted)}
+.btn:disabled{opacity:.45; cursor:default}
+.btn.primary{background:var(--ink); color:var(--bg); border-color:var(--ink)}
+.btn.primary:hover{background:var(--accent); border-color:var(--accent); color:var(--accent-ink)}
+.btn.wide{width:100%}
+#casefile{display:none}
+body.investigate #casefile{display:block}
+body.investigate #chapterBox{display:none}
+body.investigate #card{order:1}
+body.investigate #casefile{order:2}
+.case-head{order:0}
+#chapterBox{order:1}
+#card{order:2}
+#entitiesBox{order:3}
+#sourcesBox{order:4}
+.panel-foot{order:5}
+#casefile p{margin:0 0 10px}
+.hint{border-left:3px solid var(--accent); padding:2px 0 2px 10px; font-size:.92rem}
+.hint .k{display:block; color:var(--muted); font-size:.8rem}
+.stats{display:grid; grid-template-columns:1fr auto; gap:4px 12px; margin:12px 0; font-size:.9rem}
+.stats dt{color:var(--muted)}
+.stats dd{margin:0; text-align:right; font-family:var(--mono); font-size:.84rem}
+#cfStatus{min-height:1.2em; font-size:.86rem; margin:0 0 10px; color:var(--muted)}
+#card[hidden]{display:none}
+#card .card-top{display:flex; justify-content:space-between; align-items:flex-start; gap:10px}
+#card h2{font-size:1.05rem; margin:0; font-weight:600}
+#card .addr{font-family:var(--mono); font-size:.78rem; color:var(--muted); margin:2px 0 6px; word-break:break-all}
+#card .type{font-size:.88rem; margin:0 0 8px}
+#card .type b{font-weight:600}
+#card table{width:100%; border-collapse:collapse; font-size:.88rem; margin:4px 0 8px}
+#card td{padding:4px 0; border-bottom:1px solid var(--line)}
+#card td.k{color:var(--muted)}
+#card td.v{text-align:right; font-family:var(--mono); font-size:.8rem}
+#card .note{font-size:.88rem; color:var(--muted); margin:0}
+body.investigate #card .type, body.investigate #card .note{display:none}
+.close{border:0; background:transparent; cursor:pointer; width:32px; height:32px; border-radius:6px; font-size:1.25rem; line-height:1; color:var(--muted); flex:none}
+.close:hover{background:var(--bg)}
+#tagBox{display:none; margin-top:10px}
+body.investigate #tagBox{display:block}
+#tagBox fieldset{border:0; margin:0; padding:0}
+#tagBox legend{font-weight:600; font-size:.92rem; margin-bottom:6px; padding:0}
+.tb-grid{display:grid; grid-template-columns:1fr 1fr; gap:6px}
+.tb-grid button{border:1px solid var(--line); background:var(--bg); border-radius:7px; padding:7px 8px; cursor:pointer; text-align:left; font-size:.86rem}
+.tb-grid button:hover{border-color:var(--muted)}
+.tb-grid button[aria-pressed="true"]{background:var(--accent); color:var(--accent-ink); border-color:var(--accent)}
+#tagClear{margin-top:8px}
+details.block > summary{cursor:pointer; font-weight:600; list-style:none; display:flex; justify-content:space-between; align-items:center}
+details.block > summary::-webkit-details-marker{display:none}
+details.block > summary::after{content:"+"; color:var(--muted); font-weight:400; font-size:1.1rem}
+details.block[open] > summary::after{content:"\2212"}
+#entityList{list-style:none; margin:10px 0 0; padding:0; max-height:300px; overflow-y:auto; border:1px solid var(--line); border-radius:8px}
+#entityList li + li{border-top:1px solid var(--line)}
+#entityList button{display:flex; width:100%; justify-content:space-between; gap:10px; border:0; background:transparent; padding:7px 10px; cursor:pointer; text-align:left; font-size:.86rem}
+#entityList button:hover,#entityList button[aria-current="true"]{background:var(--bg)}
+#entityList .el-n{min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap}
+#entityList .el-t{color:var(--muted); flex:none; font-size:.8rem}
+#entityList .el-t.tagged{color:var(--accent)}
+#sourcesBox p{margin:10px 0 0; font-size:.88rem}
+#sourcesBox h3{font-size:.9rem; margin:14px 0 4px; font-weight:600}
+#sourcesBox ol{margin:0; padding-left:20px; font-size:.86rem}
+#sourcesBox li{margin:4px 0}
+.panel-foot{padding:14px 20px 18px; color:var(--muted); font-size:.84rem}
+.panel-foot p{margin:0 0 6px}
+kbd{font-family:var(--mono); font-size:.74rem; border:1px solid var(--line); border-radius:4px; padding:0 4px; background:var(--bg)}
+
+/* ---------- foot line ---------- */
+.footline{display:flex; justify-content:space-between; align-items:baseline; gap:8px 24px; padding:8px 20px; border-top:1px solid var(--line); background:var(--bg); font-size:.82rem; color:var(--muted)}
+.footline p{margin:0; min-width:0}
+.footline a{white-space:nowrap; color:var(--ink); font-weight:500}
+
+/* ---------- dialogs ---------- */
+.dialog{position:fixed; inset:0; z-index:50; display:flex; align-items:center; justify-content:center; background:var(--scrim); padding:16px; opacity:1; transition:opacity .35s ease}
+.dialog[hidden]{display:none}
+.dialog.hide{opacity:0; pointer-events:none}
+.dialog .plate{background:var(--panel); border:1px solid var(--line); border-radius:12px; width:100%; max-width:600px; max-height:100%; overflow-y:auto; padding:28px 30px 24px; box-shadow:0 18px 50px rgba(0,0,0,.25)}
+.plate .basis{margin:0 0 4px; color:var(--muted); font-size:.92rem}
+.plate h2{font-size:1.6rem; line-height:1.15; letter-spacing:-.02em; margin:0 0 8px; font-weight:600}
+.plate .lede{font-size:1.02rem; margin:0 0 16px}
+.stylenote{border:1px solid var(--line); border-left:3px solid var(--theft); border-radius:6px; background:var(--bg); padding:10px 12px; font-size:.9rem; margin:0 0 10px}
+.plate details{font-size:.88rem; margin:0 0 18px; color:var(--muted)}
+.plate details summary{cursor:pointer; color:var(--ink); font-weight:500}
+.plate details p{margin:8px 0 0}
+.tc-actions{display:flex; flex-wrap:wrap; gap:8px; margin:0 0 16px}
+.tc-other{font-size:.88rem; color:var(--muted); margin:0; border-top:1px solid var(--line); padding-top:12px}
+.tc-other a{color:var(--ink)}
+#verdict .plate{max-width:520px}
+#vGrade{font-size:3rem; font-weight:600; line-height:1; margin:4px 0 6px; letter-spacing:-.03em}
+#vPct{font-family:var(--mono); font-size:.82rem; color:var(--muted); margin:0 0 14px}
+#vDebrief{margin:0 0 14px; font-size:.95rem}
+#vTable{width:100%; border-collapse:collapse; font-size:.88rem; margin-bottom:16px}
+#vTable td{padding:5px 0; border-bottom:1px solid var(--line)}
+#vTable td.n{text-align:right; font-family:var(--mono); font-size:.8rem}
+#vBest{font-size:.84rem; color:var(--muted); margin:0}
+
+/* ---------- narrow screens ---------- */
+@media (max-width: 900px){
+  body{display:block; height:auto; overflow:visible}
+  .tagline{display:none}
+  .top{padding:10px 16px; position:sticky; top:0; z-index:20; gap:8px}
+  .brand{overflow:hidden}
+  .wordmark{font-size:1.02rem}
+  .top-controls{gap:6px}
+  .seg button{padding:6px 9px; font-size:.86rem}
+  .cases .ct{display:block; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; font-size:.92rem}
+  .cases a{padding:9px 8px 10px}
+  .cases .cm{display:none}
+  .cases .cn{display:block; margin:0}
+  .workspace{display:block}
+  .stage-col{display:block}
+  .stage{height:48svh; min-height:300px; max-height:540px}
+  .timeline{padding:8px 16px 10px}
+  .panel{border-left:0; overflow:visible}
+  .block{padding:16px; scroll-margin-top:64px}
+  #selChip{display:none}
+  #selChip.show{display:flex}
+  #stageChapter{display:block; position:absolute; left:12px; right:60px; top:12px; background:var(--panel); border:1px solid var(--line); border-radius:8px; padding:6px 10px; font-size:.85rem; white-space:nowrap; overflow:hidden; text-overflow:ellipsis}
+  #stageChapter:empty, body.investigate #stageChapter, #selChip.show ~ #stageChapter{display:none}
+  #legend{max-width:calc(100% - 24px)}
+  .footline{flex-direction:column; padding:12px 16px 20px}
+  .dialog .plate{padding:22px 18px 18px}
+  .plate h2{font-size:1.35rem}
+}
+@media (prefers-reduced-motion: reduce){
+  *,*::before,*::after{transition:none !important; animation:none !important; scroll-behavior:auto !important}
+}
+</style>
+</head>
+<body>
+<a class="skip" href="#panel">Skip to case details</a>
+
+<header class="top">
+  <div class="brand">
+    <a class="wordmark" href="./">Peel Chain</a>
+    <span class="tagline">Crypto laundering trails, reconstructed from public records</span>
+  </div>
+  <div class="top-controls">
+    <div class="seg" role="group" aria-label="Mode">
+      <button id="tabExhibit" type="button" aria-pressed="true">Walkthrough</button>
+      <button id="tabInvestigate" type="button" aria-pressed="false">Investigate</button>
+    </div>
+    <button id="themeBtn" class="icon-btn" type="button" aria-label="Switch theme">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="8"/><path d="M12 4a8 8 0 0 1 0 16z" fill="currentColor"/></svg>
+    </button>
+  </div>
+</header>
+
+<nav class="cases" id="caseNav" aria-label="Case files"></nav>
+
+<div class="workspace">
+  <div class="stage-col">
+    <section class="stage" id="stage" aria-label="Transaction graph">
+      <canvas id="cv" tabindex="0" role="img" aria-label="Transaction graph. Use the entity list in the side panel to inspect entities by keyboard."></canvas>
+      <div id="tip" hidden></div>
+      <div id="selChip"><span id="selChipText"></span><button type="button" id="selChipBtn">Details</button></div>
+      <div id="stageChapter" aria-hidden="true"></div>
+      <div class="stage-tools">
+        <button type="button" id="zoomIn" aria-label="Zoom in">+</button>
+        <button type="button" id="zoomOut" aria-label="Zoom out">&minus;</button>
+        <button type="button" id="zoomFit" aria-label="Fit whole graph">
+          <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M1.5 5.5v-4h4M10.5 1.5h4v4M14.5 10.5v4h-4M5.5 14.5h-4v-4"/></svg>
+        </button>
+      </div>
+      <details id="legend" open><summary>Key</summary><div class="rows" id="legendRows"></div></details>
+    </section>
+    <div class="timeline">
+      <div class="tl-row">
+        <button id="playBtn" type="button" aria-label="Play walkthrough"></button>
+        <div id="dateRead" aria-live="off"></div>
+        <div id="track" role="slider" tabindex="0" aria-label="Timeline" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
+          <div class="rail"></div>
+          <div class="rail-fill" id="railFill"></div>
+          <div class="head" id="head"></div>
+        </div>
+      </div>
+      <div class="tl-meta" id="btcRead"></div>
+    </div>
+  </div>
+
+  <aside class="panel" id="panel" tabindex="-1" aria-label="Case details">
+    <div class="block case-head">
+      <h1 id="caseTitle"></h1>
+      <p class="basis" id="caseBasis"></p>
+      <p class="sub" id="caseSub"></p>
+      <p class="quick"><button type="button" class="linkbtn" id="reopenIntro">Case introduction</button><button type="button" class="linkbtn" id="openSources">Sources and method</button></p>
+    </div>
+
+    <section class="block" id="chapterBox" aria-live="polite">
+      <div class="ch-meta"><span id="chNo"></span><span class="num" id="chDates"></span></div>
+      <h2 class="bh" id="chTitle"></h2>
+      <p id="chText"></p>
+      <div class="ch-nav">
+        <button type="button" class="btn" id="chPrev">Previous chapter</button>
+        <button type="button" class="btn" id="chNext">Next chapter</button>
+      </div>
+    </section>
+
+    <section class="block" id="casefile">
+      <h2 class="bh">Practice escalation write-up</h2>
+      <p class="small">Labels and entity types are hidden. Select an entity on the graph or in the list below, tag what you think it is, then submit. Tags are scored against the public record, weighted toward the source wallet, the main laundering channel and the recovery.</p>
+      <p class="hint"><span class="k">Case brief at this point in the timeline</span><span id="cfHint"></span></p>
+      <dl class="stats">
+        <dt>Entities tagged</dt><dd id="cfCount"></dd>
+        <dt>Best score on this device</dt><dd id="cfBest">none yet</dd>
+      </dl>
+      <p id="cfStatus" role="status"></p>
+      <button type="button" class="btn primary wide" id="fileSar">Submit write-up for grading</button>
+    </section>
+
+    <section class="block" id="card" hidden aria-label="Selected entity">
+      <div class="card-top">
+        <div>
+          <h2 id="cLabel"></h2>
+          <div class="addr" id="cAddr"></div>
+        </div>
+        <button type="button" class="close" id="cardClose" aria-label="Close entity details">&times;</button>
+      </div>
+      <p class="type">Type: <b id="cType"></b></p>
+      <table>
+        <tr><td class="k">Received</td><td class="v" id="cIn"></td></tr>
+        <tr><td class="k">Sent</td><td class="v" id="cOut"></td></tr>
+        <tr><td class="k">Transfers</td><td class="v" id="cTx"></td></tr>
+        <tr><td class="k">First activity</td><td class="v" id="cFirst"></td></tr>
+      </table>
+      <p class="note" id="cNote"></p>
+      <div id="tagBox">
+        <fieldset>
+          <legend>What is this entity?</legend>
+          <div class="tb-grid"></div>
+        </fieldset>
+        <button type="button" class="btn" id="tagClear">Clear tag</button>
+      </div>
+    </section>
+
+    <details class="block" id="entitiesBox">
+      <summary id="entitiesSummary">All entities</summary>
+      <ul id="entityList"></ul>
+    </details>
+
+    <details class="block" id="sourcesBox">
+      <summary>Sources and method</summary>
+      <p id="srcDisc"></p>
+      <div id="srcList"></div>
+    </details>
+
+    <div class="panel-foot">
+      <p>Keyboard: <kbd>Space</kbd> plays or pauses, <kbd>&larr;</kbd> <kbd>&rarr;</kbd> step 30 days, <kbd>F</kbd> fits the graph, <kbd>Esc</kbd> closes dialogs. The entity list works with Tab and Enter.</p>
+      <p>Pan by dragging, zoom with the wheel, a pinch or the buttons on the graph.</p>
+    </div>
+  </aside>
+</div>
+
+<footer class="footline">
+  <p id="footNote"></p>
+  <a href="https://elsaicequeen.github.io/">Back to Anish Majumdar's portfolio</a>
+</footer>
+
+<div id="titlecard" class="dialog" role="dialog" aria-modal="true" aria-labelledby="tcH">
+  <div class="plate">
+    <p class="basis" id="tcBasis"></p>
+    <h2 id="tcH"></h2>
+    <p class="lede" id="tcTitle"></p>
+    <p class="stylenote" id="tcStyle"></p>
+    <details><summary>Full method note</summary><p id="tcDisc"></p></details>
+    <div class="tc-actions">
+      <button type="button" class="btn primary" id="tcPlay">Start the walkthrough</button>
+      <button type="button" class="btn" id="tcSkip">Explore the full graph</button>
+      <button type="button" class="btn" id="tcInv">Investigate with labels hidden</button>
+    </div>
+    <p class="tc-other" id="tcOther"></p>
+  </div>
+</div>
+
+<div id="verdict" class="dialog" role="dialog" aria-modal="true" aria-labelledby="vHead" hidden>
+  <div class="plate">
+    <p class="basis" id="vHead">Practice escalation write-up, graded</p>
+    <div id="vGrade"></div>
+    <p id="vPct"></p>
+    <p id="vDebrief"></p>
+    <table id="vTable"></table>
+    <div class="tc-actions">
+      <button type="button" class="btn primary" id="vReveal">Show the answer path</button>
+      <button type="button" class="btn" id="vAmend">Keep editing</button>
+    </div>
+    <p id="vBest"></p>
+  </div>
+</div>
+
+<noscript><p style="padding:16px">This exhibit needs JavaScript to draw the transaction graph.</p></noscript>
+
+<script src="case001.js"></script>
+<script src="case002.js"></script>
+<script src="case003.js"></script>
+<script src="case004.js"></script>
+<script>
+'use strict';
+/* Peel Chain exhibit engine. Case data arrives as window.CASE_DATA (case 001)
+   and window.CASE_DATA_NNN; ?case=NNN selects one, ?mode=investigate opens the
+   blind tagging mode. Layout is deterministic (seeded PRNG, no Math.random). */
+
+/* ------------------------------ theme --------------------------------- */
+const THEME_KEY = 'peelchain_theme';
+(function initTheme(){
+  let t = null;
+  try { t = localStorage.getItem(THEME_KEY); } catch(e){}
+  if (t === 'light' || t === 'dark') document.documentElement.setAttribute('data-theme', t);
+})();
+const mqDark = window.matchMedia('(prefers-color-scheme: dark)');
+const mqReduce = window.matchMedia('(prefers-reduced-motion: reduce)');
+const mqCoarse = window.matchMedia('(pointer: coarse)');
+const reduced = () => mqReduce.matches;
+function effectiveTheme(){
+  const t = document.documentElement.getAttribute('data-theme');
+  return t || (mqDark.matches ? 'dark' : 'light');
+}
+const C = {};
+function readTheme(){
+  const cs = getComputedStyle(document.documentElement);
+  const v = n => cs.getPropertyValue(n).trim();
+  C.ink = v('--ink'); C.muted = v('--muted'); C.theft = v('--theft'); C.recover = v('--recover');
+  C.accent = v('--accent'); C.node = v('--node'); C.halo = v('--halo'); C.line = v('--line');
+  const btn = document.getElementById('themeBtn');
+  const next = effectiveTheme() === 'dark' ? 'light' : 'dark';
+  btn.setAttribute('aria-label', 'Switch to ' + next + ' theme');
+  btn.title = 'Switch to ' + next + ' theme';
+}
+document.getElementById('themeBtn').addEventListener('click', () => {
+  const next = effectiveTheme() === 'dark' ? 'light' : 'dark';
+  document.documentElement.setAttribute('data-theme', next);
+  try { localStorage.setItem(THEME_KEY, next); } catch(e){}
+  readTheme(); buildLegend();
+});
+mqDark.addEventListener && mqDark.addEventListener('change', () => { readTheme(); buildLegend(); });
+readTheme();
+
+/* --------------------------- case selection ---------------------------- */
+const CASE_REGISTRY = (() => {
+  const reg = {};
+  if (window.CASE_DATA) reg['001'] = window.CASE_DATA;
+  for (const k of Object.getOwnPropertyNames(window)){
+    const m = /^CASE_DATA_(\d{3})$/.exec(k);
+    if (m && window[k]) reg[m[1]] = window[k];
+  }
+  return reg;
+})();
+const params = new URLSearchParams(location.search);
+const CASE_REQ = String(params.get('case') || '001').padStart(3, '0');
+const CASE_INFO = {
+  '001': {name:'Bitfinex', year:'2016', amount:'119,754 BTC stolen',
+          title:'Bitfinex hack (2016)',
+          basis:'Public record: United States v. Lichtenstein and Morgan, D.D.C.',
+          units:'Amounts are in BTC.', seizeWord:'Seized'},
+  '002': {name:'Ronin Bridge', year:'2022', amount:'about $620M stolen',
+          title:'Ronin Bridge hack (2022)',
+          basis:'Public record: OFAC sanctions and FBI attribution to Lazarus Group, April 2022',
+          units:'Amounts are in ETH; USDC and Bitcoin-side legs are rounded ETH-equivalents.', seizeWord:'Seized or frozen'},
+  '003': {name:'Bybit', year:'2025', amount:'about $1.46B stolen',
+          title:'Bybit cold-wallet theft (2025)',
+          basis:'Public record: FBI IC3 public service announcement PSA-2025-02-26',
+          units:'Amounts are in ETH; Bitcoin-side and USD legs are theft-time ETH-equivalents.', seizeWord:'Seized or frozen'},
+  '004': {name:'Poly Network', year:'2021', amount:'about $611M, all returned',
+          title:'Poly Network exploit (2021)',
+          basis:'Industry post-mortem. No prosecution on record.',
+          units:'Amounts are in millions of US dollars at August 2021 prices.', seizeWord:'Returned'}
+};
+const CASE_ORDER = ['001','002','003','004'].filter(id => CASE_REGISTRY[id]);
+const CASE_ID = CASE_ORDER.indexOf(CASE_REQ) >= 0 ? CASE_REQ : '001';
+const DATA = CASE_REGISTRY[CASE_ID];
+if (!DATA || !Array.isArray(DATA.entities) || !DATA.entities.length){
+  document.body.innerHTML = '<p style="padding:24px">The case data did not load. Reload the page to try again.</p>';
+  throw new Error('peel-chain: case data missing');
+}
+const INFO = CASE_INFO[CASE_ID];
+const STYLE_NOTE = 'Headline facts follow the cited public record. Intermediate wallet addresses, hop counts, per-hop splits and exact dates inside documented windows are stylised to show the technique, not reproduce every transaction. ' + INFO.units;
+
+/* ------------------------------ utilities ------------------------------ */
+const DAY = 86400000;
+function mulberry32(seed){
+  let a = seed >>> 0;
+  return function(){
+    a |= 0; a = (a + 0x6D2B79F5) | 0;
+    let t = Math.imul(a ^ (a >>> 15), 1 | a);
+    t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+    return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+  };
+}
+function hashStr(s){
+  let h = 2166136261;
+  for (let i = 0; i < s.length; i++){ h ^= s.charCodeAt(i); h = Math.imul(h, 16777619); }
+  return h >>> 0;
+}
+const pd = s => Date.parse(s + 'T00:00:00Z');
+const MONTHS = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+function fmtDate(ms){
+  const d = new Date(ms);
+  return d.getUTCDate() + ' ' + MONTHS[d.getUTCMonth()] + ' ' + d.getUTCFullYear();
+}
+const ASSET = (DATA.meta && DATA.meta.assetLabel) || 'BTC';
+const IS_USD = ASSET === 'USD-M';
+function fmtAmt(n){
+  if (IS_USD){
+    const d = n >= 100 ? 0 : n >= 1 ? 1 : 2;
+    return '$' + n.toLocaleString('en-US', {maximumFractionDigits:d}) + 'M';
+  }
+  const opts = n >= 1000 ? {maximumFractionDigits:0} : n >= 1 ? {maximumFractionDigits:2} : {maximumFractionDigits:4};
+  return n.toLocaleString('en-US', opts) + ' ' + ASSET;
+}
+const clamp = (v,a,b) => v < a ? a : v > b ? b : v;
+const esc = s => String(s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+
+/* ---------------------------- derived model ---------------------------- */
+const nodes = new Map();
+for (const e of DATA.entities){
+  nodes.set(e.id, {ent:e, x:0, y:0, vx:0, vy:0, r:6, inBTC:0, outBTC:0, tx:0, firstT:Infinity});
+}
+const edges = DATA.edges.map((e,i) => ({
+  ...e, t: pd(e.date), i,
+  a: nodes.get(e.from), b: nodes.get(e.to),
+  w: 0.6 + 0.85 * Math.log10(1 + e.amountBTC)
+})).filter(e => e.a && e.b).sort((x,y) => x.t - y.t);
+for (const e of edges){
+  e.a.outBTC += e.amountBTC; e.b.inBTC += e.amountBTC;
+  e.a.tx++; e.b.tx++;
+  e.a.firstT = Math.min(e.a.firstT, e.t);
+  e.b.firstT = Math.min(e.b.firstT, e.t);
+}
+for (const n of nodes.values()) n.r = 5 + 2.4 * Math.log10(1 + Math.max(n.inBTC, n.outBTC));
+let tMin = Infinity, tMax = -Infinity;
+for (const e of edges){ tMin = Math.min(tMin, e.t); tMax = Math.max(tMax, e.t); }
+for (const c of (DATA.chapters||[])){ tMin = Math.min(tMin, pd(c.tStart)); tMax = Math.max(tMax, pd(c.tEnd)); }
+const spanDays = (tMax - tMin) / DAY;
+const PAD_T = Math.max(1, Math.min(15, spanDays * 0.02)) * DAY;
+tMin -= PAD_T; tMax += PAD_T;
+const chapters = (DATA.chapters||[]).map((c,i) => ({...c, t0:pd(c.tStart), t1:pd(c.tEnd), i})).sort((a,b)=>a.t0-b.t0);
+
+// Chapters overlap in calendar time; the walkthrough gives each one a
+// non-overlapping narration segment.
+const narrSegs = (() => {
+  const segs = [];
+  let cursor = -Infinity;
+  for (let i = 0; i < chapters.length; i++){
+    const c = chapters[i];
+    const s = Math.max(c.t0, cursor);
+    let e = Math.max(c.t1, s + DAY);
+    const nx = chapters[i+1];
+    if (nx && Math.max(nx.t0, e) >= nx.t1) e = s + Math.max((c.t1 - s)/2, DAY);
+    segs.push({c, t0:s, t1:e, n:i});
+    cursor = e;
+  }
+  return segs;
+})();
+// Piecewise wall-clock mapping: each chapter gets a real dwell; gaps compress.
+const wallMap = (() => {
+  const pieces = [];
+  let t = tMin, w = 0;
+  const push = (t1, dur) => { if (t1 > t){ pieces.push({t0:t, t1, w0:w, w1:w+dur}); t = t1; w += dur; } };
+  for (const s of narrSegs){
+    push(s.t0, 1.4);
+    push(s.t1, clamp(9 + (s.t1 - s.t0)/(30*DAY) * 0.28, 9, 16));
+  }
+  push(tMax, 1.2);
+  return pieces;
+})();
+const wallTotal = wallMap.length ? wallMap[wallMap.length-1].w1 : 1;
+function simToWall(t){
+  for (const p of wallMap) if (t <= p.t1) return p.w0 + (p.w1-p.w0) * ((t-p.t0)/((p.t1-p.t0)||1));
+  return wallTotal;
+}
+function wallToSim(w){
+  for (const p of wallMap) if (w <= p.w1) return p.t0 + (p.t1-p.t0) * ((w-p.w0)/((p.w1-p.w0)||1));
+  return tMax;
+}
+const cum = edges.map(() => ({btc:0, seized:0}));
+{ let b = 0, s = 0;
+  edges.forEach((e,i) => { b += e.amountBTC; if (e.kind === 'seizure') s += e.amountBTC; cum[i] = {btc:b, seized:s}; });
+}
+function cumAt(t){
+  let lo = -1;
+  for (let i = 0; i < edges.length; i++){ if (edges[i].t <= t) lo = i; else break; }
+  return lo < 0 ? {btc:0, seized:0, n:0} : {btc:cum[lo].btc, seized:cum[lo].seized, n:lo+1};
+}
+const seizureAnnots = (() => {
+  const m = new Map();
+  for (const e of edges){
+    if (e.kind !== 'seizure') continue;
+    if (!m.has(e.to)) m.set(e.to, {node:e.b, t0:e.t, edges:[]});
+    m.get(e.to).edges.push(e);
+  }
+  return [...m.values()];
+})();
+
+/* ------------------------- deterministic layout ------------------------ */
+const layoutSeed = hashStr(DATA.meta.caseNo + '|' + DATA.entities.length + '|' + DATA.edges.length);
+const rand = mulberry32(layoutSeed ^ 0x5EED);
+const CLUSTER_LAYOUT = {
+  victim:        {kind:'spot',   x:-800, y:-60},
+  lichtenstein:  {kind:'spot',   x:-520, y:-10, spread:150},
+  peel_chain_a:  {kind:'strand', x0:-320, y0:-310, x1:210, y1:-270},
+  peel_chain_b:  {kind:'strand', x0:-320, y0:-115, x1:210, y1:-100},
+  peel_chain_c:  {kind:'strand', x0:-320, y0:95,  x1:210, y1:105},
+  peel_chain_d:  {kind:'strand', x0:-320, y0:290, x1:210, y1:265},
+  services:      {kind:'column', x:400,  y0:-300, y1:330},
+  post_alphabay: {kind:'column', x:555,  y0:-320, y1:-190},
+  chainhop:      {kind:'spot',   x:555,  y:-60},
+  post_mixer:    {kind:'column', x:560,  y0:40,  y1:330},
+  exchanges:     {kind:'column', x:715,  y0:-310, y1:210},
+  cashout:       {kind:'column', x:855,  y0:-165, y1:80},
+  usg:           {kind:'spot',   x:0,    y:380, spread:300}
+};
+const ID_ANCHOR = {
+  w_1cga4s:   {x:-540, y:-10},
+  alphabay:   {x:400,  y:-290},
+  helix:      {x:400,  y:-130},
+  bitcoinfog: {x:400,  y:75},
+  chipmixer:  {x:400,  y:195},
+  wasabi:     {x:400,  y:330},
+  hydra:      {x:470,  y:265},
+  usg_seizure:{x:-60, y:330},
+  post_arrest:{x:250, y:430}
+};
+const anchors = new Map();
+(function buildAnchors(){
+  const byCluster = new Map();
+  for (const e of DATA.entities){
+    const c = e.cluster || 'misc';
+    if (!byCluster.has(c)) byCluster.set(c, []);
+    byCluster.get(c).push(e.id);
+  }
+  const unknown = [...byCluster.keys()].filter(c => !CLUSTER_LAYOUT[c]);
+  const firstOf = id => { const n = nodes.get(id); return isFinite(n.firstT) ? n.firstT : 0; };
+  for (const [c, ids] of byCluster){
+    ids.sort((a,b) => firstOf(a) - firstOf(b) || (a < b ? -1 : 1));
+    const spec = CLUSTER_LAYOUT[c];
+    ids.forEach((id, i) => {
+      if (ID_ANCHOR[id]){ anchors.set(id, ID_ANCHOR[id]); return; }
+      const u = ids.length > 1 ? i / (ids.length - 1) : 0.5;
+      if (!spec){
+        const ci = unknown.indexOf(c);
+        const ang = (ci / Math.max(unknown.length,1)) * Math.PI * 2 - Math.PI/2;
+        anchors.set(id, {x: Math.cos(ang)*300 + (u-0.5)*140, y: Math.sin(ang)*220});
+      } else if (spec.kind === 'strand'){
+        anchors.set(id, {x: spec.x0 + (spec.x1-spec.x0)*u, y: spec.y0 + (spec.y1-spec.y0)*u});
+      } else if (spec.kind === 'column'){
+        anchors.set(id, {x: spec.x, y: spec.y0 + (spec.y1-spec.y0)*u});
+      } else {
+        const sp = spec.spread || 0;
+        const ang = (i / Math.max(ids.length,1)) * Math.PI * 2 + 0.6;
+        anchors.set(id, {x: spec.x + Math.cos(ang)*sp*0.5, y: spec.y + Math.sin(ang)*sp*0.42});
+      }
+    });
+  }
+})();
+for (const n of nodes.values()){
+  const a = anchors.get(n.ent.id);
+  n.x = a.x + (rand()-0.5)*26;
+  n.y = a.y + (rand()-0.5)*26;
+}
+const nodeArr = [...nodes.values()];
+(function runLayout(){
+  const N = 520;
+  for (let it = 0; it < N; it++){
+    const cool = 1 - it / N;
+    for (let i = 0; i < nodeArr.length; i++){
+      for (let j = i+1; j < nodeArr.length; j++){
+        const p = nodeArr[i], q = nodeArr[j];
+        let dx = p.x - q.x, dy = p.y - q.y;
+        let d2 = dx*dx + dy*dy;
+        if (d2 < 1){ dx = (rand()-0.5); dy = (rand()-0.5); d2 = dx*dx+dy*dy+0.01; }
+        const d = Math.sqrt(d2);
+        const f = Math.min(13500 / d2, 30) * cool;
+        dx /= d; dy /= d;
+        p.vx += dx*f; p.vy += dy*f; q.vx -= dx*f; q.vy -= dy*f;
+      }
+    }
+    for (const e of edges){
+      const dx = e.b.x - e.a.x, dy = e.b.y - e.a.y;
+      const d = Math.sqrt(dx*dx + dy*dy) || 1;
+      const rest = 110 + 14 * e.w;
+      const f = (d - rest) * 0.006;
+      const ux = dx/d, uy = dy/d;
+      e.a.vx += ux*f; e.a.vy += uy*f; e.b.vx -= ux*f; e.b.vy -= uy*f;
+    }
+    for (const n of nodeArr){
+      const a = anchors.get(n.ent.id);
+      n.vx += (a.x - n.x) * 0.05; n.vy += (a.y - n.y) * 0.05;
+    }
+    const maxStep = 18 * cool + 0.6;
+    for (const n of nodeArr){
+      n.vx *= 0.55; n.vy *= 0.55;
+      const s = Math.sqrt(n.vx*n.vx + n.vy*n.vy);
+      const k = s > maxStep ? maxStep / s : 1;
+      n.x += n.vx * k; n.y += n.vy * k;
+    }
+  }
+  for (let pass = 0; pass < 40; pass++){
+    for (let i = 0; i < nodeArr.length; i++){
+      for (let j = i+1; j < nodeArr.length; j++){
+        const p = nodeArr[i], q = nodeArr[j];
+        const dx = q.x - p.x, dy = q.y - p.y;
+        const d = Math.sqrt(dx*dx + dy*dy) || 0.01;
+        const min = p.r + q.r + 26;
+        if (d < min){
+          const push = (min - d) / 2 / d;
+          p.x -= dx*push; p.y -= dy*push; q.x += dx*push; q.y += dy*push;
+        }
+      }
+    }
+  }
+})();
+let layoutHash = 0;
+for (const n of nodeArr){ layoutHash = (layoutHash ^ hashStr(n.ent.id + ':' + n.x.toFixed(2) + ',' + n.y.toFixed(2))) >>> 0; }
+
+for (const e of edges){
+  const h = hashStr(e.from + '>' + e.to + '#' + e.i);
+  e.bow = ((h % 2) ? 1 : -1) * (0.09 + ((h >>> 3) % 90) / 900);
+  e.phase = ((h >>> 8) % 1000) / 1000;
+  e.pcount = clamp(1 + Math.floor(Math.log10(1 + e.amountBTC)), 1, 7);
+  e.psize = 1.1 + 0.55 * Math.log10(1 + e.amountBTC);
+}
+function edgeGeom(e){
+  const ax = e.a.x, ay = e.a.y, bx = e.b.x, by = e.b.y;
+  const mx = (ax+bx)/2, my = (ay+by)/2;
+  const dx = bx-ax, dy = by-ay;
+  return {ax, ay, bx, by, cx: mx - dy*e.bow, cy: my + dx*e.bow};
+}
+function pointOnEdge(g, u){
+  const v = 1-u;
+  return {
+    x: v*v*g.ax + 2*v*u*g.cx + u*u*g.bx,
+    y: v*v*g.ay + 2*v*u*g.cy + u*u*g.by,
+    dx: 2*v*(g.cx-g.ax) + 2*u*(g.bx-g.cx),
+    dy: 2*v*(g.cy-g.ay) + 2*u*(g.by-g.cy)
+  };
+}
+
+/* -------------------------------- camera ------------------------------- */
+const cv = document.getElementById('cv');
+const ctx = cv.getContext('2d');
+let W = 0, H = 0, DPR = 1;
+const view = {cx:0, cy:0, scale:1};
+let camTween = null;
+let userMovedCamera = false;
+function graphBounds(ids){
+  let x0=Infinity,y0=Infinity,x1=-Infinity,y1=-Infinity;
+  const list = ids ? ids.map(i => nodes.get(i)).filter(Boolean) : nodeArr;
+  for (const n of (list.length ? list : nodeArr)){
+    x0 = Math.min(x0, n.x - n.r); y0 = Math.min(y0, n.y - n.r);
+    x1 = Math.max(x1, n.x + n.r); y1 = Math.max(y1, n.y + n.r);
+  }
+  return {x0,y0,x1,y1};
+}
+function padFor(tight){
+  const base = Math.min(W, H);
+  return tight ? Math.max(28, Math.min(150, base * 0.2)) : Math.max(24, Math.min(80, base * 0.09));
+}
+function viewFor(b, pad){
+  // labels hang below and to the sides of nodes, so leave extra room for them
+  const bw = Math.max(b.x1-b.x0, 60) * (W < 600 ? 1.04 : 1) + Math.min(90, W*0.06), bh = Math.max(b.y1-b.y0, 60) + 40;
+  const scale = clamp(Math.min((W-pad*2)/bw, (H-pad*2)/bh), 0.05, 6);
+  return {cx:(b.x0+b.x1)/2, cy:(b.y0+b.y1)/2, scale};
+}
+function tweenTo(target, seconds){
+  if (reduced() || !seconds){ Object.assign(view, target); camTween = null; return; }
+  camTween = {from:{...view}, to:target, t0:performance.now(), dur:seconds*1000};
+}
+function fitView(animate){
+  tweenTo(viewFor(graphBounds(null), padFor(false)), animate ? 0.6 : 0);
+}
+function focusOn(ids, seconds){
+  const target = viewFor(graphBounds(ids && ids.length ? ids : null), padFor(ids && ids.length));
+  target.scale = Math.min(target.scale, view.scale * 2.5, 2.5);
+  tweenTo(target, seconds || 1.6);
+}
+function zoomBy(f){
+  const target = {...view, scale: clamp(view.scale * f, 0.05, 12)};
+  userMovedCamera = true;
+  tweenTo(target, 0.25);
+}
+function stepCamera(now){
+  if (!camTween) return;
+  let u = (now - camTween.t0) / camTween.dur;
+  if (u >= 1){ Object.assign(view, camTween.to); camTween = null; return; }
+  u = u<0?0:u; const s = u*u*(3-2*u);
+  view.cx = camTween.from.cx + (camTween.to.cx - camTween.from.cx)*s;
+  view.cy = camTween.from.cy + (camTween.to.cy - camTween.from.cy)*s;
+  view.scale = camTween.from.scale + (camTween.to.scale - camTween.from.scale)*s;
+}
+function worldToScreen(x,y){ return {x:(x-view.cx)*view.scale + W/2, y:(y-view.cy)*view.scale + H/2}; }
+function screenToWorld(x,y){ return {x:(x-W/2)/view.scale + view.cx, y:(y-H/2)/view.scale + view.cy}; }
+function resize(){
+  DPR = window.devicePixelRatio || 1;
+  W = cv.clientWidth; H = cv.clientHeight;
+  cv.width = Math.max(1, Math.round(W*DPR)); cv.height = Math.max(1, Math.round(H*DPR));
+}
+resize();
+fitView(false);
+if (window.ResizeObserver){
+  new ResizeObserver(() => { resize(); if (!userMovedCamera && !playing) fitView(false); buildMarks(); }).observe(cv);
+} else {
+  window.addEventListener('resize', () => { resize(); buildMarks(); });
+}
+
+/* -------------------------------- state -------------------------------- */
+let simT = tMin;
+let playing = false;
+let playSeconds = wallTotal;
+let lastFrame = performance.now();
+let mode = 'exhibit';
+let labelsVisible = true, typesVisible = true;
+let hoverId = null, selectedId = null;
+let curChapterId = null;
+const listeners = {chapterChange:[], nodeSelect:[], timeChange:[], modeChange:[]};
+function emit(ev, arg){ for (const cb of listeners[ev]) { try{ cb(arg); }catch(err){ console.error(err); } } }
+const FLOW_MS = Math.min(75, Math.max(2, spanDays * 0.025)) * DAY;
+const INKIN_MS = Math.min(25, Math.max(0.5, spanDays * 0.01)) * DAY;
+const LABEL_FONT = '600 12px "Instrument Sans", system-ui, sans-serif';
+const MONO_FONT = '500 10px "Martian Mono", ui-monospace, Menlo, monospace';
+
+/* ------------------------------- drawing ------------------------------- */
+function kindStyle(e){
+  if (!typesVisible) return {color:C.ink, dash:null, strong:false};
+  switch(e.kind){
+    case 'hack':     return {color:C.theft, dash:null, strong:true};
+    case 'seizure':  return {color:C.recover, dash:[7,4], strong:true};
+    case 'chainhop': return {color:C.ink, dash:[6,5], strong:false};
+    case 'cashout':  return {color:C.ink, dash:[2,4], strong:false};
+    default:         return {color:C.ink, dash:null, strong:false};
+  }
+}
+function nodeColor(t){
+  if (!typesVisible) return C.ink;
+  if (t === 'hacker_wallet') return C.theft;
+  if (t === 'seizure') return C.recover;
+  return C.ink;
+}
+function drawGlyph(n, active){
+  const t = typesVisible ? n.ent.type : 'intermediary';
+  const r = n.r;
+  ctx.beginPath();
+  switch(t){
+    case 'exchange':
+      ctx.rect(n.x-r*0.9, n.y-r*0.9, r*1.8, r*1.8); break;
+    case 'darknet':
+      ctx.moveTo(n.x, n.y-r*1.15); ctx.lineTo(n.x+r*1.15, n.y);
+      ctx.lineTo(n.x, n.y+r*1.15); ctx.lineTo(n.x-r*1.15, n.y); ctx.closePath(); break;
+    case 'cashout':
+      ctx.moveTo(n.x, n.y-r*1.15); ctx.lineTo(n.x+r*1.05, n.y+r*0.85);
+      ctx.lineTo(n.x-r*1.05, n.y+r*0.85); ctx.closePath(); break;
+    default:
+      ctx.arc(n.x, n.y, r, 0, Math.PI*2);
+  }
+  ctx.fillStyle = C.node;
+  ctx.fill();
+  const col = nodeColor(t);
+  ctx.strokeStyle = active ? col : C.muted;
+  ctx.globalAlpha = active ? 1 : 0.55;
+  ctx.setLineDash(active ? [] : [3,3]);
+  ctx.lineWidth = (t === 'hacker_wallet' ? 2.4 : 1.5) / view.scale * Math.min(view.scale,1) + (t==='hacker_wallet'?1:0.5);
+  ctx.stroke();
+  ctx.setLineDash([]);
+  ctx.globalAlpha = 1;
+  if (typesVisible && t === 'mixer'){
+    ctx.beginPath(); ctx.arc(n.x, n.y, r*0.55, 0, Math.PI*2);
+    ctx.lineWidth = 1; ctx.strokeStyle = active ? col : C.muted; ctx.stroke();
+  }
+  if (typesVisible && t === 'seizure' && active){
+    ctx.save(); ctx.beginPath(); ctx.arc(n.x, n.y, r, 0, Math.PI*2); ctx.clip();
+    ctx.strokeStyle = C.recover; ctx.globalAlpha = 0.45; ctx.lineWidth = 1;
+    for (let o = -r*2; o <= r*2; o += 4.5){
+      ctx.beginPath(); ctx.moveTo(n.x+o-r, n.y-r); ctx.lineTo(n.x+o+r, n.y+r); ctx.stroke();
+    }
+    ctx.restore();
+  }
+  if (selectedId === n.ent.id || hoverId === n.ent.id){
+    ctx.beginPath(); ctx.arc(n.x, n.y, r + 6/Math.max(view.scale,0.3), 0, Math.PI*2);
+    ctx.strokeStyle = C.accent; ctx.lineWidth = (selectedId === n.ent.id ? 2.2 : 1.4)/Math.max(view.scale,0.3);
+    ctx.stroke();
+  }
+}
+function haloText(txt, x, y, color){
+  ctx.lineJoin = 'round'; ctx.lineWidth = 4; ctx.strokeStyle = C.halo;
+  ctx.strokeText(txt, x, y);
+  ctx.fillStyle = color; ctx.fillText(txt, x, y);
+}
+function annotOf(n){
+  if (!typesVisible) return null;
+  const an = seizureAnnots.find(a => a.node === n && simT >= a.t0);
+  if (!an) return null;
+  let amt = 0, last = an.t0;
+  for (const e of an.edges) if (e.t <= simT){ amt += e.amountBTC; last = e.t; }
+  return fmtAmt(amt) + ' · ' + fmtDate(last);
+}
+
+function draw(now){
+  const dt = now - lastFrame; lastFrame = now;
+  if (playing){
+    const w = simToWall(simT) + (dt/1000) * (wallTotal / playSeconds);
+    simT = wallToSim(w);
+    if (simT >= tMax){ simT = tMax; setPlaying(false); }
+  }
+  stepCamera(now);
+
+  ctx.setTransform(DPR,0,0,DPR,0,0);
+  ctx.clearRect(0,0,W,H);
+  ctx.translate(W/2, H/2); ctx.scale(view.scale, view.scale); ctx.translate(-view.cx, -view.cy);
+
+  for (const e of edges){
+    if (e.t > simT) continue;
+    const age = simT - e.t;
+    const alpha = clamp(age / INKIN_MS, 0, 1) * 0.8 + 0.06;
+    const st = kindStyle(e);
+    const g = edgeGeom(e);
+    ctx.beginPath();
+    ctx.moveTo(g.ax, g.ay);
+    ctx.quadraticCurveTo(g.cx, g.cy, g.bx, g.by);
+    ctx.strokeStyle = st.color; ctx.globalAlpha = alpha * (st.strong ? 0.85 : 0.5);
+    ctx.lineWidth = e.w; ctx.lineCap = 'round';
+    if (st.dash) ctx.setLineDash(st.dash);
+    ctx.stroke(); ctx.setLineDash([]);
+    if (alpha > 0.55){
+      const p = pointOnEdge(g, 0.56);
+      const a = Math.atan2(p.dy, p.dx), s = 4 + e.w*1.1;
+      ctx.beginPath();
+      ctx.moveTo(p.x + Math.cos(a)*s, p.y + Math.sin(a)*s);
+      ctx.lineTo(p.x + Math.cos(a+2.5)*s, p.y + Math.sin(a+2.5)*s);
+      ctx.lineTo(p.x + Math.cos(a-2.5)*s, p.y + Math.sin(a-2.5)*s);
+      ctx.closePath();
+      ctx.fillStyle = st.color; ctx.fill();
+    }
+    ctx.globalAlpha = 1;
+  }
+
+  // value in motion near the scrub head (skipped for reduced motion)
+  if (!reduced()){
+    for (const e of edges){
+      const age = simT - e.t;
+      if (age < 0 || age > FLOW_MS) continue;
+      const env = Math.min(age/(FLOW_MS*0.12), (FLOW_MS-age)/(FLOW_MS*0.25), 1);
+      const g = edgeGeom(e);
+      ctx.fillStyle = kindStyle(e).color;
+      for (let k = 0; k < e.pcount; k++){
+        const u = ((now/2400) + e.phase + k/e.pcount) % 1;
+        const p = pointOnEdge(g, u);
+        ctx.globalAlpha = 0.9 * env * (0.55 + 0.45*Math.sin(u*Math.PI));
+        ctx.beginPath(); ctx.arc(p.x, p.y, e.psize, 0, Math.PI*2); ctx.fill();
+      }
+      ctx.globalAlpha = 1;
+    }
+  }
+
+  for (const n of nodeArr) drawGlyph(n, n.firstT <= simT);
+
+  const RING_IN = Math.max(INKIN_MS * 0.5, DAY * 0.25);
+  if (typesVisible) for (const an of seizureAnnots){
+    if (simT < an.t0) continue;
+    const a = clamp((simT - an.t0)/RING_IN, 0, 1);
+    const n = an.node;
+    ctx.strokeStyle = C.recover; ctx.globalAlpha = 0.8*a;
+    ctx.lineWidth = 1.8 / Math.max(view.scale, 0.45);
+    ctx.beginPath();
+    ctx.ellipse(n.x, n.y, n.r*2.1 + 7, n.r*1.75 + 6, -0.12, 0, Math.PI*2);
+    ctx.stroke();
+    ctx.globalAlpha = 1;
+  }
+
+  // labels in screen space with greedy declutter
+  ctx.setTransform(DPR,0,0,DPR,0,0);
+  if (labelsVisible){
+    ctx.font = LABEL_FONT;
+    ctx.textAlign = 'center';
+    const emph = n => annotOf(n) ? 2 : ((hoverId === n.ent.id || selectedId === n.ent.id) ? 3 : 0);
+    const order = [...nodeArr].sort((a,b) => (emph(b) - emph(a)) || (b.r - a.r));
+    const placed = [];
+    for (const n of order){
+      if (n.firstT > simT && hoverId !== n.ent.id && selectedId !== n.ent.id) continue;
+      const em = emph(n);
+      if (!em && view.scale * n.r < 4.5) continue;
+      const s = worldToScreen(n.x, n.y);
+      if (s.x < -40 || s.x > W+40 || s.y < -40 || s.y > H+40) continue;
+      const label = n.ent.label;
+      let annot = annotOf(n);
+      const top = s.y + n.r*view.scale + 4;
+      const rectFor = withAnnot => {
+        let tw = ctx.measureText(label).width;
+        if (withAnnot){ ctx.font = MONO_FONT; tw = Math.max(tw, ctx.measureText(annot).width); ctx.font = LABEL_FONT; }
+        return {x0: s.x - tw/2 - 4, y0: top, x1: s.x + tw/2 + 4, y1: top + (withAnnot ? 30 : 15)};
+      };
+      const hits = r => placed.some(p => r.x0 < p.x1 && r.x1 > p.x0 && r.y0 < p.y1 && r.y1 > p.y0);
+      let rect = rectFor(!!annot);
+      if (em !== 3 && hits(rect)){
+        if (!annot) continue;
+        annot = null; rect = rectFor(false);
+        if (hits(rect)) continue;
+      }
+      placed.push(rect);
+      haloText(label, s.x, top + 11, nodeColor(n.ent.type));
+      if (annot){
+        ctx.font = MONO_FONT;
+        haloText(annot, s.x, top + 25, C.recover);
+        ctx.font = LABEL_FONT;
+      }
+    }
+  }
+
+  drawInvestigateLayer(now);
+  updateTimelineDOM();
+  updateChapterDOM();
+  requestAnimationFrame(draw);
+}
+
+/* ------------------------------- timeline ------------------------------ */
+const track = document.getElementById('track');
+const railFill = document.getElementById('railFill');
+const head = document.getElementById('head');
+const dateRead = document.getElementById('dateRead');
+const playBtn = document.getElementById('playBtn');
+const btcRead = document.getElementById('btcRead');
+const PLAY_SVG = '<svg viewBox="0 0 16 16" aria-hidden="true"><path d="M4 2.5v11l9.5-5.5z" fill="currentColor"/></svg>';
+const PAUSE_SVG = '<svg viewBox="0 0 16 16" aria-hidden="true"><path d="M4 2.5h3v11H4zM9 2.5h3v11H9z" fill="currentColor"/></svg>';
+
+function buildMarks(){
+  track.querySelectorAll('.chmark,.chnum,.tick').forEach(el => el.remove());
+  const tw = track.clientWidth || 300;
+  const span = tMax - tMin;
+  const uOf = t => (t - tMin) / span;
+  let lastNumX = -Infinity;
+  narrSegs.forEach((seg, i) => {
+    const u = uOf(seg.t0);
+    const m = document.createElement('div'); m.className = 'chmark'; m.style.left = (u*100)+'%';
+    track.appendChild(m);
+    if (u * tw - lastNumX >= 20){
+      lastNumX = u * tw;
+      const n = document.createElement('div'); n.className = 'chnum'; n.style.left = (u*100)+'%';
+      n.textContent = i + 1; track.appendChild(n);
+    }
+  });
+  // axis ticks: years, months or days depending on the span
+  const ticks = [];
+  const d0 = new Date(tMin), d1 = new Date(tMax);
+  if (spanDays > 3*365){
+    for (let y = d0.getUTCFullYear()+1; y <= d1.getUTCFullYear(); y++) ticks.push([Date.UTC(y,0,1), String(y)]);
+  } else if (spanDays > 60){
+    let y = d0.getUTCFullYear(), m = d0.getUTCMonth() + 1;
+    for (;;){
+      if (m > 11){ m = 0; y++; }
+      const t = Date.UTC(y, m, 1);
+      if (t > tMax) break;
+      ticks.push([t, m === 0 ? String(y) : MONTHS[m]]);
+      m++;
+    }
+  } else {
+    const step = spanDays > 20 ? 7 : 2;
+    const start = Date.UTC(d0.getUTCFullYear(), d0.getUTCMonth(), d0.getUTCDate() + 1);
+    for (let t = start; t <= tMax; t += step*DAY){
+      const d = new Date(t);
+      ticks.push([t, d.getUTCDate() + ' ' + MONTHS[d.getUTCMonth()]]);
+    }
+  }
+  const minGap = 46;
+  let lastX = -Infinity;
+  for (const [t, label] of ticks){
+    const u = uOf(t);
+    if (u <= 0.02 || u >= 0.98) continue;
+    const x = u * tw;
+    if (x - lastX < minGap) continue;
+    lastX = x;
+    const el = document.createElement('div'); el.className = 'tick'; el.style.left = (u*100)+'%';
+    el.textContent = label; track.appendChild(el);
+  }
+}
+buildMarks();
+
+let lastDateStr = '';
+function updateTimelineDOM(){
+  const u = (simT - tMin)/(tMax - tMin);
+  railFill.style.width = (u*100)+'%';
+  head.style.left = (u*100)+'%';
+  const ds = fmtDate(simT);
+  if (ds !== lastDateStr){
+    dateRead.textContent = ds; lastDateStr = ds;
+    track.setAttribute('aria-valuenow', String(Math.round(u*100)));
+    track.setAttribute('aria-valuetext', ds);
+    const c = cumAt(simT);
+    btcRead.innerHTML = c.n === 0 ? 'No transfers yet'
+      : c.n + ' transfers so far, ' + esc(fmtAmt(c.btc)) + ' summed over every hop'
+        + (c.seized > 0 && CASE_ID !== '004' ?' · <span class="seized">' + esc(INFO.seizeWord.toLowerCase()) + ' ' + esc(fmtAmt(c.seized)) + '</span>' : '');
+    emit('timeChange', simT);
+  }
+}
+function setPlaying(p){
+  playing = p;
+  playBtn.innerHTML = p ? PAUSE_SVG : PLAY_SVG;
+  playBtn.setAttribute('aria-label', p ? 'Pause walkthrough' : 'Play walkthrough');
+}
+setPlaying(false);
+function togglePlay(){
+  if (!playing && simT >= tMax - DAY) simT = tMin;
+  setPlaying(!playing);
+}
+playBtn.addEventListener('click', togglePlay);
+function stepTime(days){ simT = clamp(simT + days*DAY, tMin, tMax); setPlaying(false); }
+const STEP_DAYS = spanDays > 365 ? 30 : spanDays > 60 ? 7 : 1;
+const BIG_STEP = spanDays > 365 ? 365 : spanDays > 60 ? 30 : 3;
+track.addEventListener('keydown', ev => {
+  let handled = true;
+  if (ev.key === 'ArrowRight' || ev.key === 'ArrowUp') stepTime(STEP_DAYS);
+  else if (ev.key === 'ArrowLeft' || ev.key === 'ArrowDown') stepTime(-STEP_DAYS);
+  else if (ev.key === 'PageUp') stepTime(BIG_STEP);
+  else if (ev.key === 'PageDown') stepTime(-BIG_STEP);
+  else if (ev.key === 'Home'){ simT = tMin; setPlaying(false); }
+  else if (ev.key === 'End'){ simT = tMax; setPlaying(false); }
+  else handled = false;
+  if (handled){ ev.preventDefault(); ev.stopPropagation(); }
+});
+function isTypingTarget(el){
+  return !!(el && el.closest && el.closest('input,select,textarea,[contenteditable="true"]'));
+}
+window.addEventListener('keydown', ev => {
+  if (ev.metaKey || ev.ctrlKey || ev.altKey) return;
+  if (document.querySelector('.dialog:not([hidden]):not(.hide)')) return;
+  const el = document.activeElement;
+  if (isTypingTarget(el)) return;
+  const free = !el || el === document.body || el === cv;
+  if (ev.code === 'Space' && free){ ev.preventDefault(); togglePlay(); }
+  else if (ev.key === 'ArrowRight' && free){ ev.preventDefault(); stepTime(STEP_DAYS); }
+  else if (ev.key === 'ArrowLeft' && free){ ev.preventDefault(); stepTime(-STEP_DAYS); }
+  else if ((ev.key === 'f' || ev.key === 'F') && !(el && el.closest && el.closest('#entityList'))){ fitView(true); }
+});
+let scrubbing = false;
+function scrubTo(clientX){
+  const r = track.getBoundingClientRect();
+  const u = clamp((clientX - r.left)/r.width, 0, 1);
+  simT = tMin + u*(tMax - tMin);
+}
+track.addEventListener('pointerdown', ev => {
+  scrubbing = true; setPlaying(false); try { track.setPointerCapture(ev.pointerId); } catch(e){} scrubTo(ev.clientX);
+});
+track.addEventListener('pointermove', ev => { if (scrubbing) scrubTo(ev.clientX); });
+track.addEventListener('pointerup', () => { scrubbing = false; });
+track.addEventListener('pointercancel', () => { scrubbing = false; });
+
+/* ---------------------------- chapter panel ---------------------------- */
+const chNo = document.getElementById('chNo'), chTitle = document.getElementById('chTitle');
+const chText = document.getElementById('chText'), chDates = document.getElementById('chDates');
+const stageChapter = document.getElementById('stageChapter');
+const chPrev = document.getElementById('chPrev'), chNext = document.getElementById('chNext');
+function segIndexAt(t){
+  let cur = -1;
+  for (let i = 0; i < narrSegs.length; i++){ if (t >= narrSegs[i].t0) cur = i; else break; }
+  return cur;
+}
+function chapterAt(t){ const i = segIndexAt(t); return i < 0 ? null : narrSegs[i].c; }
+const chTitleOf = c => c.title.replace(/^[IVXLC]+\.\s*/, '');
+function renderChapter(i){
+  if (i < 0){
+    chNo.textContent = narrSegs.length + ' chapters';
+    chDates.textContent = fmtDate(tMin + PAD_T) + ' to ' + fmtDate(tMax - PAD_T);
+    chTitle.textContent = 'Before the first transfer';
+    chText.textContent = 'Press play to walk through the case chapter by chapter, or use Next chapter to step through it at your own pace.';
+    stageChapter.textContent = '';
+  } else {
+    const c = narrSegs[i].c;
+    chNo.textContent = 'Chapter ' + (i+1) + ' of ' + narrSegs.length;
+    chDates.textContent = fmtDate(c.t0) + (c.t1 - c.t0 > DAY ? ' to ' + fmtDate(c.t1) : '');
+    chTitle.textContent = chTitleOf(c);
+    chText.textContent = c.caption;
+    stageChapter.textContent = (i+1) + '/' + narrSegs.length + ' · ' + chTitleOf(c);
+  }
+  chPrev.disabled = i <= 0;
+  chNext.disabled = i >= narrSegs.length - 1;
+}
+function updateChapterDOM(){
+  const i = segIndexAt(simT);
+  const c = i < 0 ? null : narrSegs[i].c;
+  const id = c ? c.id : null;
+  if (id === curChapterId) return;
+  curChapterId = id;
+  emit('chapterChange', c);
+  renderChapter(i);
+  if (playing && c && c.focus && c.focus.length) focusOn(c.focus, 2.2);
+}
+function gotoChapter(i){
+  i = clamp(i, 0, narrSegs.length - 1);
+  const seg = narrSegs[i];
+  setPlaying(false);
+  simT = Math.max(seg.t0, Math.min(seg.t1, tMax) - 1);
+  if (seg.c.focus && seg.c.focus.length) focusOn(seg.c.focus, 1.2);
+}
+chPrev.addEventListener('click', () => gotoChapter(segIndexAt(simT) - 1));
+chNext.addEventListener('click', () => gotoChapter(segIndexAt(simT) + 1));
+renderChapter(-1);
+
+/* ------------------------------ entity card ---------------------------- */
+const card = document.getElementById('card');
+const cLabel = document.getElementById('cLabel'), cAddr = document.getElementById('cAddr');
+const cType = document.getElementById('cType'), cIn = document.getElementById('cIn');
+const cOut = document.getElementById('cOut'), cTx = document.getElementById('cTx');
+const cFirst = document.getElementById('cFirst'), cNote = document.getElementById('cNote');
+const TYPE_NAMES = {
+  hacker_wallet:'Hacker wallet', intermediary:'Intermediary', darknet:'Darknet market',
+  exchange:'Exchange', mixer:'Mixing service', cashout:'Cash-out', seizure:'Seizure or recovery'
+};
+const TYPE_PLURAL = {
+  hacker_wallet:'hacker wallets', intermediary:'intermediaries', darknet:'darknet markets',
+  exchange:'exchanges', mixer:'mixing services', cashout:'cash-out channels', seizure:'seizure or recovery wallets'
+};
+// Blind mode always shows a deterministic stand-in address: stored values such
+// as "100 ETH pool", "warrant" or "bc1q…USG" would give the answer away.
+function pseudoAddr(ent){
+  const h = hashStr('addr:' + ent.id), g = hashStr(ent.id + ':addr');
+  if (ASSET === 'BTC'){
+    const B = '123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz';
+    let s = (h % 3 === 0 ? 'bc1q' : h % 3 === 1 ? '1' : '3');
+    for (let i = 0; i < 4; i++) s += B[(h >>> (i*6)) % 58];
+    s += '…';
+    for (let i = 0; i < 3; i++) s += B[(g >>> (i*7)) % 58];
+    return s;
+  }
+  const X = '0123456789abcdef';
+  let s = '0x';
+  for (let i = 0; i < 4; i++) s += X[(h >>> (i*4)) & 15];
+  s += '…';
+  for (let i = 0; i < 4; i++) s += X[(g >>> (i*4)) & 15];
+  return s;
+}
+function blind(){ return mode === 'investigate' && !labelsVisible; }
+let cardId = null;
+function showCard(id){
+  const n = nodes.get(id); if (!n){ hideCard(); return; }
+  cardId = id;
+  cLabel.textContent = blind() ? 'Unknown entity' : n.ent.label;
+  cAddr.textContent = blind() ? pseudoAddr(n.ent) : (n.ent.shortAddr || '');
+  cType.textContent = TYPE_NAMES[n.ent.type] || n.ent.type;
+  cIn.textContent = fmtAmt(n.inBTC); cOut.textContent = fmtAmt(n.outBTC);
+  cTx.textContent = String(n.tx);
+  cFirst.textContent = isFinite(n.firstT) ? fmtDate(n.firstT) : 'none';
+  cNote.textContent = n.ent.note || '';
+  updateTagBox();
+  card.hidden = false;
+  updateSelChip();
+}
+function hideCard(){ card.hidden = true; cardId = null; updateSelChip(); }
+function selectNode(id, opts){
+  selectedId = id || null;
+  if (selectedId) showCard(selectedId); else hideCard();
+  if (selectedId && opts && opts.focus) focusOn([selectedId], 0.8);
+  markListCurrent();
+  emit('nodeSelect', selectedId);
+}
+document.getElementById('cardClose').addEventListener('click', () => selectNode(null));
+const selChip = document.getElementById('selChip'), selChipText = document.getElementById('selChipText');
+function entityName(n){ return blind() ? pseudoAddr(n.ent) : n.ent.label; }
+function updateSelChip(){
+  const n = selectedId && nodes.get(selectedId);
+  if (!n){ selChip.classList.remove('show'); return; }
+  const tag = tags.get(selectedId);
+  selChipText.textContent = entityName(n) + (blind() ? (tag ? ' · tagged ' + TYPE_NAMES[tag].toLowerCase() : ' · untagged') : ' · ' + TYPE_NAMES[n.ent.type]);
+  selChip.classList.add('show');
+}
+document.getElementById('selChipBtn').addEventListener('click', () => {
+  card.scrollIntoView({behavior: reduced() ? 'auto' : 'smooth', block:'start'});
+  const firstBtn = blind() ? card.querySelector('.tb-grid button') : document.getElementById('cardClose');
+  if (firstBtn) firstBtn.focus({preventScroll:true});
+});
+
+/* ------------------------ canvas: pan, zoom, select -------------------- */
+const tip = document.getElementById('tip');
+function hitTest(clientX, clientY){
+  const r = cv.getBoundingClientRect();
+  const w = screenToWorld(clientX - r.left, clientY - r.top);
+  const slop = mqCoarse.matches ? 18 : 10;
+  let best = null, bestD = Infinity;
+  for (const n of nodeArr){
+    const dx = w.x - n.x, dy = w.y - n.y;
+    const d = Math.sqrt(dx*dx + dy*dy);
+    const hitR = n.r + slop/Math.max(view.scale,0.3);
+    if (d < hitR && d < bestD){ best = n; bestD = d; }
+  }
+  return best ? best.ent.id : null;
+}
+function showTip(id, clientX, clientY){
+  if (!id){ tip.hidden = true; return; }
+  const n = nodes.get(id);
+  let html;
+  if (blind()){
+    const tg = tags.get(id);
+    html = '<div class="mono">' + esc(pseudoAddr(n.ent)) + '</div><div class="t2">' + (tg ? 'Tagged ' + esc(TYPE_NAMES[tg].toLowerCase()) : 'Untagged') + ' · click to inspect</div>';
+  } else {
+    html = '<div><b>' + esc(n.ent.label) + '</b></div><div class="t2">' + esc(TYPE_NAMES[n.ent.type] || n.ent.type) + ' · received ' + esc(fmtAmt(n.inBTC)) + '</div>';
+  }
+  tip.innerHTML = html;
+  tip.hidden = false;
+  const r = cv.getBoundingClientRect();
+  let x = clientX - r.left + 14, y = clientY - r.top + 14;
+  const tw = tip.offsetWidth, th = tip.offsetHeight;
+  if (x + tw > W - 8) x = clientX - r.left - tw - 14;
+  if (y + th > H - 8) y = clientY - r.top - th - 14;
+  tip.style.left = Math.max(8, x) + 'px'; tip.style.top = Math.max(8, y) + 'px';
+}
+const pointers = new Map();
+let dragging = false, dragMoved = false, lastPX = 0, lastPY = 0, pinchD = 0;
+cv.addEventListener('pointerdown', ev => {
+  pointers.set(ev.pointerId, {x:ev.clientX, y:ev.clientY});
+  try { cv.setPointerCapture(ev.pointerId); } catch(e){}
+  if (pointers.size === 1){
+    dragging = true; dragMoved = false; lastPX = ev.clientX; lastPY = ev.clientY;
+    cv.classList.add('dragging');
+  } else if (pointers.size === 2){
+    const [a, b] = [...pointers.values()];
+    pinchD = Math.hypot(a.x - b.x, a.y - b.y);
+    dragMoved = true;
+  }
+});
+cv.addEventListener('pointermove', ev => {
+  if (pointers.has(ev.pointerId)) pointers.set(ev.pointerId, {x:ev.clientX, y:ev.clientY});
+  if (pointers.size === 2){
+    const [a, b] = [...pointers.values()];
+    const d = Math.hypot(a.x - b.x, a.y - b.y);
+    if (pinchD > 0){
+      const r = cv.getBoundingClientRect();
+      const mx = (a.x + b.x)/2 - r.left, my = (a.y + b.y)/2 - r.top;
+      const before = screenToWorld(mx, my);
+      view.scale = clamp(view.scale * (d / pinchD), 0.05, 12);
+      const after = screenToWorld(mx, my);
+      view.cx += before.x - after.x; view.cy += before.y - after.y;
+      camTween = null; userMovedCamera = true;
+    }
+    pinchD = d;
+    return;
+  }
+  if (dragging){
+    const dx = ev.clientX - lastPX, dy = ev.clientY - lastPY;
+    if (Math.abs(dx) + Math.abs(dy) > 3) dragMoved = true;
+    if (dragMoved){
+      view.cx -= dx / view.scale; view.cy -= dy / view.scale;
+      camTween = null; userMovedCamera = true;
+    }
+    lastPX = ev.clientX; lastPY = ev.clientY;
+    tip.hidden = true;
+  } else if (ev.pointerType === 'mouse'){
+    const id = hitTest(ev.clientX, ev.clientY);
+    if (id !== hoverId){ hoverId = id; cv.classList.toggle('overnode', !!id); }
+    showTip(id, ev.clientX, ev.clientY);
+  }
+});
+function endPointer(ev){
+  const wasSingle = pointers.size === 1;
+  pointers.delete(ev.pointerId);
+  if (pointers.size < 2) pinchD = 0;
+  if (!wasSingle){
+    if (pointers.size === 1){ const p = [...pointers.values()][0]; lastPX = p.x; lastPY = p.y; }
+    return;
+  }
+  cv.classList.remove('dragging');
+  if (dragging && !dragMoved && ev.type === 'pointerup'){
+    const id = hitTest(ev.clientX, ev.clientY);
+    selectNode(id);
+  }
+  dragging = false;
+}
+cv.addEventListener('pointerup', endPointer);
+cv.addEventListener('pointercancel', endPointer);
+cv.addEventListener('pointerleave', ev => { if (ev.pointerType === 'mouse' && !dragging){ hoverId = null; tip.hidden = true; cv.classList.remove('overnode'); } });
+cv.addEventListener('dblclick', () => fitView(true));
+cv.addEventListener('wheel', ev => {
+  ev.preventDefault();
+  const r = cv.getBoundingClientRect();
+  const mx = ev.clientX - r.left, my = ev.clientY - r.top;
+  const before = screenToWorld(mx, my);
+  const factor = Math.exp(-ev.deltaY * 0.0016);
+  view.scale = clamp(view.scale * factor, 0.05, 12);
+  const after = screenToWorld(mx, my);
+  view.cx += before.x - after.x; view.cy += before.y - after.y;
+  camTween = null; userMovedCamera = true;
+}, {passive:false});
+document.getElementById('zoomIn').addEventListener('click', () => zoomBy(1.4));
+document.getElementById('zoomOut').addEventListener('click', () => zoomBy(1/1.4));
+document.getElementById('zoomFit').addEventListener('click', () => { userMovedCamera = false; fitView(true); });
+
+/* -------------------------------- legend ------------------------------- */
+function buildLegend(){
+  const sw = d => '<svg width="18" height="14" viewBox="0 0 18 14" aria-hidden="true">' + d + '</svg>';
+  const ink = C.ink, th = C.theft, rc = C.recover;
+  const rows = [
+    [sw('<circle cx="9" cy="7" r="4.5" fill="none" stroke="'+th+'" stroke-width="2"/>'), 'Hacker wallet'],
+    [sw('<circle cx="9" cy="7" r="4" fill="none" stroke="'+ink+'" stroke-width="1.3"/>'), 'Intermediary'],
+    [sw('<path d="M9 2 L14 7 L9 12 L4 7 Z" fill="none" stroke="'+ink+'" stroke-width="1.3"/>'), 'Darknet market'],
+    [sw('<rect x="4.5" y="2.5" width="9" height="9" fill="none" stroke="'+ink+'" stroke-width="1.3"/>'), 'Exchange'],
+    [sw('<circle cx="9" cy="7" r="4.5" fill="none" stroke="'+ink+'" stroke-width="1.3"/><circle cx="9" cy="7" r="2" fill="none" stroke="'+ink+'" stroke-width="1"/>'), 'Mixing service'],
+    [sw('<path d="M9 2 L14.2 11.5 L3.8 11.5 Z" fill="none" stroke="'+ink+'" stroke-width="1.3"/>'), 'Cash-out'],
+    [sw('<circle cx="9" cy="7" r="4.5" fill="none" stroke="'+rc+'" stroke-width="1.5"/><path d="M6.5 4.5 L11.5 9.5 M5.5 7 L9 10.5 M9 3.5 L12.5 7" stroke="'+rc+'" stroke-width="0.9"/>'), 'Seizure or recovery'],
+    [sw('<path d="M1 7 H17" stroke="'+th+'" stroke-width="2"/>'), 'Theft'],
+    [sw('<path d="M1 7 H17" stroke="'+rc+'" stroke-width="1.6" stroke-dasharray="5 3"/>'), CASE_ID === '004' ? 'Return or freeze' : 'Seizure or freeze'],
+    [sw('<path d="M1 7 H17" stroke="'+ink+'" stroke-width="1.5" stroke-dasharray="5 3"/>'), 'Chain-hop'],
+    [sw('<path d="M1 7 H17" stroke="'+ink+'" stroke-width="1.5" stroke-dasharray="1.5 3"/>'), 'Cash-out flow']
+  ];
+  document.getElementById('legendRows').innerHTML = rows.map(r => '<div class="row">' + r[0] + '<span>' + r[1] + '</span></div>').join('');
+}
+buildLegend();
+if (window.matchMedia('(max-width: 900px)').matches) document.getElementById('legend').open = false;
+
+/* --------------------------------- mode -------------------------------- */
+const tabE = document.getElementById('tabExhibit'), tabI = document.getElementById('tabInvestigate');
+function setMode(m){
+  mode = m === 'investigate' ? 'investigate' : 'exhibit';
+  const inv = mode === 'investigate';
+  labelsVisible = !inv; typesVisible = !inv;
+  document.body.classList.toggle('investigate', inv);
+  tabE.setAttribute('aria-pressed', String(!inv));
+  tabI.setAttribute('aria-pressed', String(inv));
+  resetInvestigateReveal();
+  if (inv){ setPlaying(false); simT = tMax; updateCasefile(); }
+  hoverId = null; tip.hidden = true;
+  if (selectedId) showCard(selectedId);
+  renderEntityList();
+  buildCaseNav();
+  updateSelChip();
+  emit('modeChange', mode);
+}
+tabE.addEventListener('click', () => setMode('exhibit'));
+tabI.addEventListener('click', () => setMode('investigate'));
+
+/* ------------------------------ case chrome ---------------------------- */
+const navEl = document.getElementById('caseNav');
+function caseHref(id){
+  const u = new URL(location.href);
+  u.searchParams.set('case', id);
+  if (mode === 'investigate') u.searchParams.set('mode', 'investigate'); else u.searchParams.delete('mode');
+  return u.pathname + u.search;
+}
+function buildCaseNav(){
+  navEl.innerHTML = CASE_ORDER.map(id => {
+    const ci = CASE_INFO[id];
+    return '<a href="' + esc(caseHref(id)) + '"' + (id === CASE_ID ? ' aria-current="page"' : '') + '>'
+      + '<span class="cn">' + id + '</span><span class="ct">' + esc(ci.name) + '</span>'
+      + '<span class="cm">' + esc(ci.year + ' · ' + ci.amount) + '</span></a>';
+  }).join('');
+}
+buildCaseNav();
+document.title = INFO.title + ' · Peel Chain';
+document.getElementById('caseTitle').textContent = INFO.title;
+document.getElementById('caseBasis').textContent = INFO.basis;
+document.getElementById('caseSub').textContent = DATA.meta.title || '';
+document.getElementById('footNote').textContent = STYLE_NOTE;
+document.getElementById('srcDisc').textContent = DATA.meta.disclaimer || '';
+(function buildSources(){
+  const GOV = /(^|\.)(justice\.gov|ic3\.gov|treasury\.gov|fbi\.gov|uscourts\.gov)$/;
+  const gov = [], other = [];
+  for (const s of (DATA.meta.sources || [])){
+    let host = '';
+    try { host = new URL(s.url).hostname; } catch(e){}
+    (GOV.test(host) ? gov : other).push(s);
+  }
+  const li = s => '<li><a href="' + esc(s.url) + '" target="_blank" rel="noopener">' + esc(s.name) + '</a></li>';
+  let html = '';
+  if (gov.length) html += '<h3>Court and government records</h3><ol>' + gov.map(li).join('') + '</ol>';
+  if (other.length) html += '<h3>' + (gov.length ? 'Analysis and reporting' : 'Public analysis and reporting') + '</h3><ol>' + other.map(li).join('') + '</ol>';
+  document.getElementById('srcList').innerHTML = html;
+})();
+document.getElementById('openSources').addEventListener('click', () => {
+  const box = document.getElementById('sourcesBox');
+  box.open = true;
+  box.scrollIntoView({behavior: reduced() ? 'auto' : 'smooth', block:'start'});
+  box.querySelector('summary').focus({preventScroll:true});
+});
+
+/* ---------------------------- dialogs helpers -------------------------- */
+let lastFocus = null;
+function trapFocus(dlg, ev){
+  if (ev.key !== 'Tab') return;
+  const f = [...dlg.querySelectorAll('button, a[href], summary')].filter(el => el.offsetParent !== null);
+  if (!f.length) return;
+  const first = f[0], last = f[f.length-1];
+  if (ev.shiftKey && document.activeElement === first){ ev.preventDefault(); last.focus(); }
+  else if (!ev.shiftKey && document.activeElement === last){ ev.preventDefault(); first.focus(); }
+}
+
+/* ------------------------------ title card ----------------------------- */
+const tc = document.getElementById('titlecard');
+(function titleCard(){
+  document.getElementById('tcBasis').textContent = INFO.basis;
+  document.getElementById('tcH').textContent = INFO.title;
+  document.getElementById('tcTitle').textContent = DATA.meta.title || '';
+  document.getElementById('tcStyle').textContent = 'Demonstrative reconstruction, not evidence. ' + STYLE_NOTE;
+  document.getElementById('tcDisc').textContent = DATA.meta.disclaimer || '';
+  const others = CASE_ORDER.filter(id => id !== CASE_ID);
+  document.getElementById('tcOther').innerHTML = 'Other cases: ' + others.map(id =>
+    '<a href="?case=' + id + '">' + esc(CASE_INFO[id].title) + '</a>').join(', ');
+})();
+function openTitleCard(){
+  lastFocus = document.activeElement;
+  tc.hidden = false; tc.classList.remove('hide');
+  setPlaying(false);
+  document.getElementById('tcPlay').focus();
+}
+function dismissTitle(after){
+  tc.classList.add('hide');
+  setTimeout(() => { tc.hidden = true; }, reduced() ? 0 : 350);
+  if (after) after();
+}
+tc.addEventListener('keydown', ev => {
+  trapFocus(tc, ev);
+  if (ev.key === 'Escape'){ dismissTitle(() => { simT = tMax; cv.focus({preventScroll:true}); }); }
+});
+document.getElementById('tcPlay').addEventListener('click', () => dismissTitle(() => {
+  if (mode !== 'exhibit') setMode('exhibit');
+  simT = tMin; userMovedCamera = false; fitView(false); setPlaying(true);
+  playBtn.focus({preventScroll:true});
+}));
+document.getElementById('tcSkip').addEventListener('click', () => dismissTitle(() => {
+  if (mode !== 'exhibit') setMode('exhibit');
+  simT = tMax; fitView(false); cv.focus({preventScroll:true});
+}));
+document.getElementById('tcInv').addEventListener('click', () => dismissTitle(() => {
+  setMode('investigate'); fitView(false);
+  document.getElementById('panel').focus({preventScroll:true});
+}));
+document.getElementById('reopenIntro').addEventListener('click', openTitleCard);
+
+/* ================== investigate mode: tag, grade, reveal ================ */
+// score = 100 * (weights of correctly tagged entities) / (total weight).
+// Untagged = 0 credit. The core entities of each case carry extra weight.
+const KEY_WEIGHTS = {
+  '001': { w_1cga4s:6, usg_seizure:5, alphabay:4, post_arrest:3 },
+  '002': { lazarus:6, tornado:5, sz_fbi:4, usdc25m:3 },
+  '003': { exploiter1:6, thorchain:5, exch:4, sz_meth:3 },
+  '004': { atk_eth:6, multisig:5, tether_frz:4, ret_eth:3 }
+};
+const KEY_WEIGHT  = (DATA.meta && DATA.meta.keyWeights) || KEY_WEIGHTS[CASE_ID] || {};
+const TYPE_WEIGHT = { hacker_wallet:3, seizure:2.5, darknet:2, mixer:2, exchange:1.5, cashout:1.5, intermediary:1 };
+const entWeight = e => KEY_WEIGHT[e.id] || TYPE_WEIGHT[e.type] || 1;
+const GRADE_BANDS = [[97,'A+'],[90,'A'],[75,'B'],[60,'C'],[45,'D'],[0,'F']];
+const HINTS_BY_CASE = {
+  '001': {
+    ch1_breach:  'August 2016. A trading platform is drained in about 2,000 unauthorized transfers to one outside address. Identify the victim and the destination.',
+    ch2_dormant: 'For months nothing moves. The value sits dormant under a single keyholder.',
+    ch3_alphabay:'Early 2017. Small sums route through a marketplace with no customer identification, deposited and withdrawn to break the trail.',
+    ch4_peel:    '2017 to 2019. Thin slices peel off hop by hop and land at trading venues opened under fictitious names.',
+    ch5_mixers:  '2019 to 2021. Obfuscation services: coins go in linked and come out unlinked. Some value hops to other chains.',
+    ch6_cashout: '2019 to 2021. Value leaves the ledger as bullion, retail gift cards, bank deposits and cash through middlemen.',
+    ch7_seizure: 'January and February 2022. A warrant on a cloud-storage account recovers private keys, and the bulk of the funds moves under new control.',
+    ch8_judgment:'2023 and 2024. Guilty pleas, sentencing and forfeiture of what remained.'
+  },
+  '002': {
+    ch1: 'March 2022. A cross-chain bridge is drained in two transactions signed with a quorum of stolen validator keys. Identify the destination.',
+    ch2: 'Late March 2022. A stablecoin tranche is swapped away on decentralized venues before its issuer can freeze it.',
+    ch3: 'Late March to April 2022. Tranches land at deposit addresses of centralized trading venues; one venue later freezes 86 accounts.',
+    ch4: 'April 2022. Regular 100 ETH deposits into a smart-contract mixing pool, twenty to thirty a day.',
+    ch5: 'April to May 2022. The small increments give way to tranches in the thousands; nearly the whole theft passes through the pool.',
+    ch6: 'April to August 2022. Mixed ETH is swapped for wrapped bitcoin, bridged, and mixed a second time on the Bitcoin chain.',
+    ch7: 'May 2022 to February 2023. Sanctions and recoveries: two mixers designated, about $30M seized, a foreign seizure.'
+  },
+  '003': {
+    ch1: 'February 2025. A vendor developer’s workstation is compromised. Nineteen days later a routine cold-wallet transfer signs the balance over to one outside address. Identify the victim and the destination.',
+    ch2: 'Hours after the theft. Staked-asset tokens are swapped to the base asset and about half a million coins scatter across ~50 first-hop wallets in two hours.',
+    ch3: 'First days. A token issuer recovers its coins through a withdrawal delay; a stablecoin issuer and industry partners freeze what they can reach.',
+    ch4: 'Late February to early March 2025. The first-hop wallets drain one by one into a cross-chain swap protocol; nearly three-quarters of the haul becomes bitcoin.',
+    ch5: 'February to March 2025. A swap service with no identity checks keeps converting the loot despite direct requests to stop.',
+    ch6: 'March to April 2025. The bitcoin phase: coinjoins, mixer tranches, bridges to other chains, then peer-to-peer venues and OTC desks.',
+    ch7: 'April to May 2025. The swap service announces a shutdown; German police seize its servers and the funds held on them.'
+  },
+  '004': {
+    ch1: 'August 2021. No stolen key: a crafted cross-chain message makes a bridge contract replace its own signer, and three chains are drained. Identify the source contracts and the attacker addresses.',
+    ch2: '10 to 11 August 2021. A stablecoin issuer blacklists $33M within about twenty minutes; a bystander who warns the attacker about the freeze is tipped 13.37 ETH.',
+    ch3: '11 August 2021. The victim protocol publishes recovery addresses in an open letter; the attacker answers with a self-interview in zero-value transactions.',
+    ch4: '12 to 13 August 2021. Returns begin chain by chain, about $256M by the 12th.',
+    ch5: '13 to 19 August 2021. The attacker is offered a bounty; the remaining assets sit in a jointly controlled account.',
+    ch6: '23 August 2021. The attacker publishes the private key to their share of the joint account.',
+    ch7: '24 to 25 August 2021. The frozen stablecoins are released and users are made whole, fifteen days after the theft.'
+  }
+};
+const HINTS = (DATA.meta && DATA.meta.hints) || HINTS_BY_CASE[CASE_ID] || {};
+const BEST_KEY = 'peelchain_case' + CASE_ID + '_best';
+
+const tags = new Map();
+let sar = null;                 // last grading result
+let reveal = null;
+let revealDone = false;
+const revealMarks = new Map();
+const cfHint = document.getElementById('cfHint');
+const cfCount = document.getElementById('cfCount');
+const cfBest = document.getElementById('cfBest');
+const cfStatus = document.getElementById('cfStatus');
+const fileSarBtn = document.getElementById('fileSar');
+const verdictEl = document.getElementById('verdict');
+
+const TAG_ORDER = ['hacker_wallet','intermediary','darknet','exchange','mixer','cashout','seizure'];
+(function buildTagBox(){
+  const grid = document.querySelector('#tagBox .tb-grid');
+  for (const t of TAG_ORDER){
+    const b = document.createElement('button');
+    b.type = 'button'; b.textContent = TYPE_NAMES[t]; b.dataset.t = t;
+    b.setAttribute('aria-pressed', 'false');
+    b.addEventListener('click', () => {
+      if (!cardId) return;
+      tags.set(cardId, t);
+      onTagsChanged(); updateTagBox();
+    });
+    grid.appendChild(b);
+  }
+  document.getElementById('tagClear').addEventListener('click', () => {
+    if (!cardId) return;
+    tags.delete(cardId);
+    onTagsChanged(); updateTagBox();
+  });
+})();
+function updateTagBox(){
+  const cur = cardId ? tags.get(cardId) : null;
+  for (const b of document.querySelectorAll('#tagBox .tb-grid button'))
+    b.setAttribute('aria-pressed', String(b.dataset.t === cur));
+  document.getElementById('tagClear').disabled = !cur;
+}
+function onTagsChanged(){
+  if (reveal || revealDone) resetInvestigateReveal();
+  sar = null; cfStatus.textContent = '';
+  updateCasefile();
+  renderEntityList();
+  updateSelChip();
+}
+function resetInvestigateReveal(){
+  reveal = null; revealDone = false; revealMarks.clear();
+  cfStatus.textContent = '';
+  closeVerdict(false);
+  if (mode === 'investigate'){
+    labelsVisible = false; typesVisible = false;
+    if (cardId && !card.hidden) showCard(cardId);
+  }
+}
+function loadBest(){
+  try{ const v = JSON.parse(localStorage.getItem(BEST_KEY)); return (v && isFinite(v.pct)) ? v : null; }
+  catch(e){ return null; }
+}
+function saveBest(v){ try{ localStorage.setItem(BEST_KEY, JSON.stringify(v)); }catch(e){} }
+function updateCasefile(){
+  cfCount.textContent = tags.size + ' of ' + DATA.entities.length;
+  const b = loadBest();
+  cfBest.textContent = b ? (b.grade + ' · ' + b.pct.toFixed(1) + '%') : 'none yet';
+}
+let hintChId = 'unset';
+function updateHint(){
+  const c = chapterAt(simT); const id = c ? c.id : null;
+  if (id === hintChId) return; hintChId = id;
+  cfHint.textContent = (id && HINTS[id]) || 'Scrub the timeline, inspect the flows, tag every entity you can, then submit your write-up.';
+}
+
+/* ------------------------------- entity list ---------------------------- */
+const entityList = document.getElementById('entityList');
+const listOrder = [...nodeArr].sort((a,b) => (a.firstT - b.firstT) || (a.ent.id < b.ent.id ? -1 : 1));
+function renderEntityList(){
+  document.getElementById('entitiesSummary').textContent = 'All entities (' + nodeArr.length + ')';
+  entityList.innerHTML = listOrder.map(n => {
+    const id = n.ent.id;
+    let name, t, cls = 'el-t';
+    if (blind()){
+      name = pseudoAddr(n.ent);
+      const tg = tags.get(id);
+      t = tg ? TYPE_NAMES[tg] : 'untagged';
+      if (tg) cls += ' tagged';
+    } else {
+      name = n.ent.label; t = TYPE_NAMES[n.ent.type] || n.ent.type;
+    }
+    return '<li><button type="button" data-id="' + esc(id) + '"' + (id === selectedId ? ' aria-current="true"' : '') + '>'
+      + '<span class="el-n' + (blind() ? ' mono' : '') + '">' + esc(name) + '</span><span class="' + cls + '">' + esc(t) + '</span></button></li>';
+  }).join('');
+}
+function markListCurrent(){
+  for (const b of entityList.querySelectorAll('button')){
+    if (b.dataset.id === selectedId) b.setAttribute('aria-current', 'true'); else b.removeAttribute('aria-current');
+  }
+}
+entityList.addEventListener('click', ev => {
+  const b = ev.target.closest('button[data-id]');
+  if (!b) return;
+  selectNode(b.dataset.id, {focus:true});
+});
+renderEntityList();
+
+/* --------------------------------- grading ------------------------------ */
+function gradeSAR(){
+  const results = new Map(); let got = 0, tot = 0;
+  for (const e of DATA.entities){
+    const w = entWeight(e), guess = tags.get(e.id) || null, ok = guess === e.type;
+    results.set(e.id, {truth:e.type, guess, ok, w});
+    tot += w; if (ok) got += w;
+  }
+  const pct = 100 * got / tot;
+  const grade = GRADE_BANDS.find(g => pct >= g[0])[1];
+  return {results, pct, grade, debrief: makeDebrief(results)};
+}
+const SPINE_KEYS = {
+  '001': [['w_1cga4s','the primary wallet (1CGA4s…)'],['alphabay','AlphaBay'],['usg_seizure','the government seizure wallet']],
+  '002': [['lazarus','the attacker wallet (0x098b…2f96)'],['tornado','Tornado Cash'],['sz_fbi','the US seizure wallet']],
+  '003': [['exploiter1','the exploiter wallet (0x4766…86e2)'],['thorchain','THORChain'],['exch','eXch']],
+  '004': [['atk_eth','the attacker wallet (0xC8a6…3963)'],['multisig','the joint-custody multisig'],['tether_frz','the Tether freeze']]
+};
+const SPINE = (DATA.meta && DATA.meta.spineKeys) || SPINE_KEYS[CASE_ID] || [];
+const LOWER = t => TYPE_NAMES[t].toLowerCase();
+function joinNames(arr){ return arr.length < 2 ? arr.join('') : arr.slice(0,-1).join(', ') + ' and ' + arr[arr.length-1]; }
+function makeDebrief(results){
+  const s = [];
+  const keys = SPINE.filter(([id]) => results.has(id));
+  const missed = keys.filter(([id]) => !results.get(id).ok);
+  if (keys.length && !missed.length){
+    s.push('The key entities held: you correctly identified ' + joinNames(keys.map(k => k[1])) + '.');
+  } else if (missed.length){
+    s.push('The write-up missed key entities: ' + missed.map(([id, name]) => {
+      const r = results.get(id);
+      if (!r.guess) return name + ' was left untagged';
+      const g = LOWER(r.guess);
+      return name + ' was tagged as ' + (/^[aeiou]/.test(g) ? 'an ' : 'a ') + g;
+    }).join('; ') + '.');
+  }
+  const conf = new Map();
+  for (const r of results.values()) if (r.guess && !r.ok){
+    const k = r.truth + '>' + r.guess; conf.set(k, (conf.get(k)||0) + 1);
+  }
+  let top = null;
+  for (const [k, n] of conf) if (!top || n > top.n) top = {k, n};
+  if (top && top.n >= 2){
+    const [t, g] = top.k.split('>');
+    s.push('Most common error: ' + top.n + ' ' + TYPE_PLURAL[t] + ' were tagged as ' + TYPE_PLURAL[g] + '.');
+  }
+  const un = [...results.values()].filter(r => !r.guess).length;
+  if (un > 0 && s.length < 3){
+    s.push(un + (un === 1 ? ' entity was' : ' entities were') + ' left untagged and scored zero.');
+  }
+  if (s.length < 2) s.push('No repeated pattern of errors.');
+  return s.slice(0, 3).join(' ');
+}
+
+/* ------------------------------ verdict dialog -------------------------- */
+function showVerdict(res, isBest){
+  document.getElementById('vGrade').textContent = res.grade;
+  document.getElementById('vPct').textContent =
+    'Weighted accuracy ' + res.pct.toFixed(1) + '% · ' + tags.size + ' of ' + DATA.entities.length + ' entities tagged';
+  document.getElementById('vDebrief').textContent = res.debrief;
+  const per = {};
+  for (const e of DATA.entities){
+    (per[e.type] = per[e.type] || {ok:0, n:0}).n++;
+    if (res.results.get(e.id).ok) per[e.type].ok++;
+  }
+  document.getElementById('vTable').innerHTML =
+    '<caption class="sr">Correct tags by entity type</caption>' + TAG_ORDER
+    .filter(t => per[t])
+    .map(t => '<tr><td>' + TYPE_NAMES[t] + '</td><td class="n">' + per[t].ok + ' of ' + per[t].n + ' correct</td></tr>')
+    .join('');
+  const b = loadBest();
+  document.getElementById('vBest').textContent = isBest
+    ? 'New best score for this case on this device.'
+    : 'Best score on this device: ' + (b ? b.grade + ' · ' + b.pct.toFixed(1) + '%' : 'none');
+  lastFocus = fileSarBtn;
+  verdictEl.hidden = false;
+  document.getElementById('vReveal').focus();
+}
+function closeVerdict(restore){
+  if (verdictEl.hidden) return;
+  verdictEl.hidden = true;
+  if (restore && lastFocus && lastFocus.focus) lastFocus.focus({preventScroll:true});
+}
+fileSarBtn.addEventListener('click', () => {
+  if (mode !== 'investigate' || reveal) return;
+  if (revealDone) resetInvestigateReveal();
+  sar = gradeSAR();
+  const b = loadBest();
+  const isBest = !b || sar.pct > b.pct;
+  if (isBest) saveBest({pct:sar.pct, grade:sar.grade, when:new Date().toISOString().slice(0,10)});
+  showVerdict(sar, isBest);
+  updateCasefile();
+});
+document.getElementById('vAmend').addEventListener('click', () => closeVerdict(true));
+document.getElementById('vReveal').addEventListener('click', () => {
+  closeVerdict(false);
+  if (sar) startReveal();
+  fileSarBtn.focus({preventScroll:true});
+});
+verdictEl.addEventListener('keydown', ev => {
+  trapFocus(verdictEl, ev);
+  if (ev.key === 'Escape') closeVerdict(true);
+});
+
+/* -------------------------- answer walk (reveal) ------------------------ */
+function startReveal(){
+  setPlaying(false);
+  labelsVisible = true; typesVisible = true;
+  revealMarks.clear(); revealDone = false;
+  const steps = narrSegs.map(s => ({seg:s, ids:[]}));
+  for (const e of DATA.entities){
+    const n = nodes.get(e.id);
+    const t = isFinite(n.firstT) ? n.firstT : tMax;
+    let idx = steps.findIndex(st => t <= st.seg.t1);
+    if (idx < 0) idx = steps.length - 1;
+    steps[idx].ids.push(e.id);
+  }
+  reveal = {seq: steps.filter(st => st.ids.length), i:-1, stepT0:0, stepEnd:-Infinity, marked:0, correct:0, total:0};
+  renderEntityList();
+  if (cardId) showCard(cardId);
+}
+function stepReveal(now){
+  const r = reveal;
+  if (now >= r.stepEnd){
+    if (r.i >= 0) while (r.marked < r.seq[r.i].ids.length) markOne(r.seq[r.i].ids[r.marked++], now, r);
+    r.i++;
+    if (r.i >= r.seq.length){ finishReveal(); return; }
+    const st = r.seq[r.i];
+    const dur = Math.min(2100 + 230 * st.ids.length, 5200);
+    r.stepT0 = now; r.stepEnd = now + dur; r.marked = 0;
+    r.markEvery = (dur * 0.65) / st.ids.length;
+    simT = Math.min(st.seg.t1, tMax);
+    focusOn(st.ids, Math.min(1.5, dur / 2000));
+  }
+  const st = r.seq[r.i];
+  while (r.marked < st.ids.length && now >= r.stepT0 + 350 + r.marked * r.markEvery)
+    markOne(st.ids[r.marked++], now, r);
+  cfStatus.textContent = 'Showing answers, chapter ' + (st.seg.n + 1) + ': ' + r.correct + ' of ' + r.total + ' correct so far';
+}
+function markOne(id, now, r){
+  const res = sar.results.get(id);
+  revealMarks.set(id, {at: now, ok: res.ok, guess: res.guess});
+  r.total++; if (res.ok) r.correct++;
+}
+function finishReveal(){
+  reveal = null; revealDone = true;
+  simT = tMax;
+  fitView(true);
+  const ok = [...sar.results.values()].filter(x => x.ok).length;
+  cfStatus.textContent = 'Graded ' + sar.grade + ' · ' + sar.pct.toFixed(1) + '% · ' + ok + ' of ' + DATA.entities.length + ' correct. Red crosses are wrong tags, grey crosses are untagged. Change any tag to hide the labels again.';
+}
+
+/* -------------------- canvas layer: tags and answer marks --------------- */
+function drawInvestigateLayer(now){
+  if (mode !== 'investigate') return;
+  if (reveal) stepReveal(now);
+  ctx.textAlign = 'center';
+  if (reveal || revealDone){
+    for (const [id, m] of revealMarks){
+      const n = nodes.get(id);
+      const a = reduced() ? 1 : clamp((now - m.at) / 350, 0, 1);
+      if (a <= 0) continue;
+      const s = worldToScreen(n.x, n.y);
+      if (s.x < -60 || s.x > W+60 || s.y < -60 || s.y > H+60) continue;
+      ctx.globalAlpha = a;
+      ctx.font = '700 15px "Instrument Sans", system-ui, sans-serif';
+      haloText(m.ok ? '✓' : '✗', s.x, s.y - n.r*view.scale - 7, m.ok ? C.recover : (m.guess ? C.theft : C.muted));
+      if (!m.ok && m.guess){
+        ctx.font = MONO_FONT;
+        haloText('tagged ' + LOWER(m.guess), s.x, s.y - n.r*view.scale - 24, C.theft);
+      }
+      ctx.globalAlpha = 1;
+    }
+  } else {
+    ctx.font = MONO_FONT;
+    for (const [id, t] of tags){
+      const n = nodes.get(id); if (!n) continue;
+      const s = worldToScreen(n.x, n.y);
+      if (s.x < -60 || s.x > W+60 || s.y < -60 || s.y > H+60) continue;
+      haloText(LOWER(t), s.x, s.y + n.r*view.scale + 15, C.accent);
+    }
+  }
+  updateHint();
+}
+
+/* -------------------------------- public API ---------------------------- */
+window.PeelChain = {
+  data: DATA,
+  caseId: CASE_ID,
+  setMode,
+  on(ev, cb){ if (listeners[ev]) listeners[ev].push(cb); },
+  engine: {
+    getTime: () => simT,
+    setTime(t){ simT = clamp(typeof t === 'string' ? pd(t) : t, tMin, tMax); },
+    play(){ if (simT >= tMax - DAY) simT = tMin; setPlaying(true); },
+    pause(){ setPlaying(false); },
+    isPlaying: () => playing,
+    setPlaySeconds(s){ playSeconds = Math.max(5, s); },
+    timeRange: () => ({tMin, tMax}),
+    currentChapter: () => chapterAt(simT),
+    chapters, edges, nodes,
+    focusOn, fitView,
+    nodeAt: hitTest,
+    getNodeScreenPos(id){
+      const n = nodes.get(id); if (!n) return null;
+      const s = worldToScreen(n.x, n.y);
+      return {x:s.x, y:s.y, r:n.r*view.scale};
+    },
+    selectNode,
+    layoutHash
+  }
+};
+
+if (params.get('mode') === 'investigate'){
+  tc.hidden = true;
+  setMode('investigate');
+} else {
+  requestAnimationFrame(() => document.getElementById('tcPlay').focus({preventScroll:true}));
+}
+updateCasefile();
+requestAnimationFrame(t => { lastFrame = t; draw(t); });
+</script>
+</body>
+</html>
