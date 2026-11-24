@@ -4,24 +4,24 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Anish Majumdar</title>
-<meta name="description" content="Anish Majumdar: data and risk analyst. This page is a small database of my work; query it.">
+<meta name="description" content="Anish Majumdar: data analyst since 2019, in crypto since 2023. Query my work in the browser.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600&family=Martian+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
 :root{
   --paper:#ECEDE8; --ink:#14171C; --muted:#5D6470; --line:#CFD2CA;
-  --accent:#2E46D1; --accent-ink:#FFFFFF; --panel:#FAFAF7; --sel:#DCE1FA; --err:#A3302A;
+  --accent:#2E46D1; --accent-ink:#FFFFFF; --bar:rgba(46,70,209,.16); --panel:#FAFAF7; --sel:#DCE1FA; --err:#A3302A;
 }
 @media (prefers-color-scheme: dark){
   :root:not([data-theme="light"]){
     --paper:#15171B; --ink:#E6E7E3; --muted:#9097A2; --line:#2C3038;
-    --accent:#8A9BFF; --accent-ink:#0E1120; --panel:#1C1F25; --sel:#2A3160; --err:#F08A84;
+    --accent:#8A9BFF; --accent-ink:#0E1120; --bar:rgba(138,155,255,.22); --panel:#1C1F25; --sel:#2A3160; --err:#F08A84;
   }
 }
 :root[data-theme="dark"]{
   --paper:#15171B; --ink:#E6E7E3; --muted:#9097A2; --line:#2C3038;
-  --accent:#8A9BFF; --accent-ink:#0E1120; --panel:#1C1F25; --sel:#2A3160; --err:#F08A84;
+  --accent:#8A9BFF; --accent-ink:#0E1120; --bar:rgba(138,155,255,.22); --panel:#1C1F25; --sel:#2A3160; --err:#F08A84;
 }
 *{box-sizing:border-box}
 html{-webkit-text-size-adjust:100%}
@@ -31,67 +31,75 @@ a{color:inherit; text-decoration-color:var(--accent); text-decoration-thickness:
 a:hover{color:var(--accent)}
 :focus-visible{outline:2px solid var(--accent); outline-offset:2px; border-radius:3px}
 .sr-only{position:absolute; width:1px; height:1px; overflow:hidden; clip:rect(0 0 0 0); white-space:nowrap}
-.mono{font-family:"Martian Mono",ui-monospace,monospace}
-
 .wrap{max-width:1180px; margin:0 auto; padding:0 16px}
 
-/* hero: who on the left, the database on the right */
-.hero{display:grid; grid-template-columns:minmax(0,5fr) minmax(0,7fr); gap:56px; padding:88px 0 72px; align-items:start}
-@media (max-width:900px){.hero{grid-template-columns:1fr; gap:36px; padding-top:56px}}
-.who h1{font-weight:600; font-size:clamp(2.5rem,5.4vw,4rem); line-height:1; letter-spacing:-.035em; margin:0 0 22px}
-.who p{font-size:1.2rem; line-height:1.5; margin:0 0 18px; max-width:26em}
-.who .hint{color:var(--muted); font-size:1rem}
-.contact{list-style:none; padding:0; margin:28px 0 0; display:flex; flex-wrap:wrap; gap:6px 22px; font-weight:500}
+/* hero: who on the left (40%), the data on the right (60%) */
+.hero{display:grid; grid-template-columns:minmax(0,4fr) minmax(0,6fr); gap:56px; padding:80px 0 64px; align-items:start}
+@media (max-width:900px){.hero{grid-template-columns:1fr; gap:36px; padding-top:48px}}
+.who h1{font-weight:600; font-size:clamp(2.5rem,5vw,3.75rem); line-height:1; letter-spacing:-.035em; margin:0 0 22px}
+.intro{font-size:1.25rem; line-height:1.5; margin:0; max-width:24em}
+.contact{list-style:none; padding:0; margin:26px 0 0; display:flex; flex-wrap:wrap; gap:6px 22px; font-weight:500}
+.stack{margin:32px 0 0; padding:20px 0 0; border-top:1px solid var(--line); display:grid; grid-template-columns:auto 1fr; gap:8px 18px; font-size:.96rem}
+.stack dt{color:var(--muted)}
+.stack dd{margin:0}
 
-/* the console */
+/* the console: results are the loudest thing in it */
 .console{background:var(--panel); border:1px solid var(--line); border-radius:10px; overflow:hidden}
-.presets{display:flex; flex-wrap:wrap; gap:6px; padding:12px 12px 0}
+.presets{display:flex; flex-wrap:wrap; gap:6px; padding:12px 14px 0}
 .presets button{
-  font:500 .9rem/1 "Instrument Sans",sans-serif; color:var(--ink); background:transparent;
+  font:500 .92rem/1 "Instrument Sans",sans-serif; color:var(--ink); background:transparent;
   border:1px solid var(--line); border-radius:999px; padding:8px 12px; cursor:pointer;
 }
 .presets button:hover{border-color:var(--accent)}
 .presets button[aria-pressed="true"]{background:var(--accent); color:var(--accent-ink); border-color:var(--accent)}
+.out{overflow-x:auto; padding:6px 0 4px; min-height:180px}
+.out table{border-collapse:collapse; width:100%; font-variant-numeric:tabular-nums}
+.out th{text-align:left; font:500 .8rem/1.3 "Martian Mono",ui-monospace,monospace; color:var(--muted); padding:12px 18px 8px; border-bottom:1px solid var(--line); white-space:nowrap}
+.out td{padding:12px 18px; border-bottom:1px solid var(--line); vertical-align:middle; font-size:1.05rem}
+.out tr:last-child td{border-bottom:0}
+.out td.num{text-align:right; font:500 1rem/1.3 "Martian Mono",ui-monospace,monospace; white-space:nowrap}
+.out td.null{color:var(--muted); font-style:italic; font-size:.95rem}
+.out td.bar{position:relative; min-width:180px}
+.out td.bar .fill{position:absolute; left:18px; top:9px; bottom:9px; background:var(--bar); border-radius:3px}
+.out td.bar span{position:relative; padding-left:10px; font:500 1rem/1.3 "Martian Mono",ui-monospace,monospace}
+.out .msg{padding:18px; color:var(--muted); margin:0}
+.sqlbox{border-top:1px solid var(--line)}
+.sqlbox summary{cursor:pointer; padding:11px 18px; color:var(--muted); font-size:.92rem; list-style:none}
+.sqlbox summary::-webkit-details-marker{display:none}
+.sqlbox summary:hover{color:var(--ink)}
 textarea{
-  display:block; width:100%; min-height:200px; resize:vertical; white-space:pre; overflow-x:auto; margin:0; border:0; border-bottom:1px solid var(--line);
-  background:transparent; color:var(--ink); padding:16px 18px; font:400 .86rem/1.65 "Martian Mono",ui-monospace,monospace;
-  tab-size:2;
+  display:block; width:100%; min-height:170px; resize:vertical; margin:0; border:0; border-top:1px solid var(--line);
+  background:transparent; color:var(--ink); padding:14px 18px; font:400 .82rem/1.65 "Martian Mono",ui-monospace,monospace;
+  white-space:pre; overflow-x:auto;
 }
 textarea:focus-visible{outline:none; box-shadow:inset 3px 0 0 var(--accent)}
-.bar{display:flex; justify-content:space-between; align-items:center; gap:12px; padding:10px 12px 10px 18px; border-bottom:1px solid var(--line)}
-.status{color:var(--muted); font-size:.92rem}
+.bar-row{display:flex; justify-content:space-between; align-items:center; gap:12px; padding:10px 12px 10px 18px; border-top:1px solid var(--line)}
+.status{color:var(--muted); font-size:.9rem}
 .status.err{color:var(--err)}
-.run{font:600 .95rem/1 "Instrument Sans",sans-serif; background:var(--ink); color:var(--paper); border:0; border-radius:7px; padding:10px 14px; cursor:pointer; white-space:nowrap}
+.run{font:600 .92rem/1 "Instrument Sans",sans-serif; background:var(--ink); color:var(--paper); border:0; border-radius:7px; padding:10px 14px; cursor:pointer; white-space:nowrap}
 .run kbd{font:inherit; opacity:.6; margin-left:6px; font-weight:500}
 .run:disabled{opacity:.45; cursor:default}
-.out{overflow-x:auto; max-height:360px}
-.out table{border-collapse:collapse; width:100%; font:400 .84rem/1.4 "Martian Mono",ui-monospace,monospace; font-variant-numeric:tabular-nums}
-.out th{position:sticky; top:0; background:var(--panel); text-align:left; font-weight:500; color:var(--muted); padding:10px 18px 8px; border-bottom:1px solid var(--line); white-space:nowrap}
-.out td{padding:9px 18px; border-bottom:1px solid var(--line); vertical-align:top}
-.out tr:last-child td{border-bottom:0}
-.out .num{text-align:right}
-.out .null{color:var(--muted); font-style:italic}
-@media (prefers-reduced-motion:no-preference){
-  .out tbody tr{animation:in .3s ease-out both}
-  @keyframes in{from{opacity:0}to{opacity:1}}
-}
 
-/* case notes */
-.notes{border-top:1px solid var(--line); padding:72px 0 24px}
-.notes > h2,.roles-wrap > h2{font-weight:600; font-size:1.5rem; letter-spacing:-.015em; margin:0 0 8px}
-.lead{color:var(--muted); margin:0 0 40px; max-width:40em}
-.note{display:grid; grid-template-columns:minmax(0,4fr) minmax(0,8fr); gap:8px 56px; padding:32px 0; border-top:1px solid var(--line)}
+/* case notes: an audit-report grid, one figure per note on the left rail */
+.notes{border-top:1px solid var(--line); padding:64px 0 16px}
+h2{font-weight:600; font-size:1.5rem; letter-spacing:-.015em; margin:0 0 8px}
+.lead{color:var(--muted); margin:0 0 36px; max-width:40em}
+.note{display:grid; grid-template-columns:minmax(0,3fr) minmax(0,7fr); gap:10px 56px; padding:34px 0; border-top:1px solid var(--line)}
+.note:last-child{border-bottom:1px solid var(--line)}
 @media (max-width:900px){.note{grid-template-columns:1fr}}
-.note h3{font-weight:600; font-size:1.3rem; line-height:1.25; letter-spacing:-.01em; margin:0 0 6px}
-.note .where{color:var(--muted); margin:0}
+.figure{font:500 clamp(1.7rem,3vw,2.3rem)/1.1 "Martian Mono",ui-monospace,monospace; letter-spacing:-.03em; margin:0 0 8px}
+.figcap{color:var(--muted); font-size:.95rem; margin:0; max-width:18em}
+.note h3{font-weight:600; font-size:1.3rem; line-height:1.25; letter-spacing:-.01em; margin:0 0 4px}
+.where{color:var(--muted); margin:0 0 12px}
 .note .body p{margin:0 0 12px; max-width:40em}
-.note .proof{font-weight:600}
-.actions{display:flex; flex-wrap:wrap; gap:8px 22px; align-items:center; margin-top:4px; font-weight:500}
-.ask{font:500 .95rem/1 "Instrument Sans",sans-serif; color:var(--accent); background:transparent; border:0; padding:6px 0; cursor:pointer; text-decoration:underline; text-decoration-thickness:1.5px; text-underline-offset:3px}
+.sowhat{font-weight:600}
+.actions{display:flex; flex-wrap:wrap; gap:8px 22px; align-items:center; font-weight:500}
+.ask{font:500 1rem/1 "Instrument Sans",sans-serif; color:inherit; background:transparent; border:0; padding:4px 0; cursor:pointer; text-decoration:underline; text-decoration-color:var(--accent); text-decoration-thickness:1.5px; text-underline-offset:3px}
+.ask:hover{color:var(--accent)}
 
-.roles-wrap{padding:56px 0 24px}
+.roles-wrap{padding:56px 0 16px}
 .roles{list-style:none; margin:24px 0 0; padding:0}
-.roles li{display:grid; grid-template-columns:minmax(0,4fr) minmax(0,6fr) auto; gap:4px 56px; padding:12px 0; border-top:1px solid var(--line)}
+.roles li{display:grid; grid-template-columns:minmax(0,3fr) minmax(0,5fr) auto; gap:4px 56px; padding:12px 0; border-top:1px solid var(--line)}
 .roles li:last-child{border-bottom:1px solid var(--line)}
 .roles .org{font-weight:600}
 .roles .t{color:var(--muted)}
@@ -106,60 +114,86 @@ footer{color:var(--muted); padding:40px 0 80px; font-size:.98rem}
 <section class="hero">
   <div class="who">
     <h1>Anish Majumdar</h1>
-    <p>I work out why the numbers moved, and I build the checks that keep them honest: SQL, on-chain data, and AI workflows that a person still signs off.</p>
-    <p class="hint">This page is a small SQLite database of my work, running in your browser. Pick a question or write your own query.</p>
+    <p class="intro">Data analyst since 2019, in crypto since 2023. I check why a number moved before anyone builds a plan on it.</p>
     <ul class="contact">
       <li><a href="mailto:anish.majumdar123@gmail.com">anish.majumdar123@gmail.com</a></li>
       <li><a href="https://www.linkedin.com/in/anish-majumdar-615633187">LinkedIn</a></li>
     </ul>
+    <dl class="stack">
+      <dt>Data</dt><dd>SQL (Spark SQL, Trino, DuckDB, DuneSQL), Python with pandas, Databricks, Superset, Mixpanel</dd>
+      <dt>On-chain</dt><dd>Arkham, block explorers</dd>
+      <dt>AI and ops</dt><dd>Claude Code and Codex agents, n8n</dd>
+    </dl>
   </div>
 
   <div class="console" id="console">
-    <div class="presets" role="toolbar" aria-label="Example questions" id="presets"></div>
-    <label class="sr-only" for="q">SQL query</label>
-    <textarea id="q" wrap="off" spellcheck="false" autocapitalize="off" autocomplete="off"></textarea>
-    <div class="bar">
-      <span class="status" id="status" role="status">Loading SQLite…</span>
-      <button class="run" id="run" disabled>Run query<kbd id="kbd">⌘↵</kbd></button>
-    </div>
+    <div class="presets" role="toolbar" aria-label="Questions to run" id="presets"></div>
     <div class="out" id="out" aria-live="polite"></div>
+    <details class="sqlbox" id="sqlbox">
+      <summary>SQLite, running in your browser. Open to edit the query.</summary>
+      <label class="sr-only" for="q">SQL query</label>
+      <textarea id="q" wrap="off" spellcheck="false" autocapitalize="off" autocomplete="off"></textarea>
+      <div class="bar-row">
+        <span class="status" id="status" role="status">Loading SQLite…</span>
+        <button class="run" id="run" disabled>Run query<kbd id="kbd">⌘↵</kbd></button>
+      </div>
+    </details>
   </div>
 </section>
 
 <section class="notes" aria-labelledby="notes-h">
   <h2 id="notes-h">Case notes</h2>
-  <p class="lead">Two pieces of work from my job and two I built on my own. Work figures are rounded or relative; the full versions are in my CV.</p>
+  <p class="lead">Three pieces of work from my job and two I built on my own. Work figures are rounded or relative.</p>
 
   <article class="note">
-    <div><h3>A listing desk run by an AI agent, approved by a person</h3><p class="where">CoinDCX</p></div>
+    <div><p class="figure">4–5 h → ~1 h</p><p class="figcap">hands-on listing review per day, my estimate</p></div>
     <div class="body">
+      <h3>A listing desk run by an AI agent, approved by a person</h3>
+      <p class="where">CoinDCX</p>
       <p>The agent prepares each token-listing pass. Deterministic checks confirm the exact contract and screen for sell-blocks, freeze or confiscation rights and punitive taxes. A person approves every production write after a dry run, and each write is read back and saved as an audit receipt. Each of four listing incidents became a permanent guard.</p>
-      <p class="proof">Hands-on review went from 4–5 hours a day to about one, by my estimate.</p>
-      <div class="actions"><button class="ask" data-preset="desk">Query the desk</button></div>
+      <p class="sowhat">From November 2026 the desk ran this way, from a runbook I wrote.</p>
+      <div class="actions"><button class="ask" data-preset="desk">See who decides what</button></div>
     </div>
   </article>
 
   <article class="note">
-    <div><h3>Reading the numbers before trusting them</h3><p class="where">CoinDCX</p></div>
+    <div><p class="figure">57.7%</p><p class="figcap">of a weekly volume drop came from fewer traders</p></div>
     <div class="body">
-      <p>When weekly volume fell, I split the drop into trader count, orders per trader and order size, reconciled it to cohort movements and checked it against six other venues on matched days. Most of it was fewer traders, not less trading by the ones who stayed.</p>
-      <p>When the trading fee went up in steps, revenue rose and the headline said it worked. Splitting by trader segment showed the heaviest 1% of traders made over half of each month’s volume, and they had cheaper venues to move to. I recommended holdout tests before any future fee change. Elsewhere I found order times stored in local time but labelled UTC, which had put a peak-hours plan several hours off.</p>
-      <div class="actions"><button class="ask" data-preset="volume">Query the volume drop</button><button class="ask" data-preset="fees">Query the fee steps</button></div>
+      <h3>Why volume fell</h3>
+      <p class="where">CoinDCX</p>
+      <p>I split the drop into trader count, orders per trader and order size, reconciled the split to cohort movements and checked it against six other venues on matched days. Most of the fall was traders leaving, not less trading by the ones who stayed.</p>
+      <div class="actions"><button class="ask" data-preset="volume">Run the breakdown</button></div>
     </div>
   </article>
 
   <article class="note">
-    <div><h3>Peel Chain</h3><p class="where">Own project</p></div>
+    <div><p class="figure">5.5 h</p><p class="figcap">how far off a peak-hours plan was</p></div>
     <div class="body">
-      <p>Laundering trails from four major crypto hacks (Bitfinex, Ronin, Bybit, Poly Network), rebuilt from public court records and press releases as interactive exhibits. Watch the walkthrough, then switch to investigate mode: the labels disappear and you tag the exchanges, mixers and cash-out points yourself. Intermediate hops are stylised, and the title card says so.</p>
+      <h3>Two numbers that looked fine</h3>
+      <p class="where">CoinDCX</p>
+      <p>Order times were stored in local time but labelled UTC, which had put the growth plan’s peak-activity window 5.5 hours off. I corrected it and wrote down the timestamp basis so the next analysis starts from it.</p>
+      <p>Separately, the trading fee rose in steps and revenue went up, so the headline said it worked. Split by trader segment, the heaviest 1% of traders made 53–68% of monthly volume, and they had cheaper venues to move to.</p>
+      <p class="sowhat">I recommended holdout tests before any further fee change.</p>
+      <div class="actions"><button class="ask" data-preset="fees">See the fee steps</button></div>
+    </div>
+  </article>
+
+  <article class="note">
+    <div><p class="figure">4 hacks</p><p class="figcap">rebuilt from public court records</p></div>
+    <div class="body">
+      <h3>Peel Chain</h3>
+      <p class="where">Own project</p>
+      <p>Laundering trails from Bitfinex, Ronin, Bybit and Poly Network as interactive exhibits. Watch the walkthrough, then switch to investigate mode: the labels disappear and you tag the exchanges, mixers and cash-out points yourself. Intermediate hops are stylised, and the title card says so.</p>
       <div class="actions"><a href="https://peel-chain.vercel.app/">Open the exhibit</a></div>
     </div>
   </article>
 
   <article class="note">
-    <div><h3>Circle Intel</h3><p class="where">Own project</p></div>
+    <div><p class="figure">USDC</p><p class="figcap">supply and the wider Circle ecosystem</p></div>
     <div class="body">
-      <p>A dashboard of USDC supply and the wider Circle ecosystem, built in Next.js.</p>
+      <h3>Circle Intel</h3>
+      <p class="where">Own project</p>
+      <p>A dashboard of USDC supply and the Circle ecosystem, built in Next.js.</p>
       <div class="actions"><a href="https://circle-intel-taupe.vercel.app">Open the dashboard</a><a href="https://github.com/elsaicequeen/circle-intel">Source</a></div>
     </div>
   </article>
@@ -191,11 +225,9 @@ footer{color:var(--muted); padding:40px 0 80px; font-size:.98rem}
     "CREATE TABLE volume_change(driver TEXT, share_of_change_pct REAL);",
     "INSERT INTO volume_change VALUES ('fewer traders',57.7),('fewer orders per trader',33.4),('smaller orders',8.9);",
     "CREATE TABLE desk(step INTEGER, task TEXT, done_by TEXT);",
-    "INSERT INTO desk VALUES (1,'prepare the listing pass','AI agent'),(2,'confirm the exact contract','deterministic check'),(3,'screen sell-blocks, freeze rights, taxes','deterministic check'),(4,'dry run of the write','system'),(5,'approve the production write','a person'),(6,'read back and save audit receipt','system');",
-    "CREATE TABLE fee_steps(step INTEGER, effective_fee_pct REAL, what_it_hid TEXT);",
-    "INSERT INTO fee_steps VALUES (1,0.57,NULL),(2,0.89,NULL),(3,1.50,'top 1% of traders = 53–68% of volume');",
-    "CREATE TABLE work(title TEXT, kind TEXT, link TEXT);",
-    "INSERT INTO work VALUES ('AI listing desk with human sign-off','at CoinDCX',NULL),('Volume, fee and timestamp reviews','at CoinDCX',NULL),('Peel Chain','own project','https://peel-chain.vercel.app/'),('Circle Intel','own project','https://circle-intel-taupe.vercel.app');",
+    "INSERT INTO desk VALUES (1,'prepare the listing pass','AI agent'),(2,'confirm the exact contract','deterministic check'),(3,'screen sell-blocks, freeze rights, taxes','deterministic check'),(4,'dry run of the write','system'),(5,'approve the production write','a person'),(6,'read back and save an audit receipt','system');",
+    "CREATE TABLE fee_steps(step INTEGER, effective_fee_pct REAL);",
+    "INSERT INTO fee_steps VALUES (1,0.57),(2,0.89),(3,1.50);",
     "CREATE TABLE roles(org TEXT, title TEXT, from_year INTEGER, to_year INTEGER);",
     "INSERT INTO roles VALUES ('CoinDCX','Founder''s Office, Assistant Manager',2026,NULL),('CoinDCX','Specialist, Web3',2024,2026),('QuantixLabs','Web3 specialist consultant',2026,NULL),('Neevilas Ventures','Investment analyst',2024,2026),('Bitquery','Technical writer',2023,2025),('Centron Technical Services','Blockchain developer',2023,2024),('Prarang','Data analyst',2019,2023);"
   ].join("\n");
@@ -203,58 +235,42 @@ footer{color:var(--muted); padding:40px 0 80px; font-size:.98rem}
   var PRESETS = [
     {id:"volume", label:"Why did volume fall?", sql:
 "-- Weekly trading volume fell. Which lever moved?\nSELECT driver,\n       share_of_change_pct,\n       round(sum(share_of_change_pct)\n             OVER (ORDER BY share_of_change_pct DESC), 1) AS running_total\nFROM volume_change\nORDER BY share_of_change_pct DESC;"},
-    {id:"desk", label:"Who does what on the listing desk?", sql:
-"-- An AI agent proposes; checks and a person decide.\nSELECT step, task, done_by\nFROM desk\nORDER BY step;"},
-    {id:"fees", label:"Did the fee rise work?", sql:
-"SELECT step,\n       effective_fee_pct,\n       round(effective_fee_pct / 0.57, 2) AS vs_first_step,\n       what_it_hid\nFROM fee_steps\nORDER BY step;"},
-    {id:"work", label:"What has he built?", sql:
-"SELECT title, kind, coalesce(link, 'internal') AS link\nFROM work;"},
-    {id:"roles", label:"Where has he worked?", sql:
-"SELECT org, title, from_year,\n       coalesce(to_year, 'now') AS to_year\nFROM roles\nORDER BY from_year DESC;"}
+    {id:"desk", label:"Who decides on the listing desk?", sql:
+"-- The agent proposes; checks and a person decide.\nSELECT step, task, done_by\nFROM desk\nORDER BY step;"},
+    {id:"fees", label:"How far did the fee rise?", sql:
+"SELECT step,\n       effective_fee_pct,\n       round(effective_fee_pct / 0.57, 2) AS times_first_step\nFROM fee_steps\nORDER BY step;"}
   ];
 
   var q = document.getElementById("q"), out = document.getElementById("out"),
       status = document.getElementById("status"), run = document.getElementById("run"),
       presetsEl = document.getElementById("presets");
-  var db = null, typing = null;
+  var db = null;
   var reduce = window.matchMedia && matchMedia("(prefers-reduced-motion: reduce)").matches;
   if (!/Mac|iPhone|iPad/.test(navigator.platform || "")) document.getElementById("kbd").textContent = "Ctrl↵";
 
   PRESETS.forEach(function(p){
     var b = document.createElement("button");
     b.type = "button"; b.textContent = p.label; b.dataset.id = p.id; b.setAttribute("aria-pressed","false");
-    b.addEventListener("click", function(){ load(p.id, true); });
+    b.addEventListener("click", function(){ load(p.id); });
     presetsEl.appendChild(b);
   });
   document.querySelectorAll(".ask").forEach(function(b){
     b.addEventListener("click", function(){
       document.getElementById("console").scrollIntoView({behavior: reduce ? "auto" : "smooth", block:"center"});
-      load(b.dataset.preset, false);
+      load(b.dataset.preset);
     });
   });
 
   function mark(id){
     presetsEl.querySelectorAll("button").forEach(function(b){ b.setAttribute("aria-pressed", String(b.dataset.id === id)); });
   }
-  function load(id, instant){
+  function load(id){
     var p = PRESETS.filter(function(x){ return x.id === id; })[0]; if (!p) return;
-    mark(id);
-    if (typing) { clearInterval(typing); typing = null; }
-    if (instant || reduce) { q.value = p.sql; exec(); return; }
-    var i = 0; q.value = "";
-    typing = setInterval(function(){
-      i += 3; q.value = p.sql.slice(0, i);
-      if (i >= p.sql.length) { clearInterval(typing); typing = null; exec(); }
-    }, 16);
+    mark(id); q.value = p.sql; exec();
   }
 
   function esc(s){ return String(s).replace(/[&<>"]/g, function(c){ return {"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;"}[c]; }); }
-  function cell(v, dp){
-    if (v === null) return '<td class="null">null</td>';
-    if (typeof v === "number") return '<td class="num">' + esc(dp ? v.toFixed(dp) : v) + '</td>';
-    if (/^https:\/\//.test(v)) return '<td><a href="' + esc(v) + '">' + esc(v.replace(/^https:\/\//,"").replace(/\/$/,"")) + '</a></td>';
-    return '<td>' + esc(v) + '</td>';
-  }
+  function fmt(v, dp){ return dp ? v.toFixed(dp) : String(v); }
   function exec(){
     if (!db) return;
     var sql = q.value.trim(); if (!sql) return;
@@ -262,39 +278,56 @@ footer{color:var(--muted); padding:40px 0 80px; font-size:.98rem}
     try {
       var res = db.exec(sql);
       var ms = (performance.now() - t0).toFixed(1);
-      if (!res.length) { out.innerHTML = ""; status.className = "status"; status.textContent = "Done in " + ms + " ms. The query returned no rows."; return; }
+      if (!res.length) { out.innerHTML = '<p class="msg">The query ran and returned no rows.</p>'; status.className = "status"; status.textContent = "Done in " + ms + " ms"; return; }
       var r = res[res.length - 1];
-      var h = "<table><thead><tr>" + r.columns.map(function(c){ return '<th scope="col">' + esc(c) + "</th>"; }).join("") + "</tr></thead><tbody>";
       var dps = r.columns.map(function(_, j){
         return r.values.reduce(function(m, row){
           var v = row[j]; if (typeof v !== "number" || Number.isInteger(v)) return m;
-          var d = (String(v).split(".")[1] || "").length; return Math.max(m, Math.min(d, 4));
+          return Math.max(m, Math.min((String(v).split(".")[1] || "").length, 4));
         }, 0);
       });
-      r.values.forEach(function(row){ h += "<tr>" + row.map(function(v, j){ return cell(v, dps[j]); }).join("") + "</tr>"; });
+      var maxes = r.columns.map(function(c, j){
+        if (!/_pct$/.test(c)) return 0;
+        return r.values.reduce(function(m, row){ return typeof row[j] === "number" ? Math.max(m, row[j]) : m; }, 0);
+      });
+      var h = "<table><thead><tr>" + r.columns.map(function(c){ return '<th scope="col">' + esc(c) + "</th>"; }).join("") + "</tr></thead><tbody>";
+      r.values.forEach(function(row){
+        h += "<tr>" + row.map(function(v, j){
+          if (v === null) return '<td class="null">null</td>';
+          if (typeof v === "number" && maxes[j] > 0)
+            return '<td class="bar"><span class="fill" style="width:calc((100% - 36px) * ' + (v / maxes[j]).toFixed(4) + ')"></span><span>' + esc(fmt(v, dps[j])) + '</span></td>';
+          if (typeof v === "number") return '<td class="num">' + esc(fmt(v, dps[j])) + '</td>';
+          return '<td>' + esc(v) + '</td>';
+        }).join("") + "</tr>";
+      });
       out.innerHTML = h + "</tbody></table>";
       status.className = "status";
       status.textContent = r.values.length + (r.values.length === 1 ? " row" : " rows") + " in " + ms + " ms";
     } catch (e) {
-      out.innerHTML = "";
+      out.innerHTML = '<p class="msg">' + esc(String(e.message || e)) + '. Tables: volume_change, desk, fee_steps, roles.</p>';
       status.className = "status err";
-      status.textContent = String(e.message || e) + ". Tables: volume_change, desk, fee_steps, work, roles.";
+      status.textContent = "Query failed";
+      document.getElementById("sqlbox").open = true;
     }
   }
   run.addEventListener("click", exec);
   q.addEventListener("keydown", function(e){
     if ((e.metaKey || e.ctrlKey) && e.key === "Enter") { e.preventDefault(); exec(); }
   });
-  q.addEventListener("input", function(){ if (!typing) mark(null); });
+  q.addEventListener("input", function(){ mark(null); });
 
-  if (typeof initSqlJs !== "function") { status.className = "status err"; status.textContent = "SQLite could not load. Check your connection and reload."; return; }
+  function fail(){
+    status.className = "status err"; status.textContent = "SQLite did not load";
+    out.innerHTML = '<p class="msg">The live query needs SQLite, which did not load. Reload to try again; the case notes below have the same figures.</p>';
+  }
+  if (typeof initSqlJs !== "function") { fail(); return; }
   initSqlJs({ locateFile: function(f){ return "https://cdnjs.cloudflare.com/ajax/libs/sql.js/1.10.3/" + f; } })
     .then(function(SQL){
       db = new SQL.Database(); db.run(SCHEMA);
       run.disabled = false; status.textContent = "Ready";
-      load("volume", false);
+      load("volume");
     })
-    .catch(function(){ status.className = "status err"; status.textContent = "SQLite could not load. Check your connection and reload."; });
+    .catch(fail);
 })();
 </script>
 </body>
