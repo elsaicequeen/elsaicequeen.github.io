@@ -1,0 +1,748 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Enforcement-Gap Tracker — Snapshot 2026-07-12</title>
+<!-- ===========================================================================
+  ENFORCEMENT-GAP TRACKER — static snapshot page.
+
+  DATA: the script#snapshot-data JSON block below is the byte-for-byte
+  contents of enforcement-gap/data/snapshot.json, injected at
+  build time. The page renders ONLY from that block; there are no numbers in
+  the markup that do not come from the JSON. snapshot.json stays the source of
+  record — regenerate this page if it changes.
+
+  HONESTY: this is a dated snapshot, not a live tracker. The banner says so.
+  Anything the researcher could not retrieve is listed under Coverage Notes
+  rather than approximated. See README.md for what the live version needs.
+============================================================================ -->
+<style>
+  :root{
+    --paper:#f1ece0;
+    --paper-hi:#f6f2e8;
+    --ink:#211d16;
+    --ink-faint:#5c554a;
+    --rule:#b9b09d;
+    --rule-soft:#d5cdba;
+    --red:#8f1d14;
+    --serif:Georgia,'Charter','Iowan Old Style','Times New Roman',serif;
+    --mono:'SF Mono',Menlo,Consolas,'Liberation Mono',monospace;
+  }
+  @media (prefers-color-scheme: dark){
+    :root{
+      --paper:#1b1712;
+      --paper-hi:#221d17;
+      --ink:#d9d1c0;
+      --ink-faint:#93897a;
+      --rule:#4a4335;
+      --rule-soft:#352f26;
+      --red:#d4695c;
+    }
+  }
+  :root[data-theme="light"]{
+    --paper:#f1ece0; --paper-hi:#f6f2e8; --ink:#211d16; --ink-faint:#5c554a;
+    --rule:#b9b09d; --rule-soft:#d5cdba; --red:#8f1d14;
+  }
+  :root[data-theme="dark"]{
+    --paper:#1b1712; --paper-hi:#221d17; --ink:#d9d1c0; --ink-faint:#93897a;
+    --rule:#4a4335; --rule-soft:#352f26; --red:#d4695c;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{background:var(--paper)}
+  body{
+    font-family:var(--serif);
+    color:var(--ink);
+    background-color:var(--paper);
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='240'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0.35 0 0 0 0 0.32 0 0 0 0 0.26 0 0 0 0.05 0'/%3E%3C/filter%3E%3Crect width='240' height='240' filter='url(%23n)'/%3E%3C/svg%3E");
+    line-height:1.5;
+    -webkit-font-smoothing:antialiased;
+  }
+  .sheet{max-width:64rem;margin:0 auto;padding:0 1.4rem 4rem}
+
+  a{color:inherit;text-decoration-color:var(--rule);text-underline-offset:2px}
+  a:hover{text-decoration-color:var(--red)}
+
+  .num, .mono{
+    font-family:var(--mono);
+    font-variant-numeric:tabular-nums;
+    font-size:.92em;
+  }
+  .caption-line{
+    font-size:.66rem;letter-spacing:.14em;color:var(--ink-faint);
+    text-transform:uppercase;
+  }
+
+  /* ---------- masthead ---------- */
+  header.masthead{
+    display:flex;align-items:flex-end;justify-content:space-between;gap:1rem;
+    padding:1.6rem 0 .7rem;border-bottom:2px solid var(--ink);
+    box-shadow:0 2px 0 var(--paper), 0 3px 0 var(--rule);
+    margin-bottom:1.1rem;
+  }
+  header.masthead h1{
+    font-size:1.45rem;font-weight:600;letter-spacing:.04em;text-transform:uppercase;
+    margin-top:.2rem;
+  }
+  header.masthead .subtitle{
+    font-size:.86rem;font-style:italic;color:var(--ink-faint);margin-top:.25rem;
+    max-width:38rem;
+  }
+  .snapshot-stamp{
+    flex:none;font-size:.64rem;letter-spacing:.18em;text-transform:uppercase;
+    color:var(--red);border:1.5px solid var(--red);padding:.34rem .6rem;
+    transform:rotate(-1.2deg);user-select:none;white-space:nowrap;text-align:center;
+    line-height:1.6;
+  }
+  .snapshot-stamp .num{font-size:.72rem}
+
+  /* ---------- honesty banner ---------- */
+  .banner{
+    border:1.5px solid var(--red);
+    border-left-width:6px;
+    background:var(--paper-hi);
+    padding:.7rem 1rem .75rem;
+    margin:0 0 1.6rem;
+  }
+  .banner .lead{
+    font-size:1.02rem;font-weight:600;letter-spacing:.01em;
+  }
+  .banner .lead .num{font-weight:400}
+  .banner p{font-size:.8rem;color:var(--ink-faint);margin-top:.35rem;line-height:1.55}
+
+  /* ---------- sections ---------- */
+  section{margin:2.4rem 0 0}
+  h2.sec{
+    font-size:.78rem;letter-spacing:.18em;text-transform:uppercase;font-weight:600;
+    border-bottom:1.5px solid var(--ink);padding-bottom:.3rem;margin-bottom:.9rem;
+    display:flex;justify-content:space-between;align-items:baseline;gap:1rem;
+  }
+  h2.sec .sec-no{color:var(--red)}
+  h2.sec .sec-note{
+    font-weight:400;letter-spacing:.05em;text-transform:none;font-style:italic;
+    font-size:.74rem;color:var(--ink-faint);
+  }
+  .sec-intro{font-size:.88rem;line-height:1.6;max-width:44rem;margin-bottom:1.1rem}
+  .sec-intro em{color:var(--ink)}
+
+  /* ---------- findings (gaps) ---------- */
+  .finding{
+    border-top:1px solid var(--rule);
+    padding:.85rem 0 1rem;
+  }
+  .finding:last-of-type{border-bottom:1px solid var(--rule)}
+  .finding .f-head{
+    display:flex;align-items:baseline;gap:.8rem;flex-wrap:wrap;margin-bottom:.35rem;
+  }
+  .finding .f-no{
+    font-family:var(--mono);font-size:.68rem;letter-spacing:.14em;color:var(--red);
+    text-transform:uppercase;flex:none;
+  }
+  .finding .f-title{font-size:1rem;font-weight:600;letter-spacing:.01em}
+  .finding .f-measure{
+    margin-left:auto;flex:none;
+    font-family:var(--mono);font-variant-numeric:tabular-nums;font-size:.72rem;
+    color:var(--red);border:1px solid var(--red);padding:.12rem .45rem;
+    white-space:nowrap;
+  }
+  .finding .f-claim{font-size:.88rem;line-height:1.62;max-width:46rem}
+  .finding .f-evidence{
+    font-size:.8rem;line-height:1.58;color:var(--ink-faint);
+    border-left:3px solid var(--rule);padding-left:.8rem;margin-top:.5rem;max-width:44rem;
+  }
+  .finding .f-evidence .lbl{
+    font-size:.6rem;letter-spacing:.16em;text-transform:uppercase;display:block;
+    margin-bottom:.15rem;color:var(--ink-faint);
+  }
+  .srcs{margin-top:.45rem;font-size:.68rem;line-height:1.9}
+  .srcs .lbl{
+    font-size:.58rem;letter-spacing:.16em;text-transform:uppercase;color:var(--ink-faint);
+    margin-right:.4rem;
+  }
+  .srcs a{
+    font-family:var(--mono);font-size:.66rem;color:var(--ink-faint);
+    text-decoration:none;border-bottom:1px dotted var(--rule);
+    margin-right:.55rem;white-space:nowrap;
+  }
+  .srcs a:hover{color:var(--red);border-bottom-color:var(--red)}
+
+  /* ---------- tables ---------- */
+  .tblwrap{overflow-x:auto;margin:.4rem 0 .9rem}
+  table{
+    border-collapse:collapse;width:100%;font-size:.8rem;
+    background:var(--paper-hi);
+  }
+  th{
+    font-size:.6rem;letter-spacing:.14em;text-transform:uppercase;font-weight:600;
+    color:var(--ink-faint);text-align:left;padding:.4rem .6rem;
+    border-bottom:1.5px solid var(--ink);white-space:nowrap;
+  }
+  td{
+    padding:.4rem .6rem;border-bottom:1px dotted var(--rule);
+    vertical-align:top;
+  }
+  tr:last-child td{border-bottom:1px solid var(--rule)}
+  td.num, th.num{text-align:right}
+  td.date{font-family:var(--mono);font-variant-numeric:tabular-nums;font-size:.72rem;white-space:nowrap}
+  td .srcs{margin-top:.15rem}
+  .tbl-note{font-size:.74rem;font-style:italic;color:var(--ink-faint);max-width:44rem;line-height:1.55;margin:-.3rem 0 .9rem}
+
+  /* per-tag counts: compact grid table */
+  table.tags td, table.tags th{padding:.3rem .55rem}
+  table.tags tfoot td{
+    border-top:1.5px solid var(--ink);border-bottom:none;font-weight:600;
+  }
+
+  /* ---------- notes lists ---------- */
+  ol.notes{list-style:none;counter-reset:note}
+  ol.notes li{
+    counter-increment:note;position:relative;padding:.5rem 0 .55rem 2.3rem;
+    border-top:1px dotted var(--rule);font-size:.82rem;line-height:1.6;max-width:46rem;
+  }
+  ol.notes li:last-child{border-bottom:1px dotted var(--rule)}
+  ol.notes li::before{
+    content:"N." counter(note,decimal-leading-zero);
+    position:absolute;left:0;top:.62rem;
+    font-family:var(--mono);font-size:.62rem;letter-spacing:.08em;color:var(--red);
+  }
+
+  /* ---------- policy block ---------- */
+  .policy{
+    border-left:3px solid var(--ink);padding:.1rem 0 .1rem .85rem;
+    font-size:.84rem;line-height:1.6;max-width:44rem;margin:.2rem 0 1rem;
+  }
+  .policy .lbl{
+    font-size:.6rem;letter-spacing:.16em;text-transform:uppercase;color:var(--ink-faint);
+    display:block;margin-bottom:.2rem;
+  }
+
+  /* ---------- source register ---------- */
+  ol.register{list-style:none}
+  ol.register li{
+    display:flex;gap:.7rem;align-items:baseline;
+    padding:.32rem 0;border-bottom:1px dotted var(--rule-soft);
+    font-size:.78rem;line-height:1.5;
+  }
+  ol.register .r-no{
+    flex:none;font-family:var(--mono);font-size:.62rem;color:var(--ink-faint);width:2.2rem;
+    font-variant-numeric:tabular-nums;
+  }
+  ol.register .r-name{min-width:0}
+  ol.register .r-name a{word-break:break-word}
+  ol.register .r-date{
+    flex:none;margin-left:auto;font-family:var(--mono);font-size:.64rem;
+    color:var(--ink-faint);font-variant-numeric:tabular-nums;white-space:nowrap;
+  }
+
+  /* ---------- footer ---------- */
+  footer.colophon{
+    margin-top:3rem;border-top:2px solid var(--ink);padding-top:.7rem;
+    font-size:.72rem;color:var(--ink-faint);line-height:1.7;max-width:46rem;
+  }
+  footer.colophon .mono{font-size:.68rem}
+
+  @media print{
+    body{background-image:none}
+    .tblwrap{overflow-x:visible}
+  }
+  @media (max-width:640px){
+    header.masthead{flex-direction:column;align-items:flex-start;gap:.6rem}
+    .finding .f-measure{margin-left:0}
+  }
+</style>
+</head>
+<body>
+<script type="application/json" id="snapshot-data">{
+  "asOf": "2026-07-12",
+  "disclaimer": "Every figure in this file carries a source URL. Nothing here is stylized or estimated. Where a list or count could not be retrieved, that is stated in coverageNotes rather than approximated. Third-party aggregates (AMLBot/Dune, BlockSec) are labeled as such and are not directly comparable to issuer press-release figures; see coverageNotes.",
+  "sources": [
+    { "name": "0xB10C OFAC sanctioned digital currency addresses mirror (lists branch, generated from treasury sdn.xml)", "url": "https://github.com/0xB10C/ofac-sanctioned-digital-currency-addresses/tree/lists", "retrieved": "2026-07-12" },
+    { "name": "GitHub API: mirror lists-branch last commit", "url": "https://api.github.com/repos/0xB10C/ofac-sanctioned-digital-currency-addresses/commits?sha=lists&per_page=1", "retrieved": "2026-07-12" },
+    { "name": "Tether: Supports Freeze of More Than $344 Million in USDT in Coordination with OFAC and U.S. Law Enforcement", "url": "https://tether.io/news/tether-supports-freeze-of-more-than-344-million-in-usdt-in-coordination-with-ofac-and-u-s-law-enforcement/", "retrieved": "2026-07-12" },
+    { "name": "Tether: Introduces New Policy to Strengthen Ecosystem Security (SDN wallet-freezing policy)", "url": "https://tether.io/news/tether-introduces-new-policy-to-strengthen-ecosystem-security/", "retrieved": "2026-07-12" },
+    { "name": "AMLBot: Stablecoin Freezes 2023-2025, USDT vs USDC (Dune-based snapshot 2025-10-07)", "url": "https://blog.amlbot.com/stablecoin-freezes-2023-2025-a-data-backed-analysis-of-usdt-vs-usdc-by-amlbot/", "retrieved": "2026-07-12" },
+    { "name": "Chainalysis: OFAC Sanctions Tracker - How Sanctions Impact Crypto Crime", "url": "https://www.chainalysis.com/blog/ofac-sanctions/", "retrieved": "2026-07-12" },
+    { "name": "Chainalysis: OFAC Sanctions 100+ ISIS-K Crypto Addresses (July 2026)", "url": "https://www.chainalysis.com/blog/isis-designation-crypto-addresses-july-2026/", "retrieved": "2026-07-12" },
+    { "name": "OFAC Recent Actions 2025-03-21: Cyber-related Designation Removal (Tornado Cash delisting)", "url": "https://ofac.treasury.gov/recent-actions/20250321", "retrieved": "2026-07-12" },
+    { "name": "U.S. Treasury press release: sanctions on Grinex (Garantex successor) and network", "url": "https://home.treasury.gov/news/press-releases/sb0225", "retrieved": "2026-07-12" },
+    { "name": "DOJ: Garantex Cryptocurrency Exchange Disrupted in International Operation (2025-03-07)", "url": "https://www.justice.gov/opa/pr/garantex-cryptocurrency-exchange-disrupted-international-operation", "retrieved": "2026-07-12" },
+    { "name": "CoinDesk: Sanctioned Russian Crypto Exchange Garantex Seized, Operators Charged (2025-03-07)", "url": "https://www.coindesk.com/policy/2025/03/07/sanctioned-russian-crypto-exchange-garantex-seized-operators-charged-with-money-laundering", "retrieved": "2026-07-12" },
+    { "name": "Cointelegraph: Tether freezes $27M USDT on sanctioned Russian exchange Garantex", "url": "https://cointelegraph.com/news/tether-freezes-27-million-usdt-sanctions-garantex-russia", "retrieved": "2026-07-12" },
+    { "name": "The Block: Tether freezes $225 million worth of stolen USDT after DOJ investigation (2023-11)", "url": "https://www.theblock.co/post/263802/tether-freezes-225-million-worth-of-stolen-usdt-after-doj-investigation", "retrieved": "2026-07-12" },
+    { "name": "Decrypt: Justice Dept. Files to Seize Record $225 Million Tied to Pig Butchering Crypto Scams (2025-06)", "url": "https://decrypt.co/325882/justice-dept-seize-record-225-million-pig-butchering-crypto-scams", "retrieved": "2026-07-12" },
+    { "name": "CoinDesk: Tether Freezes 41 Crypto Wallets Tied to Sanctions (2023-12-09)", "url": "https://www.coindesk.com/business/2023/12/09/tether-freezes-41-crypto-wallets-tied-to-sanctions", "retrieved": "2026-07-12" },
+    { "name": "Cointelegraph: Tether announces wallet-freezing policy for OFAC-sanctioned persons", "url": "https://cointelegraph.com/news/tether-announces-wallet-freezing-policy-ofac-sanctioned", "retrieved": "2026-07-12" },
+    { "name": "Blockworks: Tether Won't Freeze Sanctioned Tornado Cash Addresses Without Authorities' Request (2022-08)", "url": "https://blockworks.com/news/tether-wont-freeze-sanctioned-tornado-cash-addresses-without-authorities-request", "retrieved": "2026-07-12" },
+    { "name": "CoinDesk: Tether Freezes 32 Crypto Addresses Linked to Terrorism, Warfare in Israel and Ukraine (2023-10-16)", "url": "https://www.coindesk.com/business/2023/10/16/tether-freezes-32-addresses-linked-to-terrorism-and-warfare-in-israel-and-ukraine", "retrieved": "2026-07-12" },
+    { "name": "Bybit Learn: Bybit Security Incident timeline (Tether froze $181,000 USDT, 2025-02-22)", "url": "https://learn.bybit.com/en/this-week-in-bybit/bybit-security-incident-timeline", "retrieved": "2026-07-12" },
+    { "name": "Chainalysis: APAC-based Law Enforcement Freezes $47 Million in Pig Butchering Funds (2025-08)", "url": "https://www.chainalysis.com/blog/apac-law-enforcement-freezes-pig-butchering-funds-august-2025/", "retrieved": "2026-07-12" },
+    { "name": "CoinDesk: Tether freezes $182 million in USDT across five Tron wallets (2026-01-12)", "url": "https://www.coindesk.com/markets/2026/01/12/tether-freezes-usd182-million-in-usdt-stablecoin-across-five-tron-blockchain-wallets", "retrieved": "2026-07-12" },
+    { "name": "CoinDesk: Tether freezes $344 million in USDT on Tron tied to illicit activity (2026-04-23)", "url": "https://www.coindesk.com/business/2026/04/23/tether-freezes-usd344-million-in-usdt-on-tron-tied-to-illicit-activity", "retrieved": "2026-07-12" },
+    { "name": "Bitcoin.com News: Tether Freezes $515 Million in USDT Across 371 Addresses in 30 Days (2026-05)", "url": "https://news.bitcoin.com/tether-freezes-515-million-usdt-371-addresses-2026/", "retrieved": "2026-07-12" },
+    { "name": "The Crypto Times: Tether Blacklists 370 Addresses, Freezes $514.64M in USDT Over Past 30 Days (2026-05-08)", "url": "https://www.cryptotimes.io/2026/05/08/tether-blacklists-370-addresses-freezes-514-64m-in-usdt-over-past-30-days/", "retrieved": "2026-07-12" },
+    { "name": "BanklessTimes: Tether Freezes 131 ISIS-K TRON Wallets After OFAC Sanctions Update (2026-07-02)", "url": "https://www.banklesstimes.com/articles/2026/07/02/tether-blocks-131-isis%E2%80%91k-tron-wallets-in-sweeping-usdt-terror-crackdown/", "retrieved": "2026-07-12" },
+    { "name": "BlockSec: USDT Blacklisting in 2025 - $1.26B Frozen on Ethereum & Tron", "url": "https://blocksec.com/blog/1-26-billion-frozen-usdt-blacklisting-on-ethereum-and-tron-in-2025", "retrieved": "2026-07-12" },
+    { "name": "CryptoSlate: Circle blacklists all Tornado Cash ETH addresses, effectively freezing USDC (2022-08)", "url": "https://cryptoslate.com/circle-blacklists-all-tornado-cash-eth-addresses-effectively-freezing-usdc/", "retrieved": "2026-07-12" },
+    { "name": "Cointelegraph: Circle freezes blacklisted Tornado Cash smart contract addresses (2022-08)", "url": "https://cointelegraph.com/news/circle-freezes-blacklisted-tornado-cash-smart-contract-addresses", "retrieved": "2026-07-12" },
+    { "name": "The Block: New York judge grants relief to Multichain liquidators, extending freeze on stolen USDC", "url": "https://www.theblock.co/post/377094/multichain-extends-freeze-stolen-usdc", "retrieved": "2026-07-12" },
+    { "name": "CoinDesk: Circle CEO says he won't freeze USDC without a court order even as hackers walk away with millions (2026-04-13)", "url": "https://www.coindesk.com/business/2026/04/13/circle-ceo-says-he-won-t-freeze-usdc-without-a-court-order-even-as-hackers-walk-away-with-millions", "retrieved": "2026-07-12" },
+    { "name": "Yahoo Finance: Circle Froze Millions in USDC Across 16 Wallets, Now Rolling It Back (2026-03)", "url": "https://finance.yahoo.com/markets/crypto/articles/circle-first-froze-16-usdc-085427724.html", "retrieved": "2026-07-12" },
+    { "name": "Elliptic: The rise and fall of eXch - the dark service used by North Korea to launder $200 million stolen from Bybit", "url": "https://www.elliptic.co/blog/the-rise-and-fall-of-exch-the-dark-service-used-by-north-korea-to-launder-200-million-stolen-from-bybit", "retrieved": "2026-07-12" },
+    { "name": "Steptoe: Treasury Department Delists Tornado Cash Following the Fifth Circuit's Decision", "url": "https://www.steptoe.com/en/news-publications/international-compliance-blog/treasury-department-delists-tornado-cash-following-the-fifth-circuits-decision.html", "retrieved": "2026-07-12" },
+    { "name": "Dune: USDC Banned Addresses (phabc) - JS dashboard, live count not retrievable headlessly", "url": "https://dune.com/phabc/usdc-banned-addresses", "retrieved": "2026-07-12" },
+    { "name": "Dune: USDT & USDC blacklist (ozark) - JS dashboard, live count not retrievable headlessly", "url": "https://dune.com/ozark/usdt-and-usdc-blacklist", "retrieved": "2026-07-12" }
+  ],
+  "ofac": {
+    "source": "0xB10C mirror of treasury sdn.xml 'Digital Currency Address' entries, lists branch",
+    "mirrorLastUpdatedUTC": "2026-07-02T05:10:11Z",
+    "addressCountsPerAssetTag": {
+      "XBT": 518, "TRX": 181, "ETH": 93, "USDT": 93, "XMR": 11, "LTC": 10, "BCH": 7, "DASH": 3, "ZEC": 3, "USDC": 2, "ARB": 1, "BSC": 1, "BSV": 1, "BTG": 1, "ETC": 1, "SOL": 1, "XRP": 1, "XVG": 1
+    },
+    "totalAddressEntriesAcrossAssetTags": 928,
+    "countNotes": [
+      "Counts are entries per SDN asset tag, verified by downloading each .txt and counting non-empty lines on 2026-07-12.",
+      "USDT tag (93) breaks down by address format: 78 TRON-format (T...), 8 Ethereum-format (0x...), 7 Bitcoin-format (1.../3...). OFAC tags an address under USDT separately from the chain tag: TRX-vs-USDT list overlap is 0 addresses; ETH-vs-USDT overlap is 4 addresses (case-insensitive comparison).",
+      "TRX count (181) includes the 131 ISIS-K TRON addresses added 2026-07-01."
+    ],
+    "notableDesignations": [
+      { "entity": "Lazarus Group (DPRK)", "date": "2019-09-13", "note": "Initial designation; digital-currency addresses added in updates on 2022-04-14 and 2022-04-22 (Ronin/Axie hack era).", "source": "https://www.chainalysis.com/blog/ofac-sanctions/" },
+      { "entity": "Suex OTC", "date": "2021-09-22", "note": "First virtual-asset service provider designated by OFAC (ransomware laundering).", "source": "https://www.chainalysis.com/blog/ofac-sanctions/" },
+      { "entity": "Chatex", "date": "2021-11-08", "note": "P2P exchange designated for facilitating ransomware transactions.", "source": "https://www.chainalysis.com/blog/ofac-sanctions/" },
+      { "entity": "Hydra Market + Garantex", "date": "2022-04-05", "note": "World's largest darknet market and Russian exchange designated the same day.", "source": "https://www.chainalysis.com/blog/ofac-sanctions/" },
+      { "entity": "Blender.io", "date": "2022-05-06", "note": "First mixer ever sanctioned by OFAC.", "source": "https://www.chainalysis.com/blog/ofac-sanctions/" },
+      { "entity": "Tornado Cash", "date": "2022-08-08", "note": "Designated with 38 crypto addresses; redesignated 2022-11-08; DELISTED 2025-03-21 after Fifth Circuit Van Loon ruling (2024-11-26).", "sources": ["https://www.chainalysis.com/blog/ofac-sanctions/", "https://ofac.treasury.gov/recent-actions/20250321", "https://www.steptoe.com/en/news-publications/international-compliance-blog/treasury-department-delists-tornado-cash-following-the-fifth-circuits-decision.html"] },
+      { "entity": "Sinbad.io", "date": "2023-11-29", "note": "Mixer designated for Lazarus Group use.", "source": "https://www.chainalysis.com/blog/ofac-sanctions/" },
+      { "entity": "Cryptex + PM2BTC", "date": "2024-09-26", "note": "Cryptex sanctioned; PM2BTC named primary money laundering concern.", "source": "https://www.chainalysis.com/blog/ofac-sanctions/" },
+      { "entity": "Aeza Group LLC", "date": "2025-07-01", "note": "Russia-based bulletproof hosting provider.", "source": "https://www.chainalysis.com/blog/ofac-sanctions/" },
+      { "entity": "Grinex", "date": "2025-08-14", "note": "Designated as Garantex successor built by Garantex staff immediately after the 2025-03-06 takedown.", "sources": ["https://www.chainalysis.com/blog/ofac-sanctions/", "https://home.treasury.gov/news/press-releases/sb0225"] },
+      { "entity": "ISIS-K (ISIL Khorasan) identifier update", "date": "2026-07-01", "note": "134 digital-asset identifiers added: 131 TRON + 3 Monero. Wallets had received over $1.4M since 2023 and sent over $880K before designation.", "sources": ["https://www.chainalysis.com/blog/isis-designation-crypto-addresses-july-2026/", "https://www.banklesstimes.com/articles/2026/07/02/tether-blocks-131-isis%E2%80%91k-tron-wallets-in-sweeping-usdt-terror-crackdown/"] }
+    ]
+  },
+  "tether": {
+    "totals": [
+      { "metric": "Cumulative assets frozen in cooperation with law enforcement", "value": "more than $4.4 billion (including over $2.1 billion connected to U.S. authorities)", "asOf": "2026-04-23", "source": "https://tether.io/news/tether-supports-freeze-of-more-than-344-million-in-usdt-in-coordination-with-ofac-and-u-s-law-enforcement/" },
+      { "metric": "Law-enforcement cooperation footprint", "value": "more than 340 agencies in 65 countries; more than 2,300 cases globally (1,200+ tied to U.S. law enforcement)", "asOf": "2026-04-23", "source": "https://tether.io/news/tether-supports-freeze-of-more-than-344-million-in-usdt-in-coordination-with-ofac-and-u-s-law-enforcement/" },
+      { "metric": "Blacklisted USDT addresses (Ethereum + TRON), third-party on-chain count", "value": "7,268 addresses; $3.29 billion frozen ($1.75B on TRON alone)", "asOf": "2025-10-07", "source": "https://blog.amlbot.com/stablecoin-freezes-2023-2025-a-data-backed-analysis-of-usdt-vs-usdc-by-amlbot/" },
+      { "metric": "USDT frozen during calendar 2025 (Ethereum + TRON)", "value": "$1.26 billion", "asOf": "2025 full year", "source": "https://blocksec.com/blog/1-26-billion-frozen-usdt-blacklisting-on-ethereum-and-tron-in-2025" }
+    ],
+    "policy": "Voluntary OFAC-SDN wallet-freezing policy adopted 2023-12-01, announced 2023-12-09, extending sanctions controls to the secondary market. Before that (Aug 2022) Tether publicly declined to proactively freeze OFAC-sanctioned Tornado Cash addresses absent a specific law-enforcement request.",
+    "policySources": ["https://tether.io/news/tether-introduces-new-policy-to-strengthen-ecosystem-security/", "https://cointelegraph.com/news/tether-announces-wallet-freezing-policy-ofac-sanctioned", "https://blockworks.com/news/tether-wont-freeze-sanctioned-tornado-cash-addresses-without-authorities-request"],
+    "documentedFreezeEvents": [
+      { "date": "2023-10-16", "event": "Froze 32 addresses holding $873,118.34 linked to terrorism and warfare in Israel and Ukraine, working with Israel's National Bureau for Counter Terror Financing (NBCTF) after the Oct 7 Hamas attack.", "sources": ["https://www.coindesk.com/business/2023/10/16/tether-freezes-32-addresses-linked-to-terrorism-and-warfare-in-israel-and-ukraine", "https://www.euronews.com/business/2023/10/16/tether-freezes-32-addresses-linked-to-terrorism-and-warfare-in-israel-and-ukraine"] },
+      { "date": "2023-11-20", "event": "Froze approximately $225 million USDT linked to a Southeast Asian pig-butchering / human-trafficking syndicate, after a DOJ investigation with OKX; largest USDT freeze at the time. DOJ simultaneously seized ~$9M.", "sources": ["https://www.theblock.co/post/263802/tether-freezes-225-million-worth-of-stolen-usdt-after-doj-investigation", "https://cointelegraph.com/news/us-justice-department-seizes-usdt-illicit-funds-frozen-tether", "https://www.coindesk.com/policy/2023/11/21/tether-worth-9m-tied-to-pig-butchering-scams-is-seized-by-us-doj"] },
+      { "date": "2023-12-09", "event": "Announced voluntary SDN freezing policy; froze 41 wallets controlled by OFAC-SDN-listed persons; 161 previously-listed addresses (~$3.5M USDT) blocked under the new policy.", "sources": ["https://www.coindesk.com/business/2023/12/09/tether-freezes-41-crypto-wallets-tied-to-sanctions", "https://tether.io/news/tether-introduces-new-policy-to-strengthen-ecosystem-security/", "https://itez.com/en/blog/regulation/tether-blocks-3-and-5-million-usdt-on-161-ofac-sanctioned-addresses"] },
+      { "date": "2025-02-22", "event": "Froze $181,000 USDT linked to the ~$1.5B Bybit hack (Lazarus Group) the day after the exploit.", "sources": ["https://learn.bybit.com/en/this-week-in-bybit/bybit-security-incident-timeline", "https://www.ccn.com/education/crypto/ben-zhou-bybit-1-5-billion-hack-explained/"] },
+      { "date": "2025-03-06", "event": "Froze ~$27-28 million USDT on sanctioned Russian exchange Garantex, forcing it to halt operations; coordinated with a US/German/Finnish law-enforcement seizure of Garantex domains and servers announced 2025-03-07.", "sources": ["https://cointelegraph.com/news/tether-freezes-27-million-usdt-sanctions-garantex-russia", "https://www.justice.gov/opa/pr/garantex-cryptocurrency-exchange-disrupted-international-operation", "https://www.coindesk.com/policy/2025/03/07/sanctioned-russian-crypto-exchange-garantex-seized-operators-charged-with-money-laundering"] },
+      { "date": "2025-06", "event": "DOJ filed to seize the $225M frozen in the Nov 2023 pig-butchering case; described as the largest seizure in U.S. Secret Service history.", "sources": ["https://decrypt.co/325882/justice-dept-seize-record-225-million-pig-butchering-crypto-scams", "https://blockchain.bakermckenzie.com/2025/07/01/the-225-million-crypto-seizure-a-landmark-in-pig-butchering-scam-combat/"] },
+      { "date": "2025-08", "event": "Participated with Chainalysis, Binance and OKX in an APAC law-enforcement operation freezing ~$47-50 million in pig-butchering funds.", "sources": ["https://www.chainalysis.com/blog/apac-law-enforcement-freezes-pig-butchering-funds-august-2025/", "https://www.theblock.co/post/368611/chainalysis-tether-binance-okx-police-freeze-nearly-50-million-usd-pig-butchering-scam-funds"] },
+      { "date": "2026-01-12", "event": "Froze $182 million USDT across five TRON wallets tied to illicit activity.", "sources": ["https://www.coindesk.com/markets/2026/01/12/tether-freezes-usd182-million-in-usdt-stablecoin-across-five-tron-blockchain-wallets"] },
+      { "date": "2026-04-23", "event": "Supported freeze of more than $344 million USDT across two addresses in coordination with OFAC and U.S. law enforcement; announcement cites cumulative $4.4B+ frozen.", "sources": ["https://tether.io/news/tether-supports-freeze-of-more-than-344-million-in-usdt-in-coordination-with-ofac-and-u-s-law-enforcement/", "https://www.coindesk.com/business/2026/04/23/tether-freezes-usd344-million-in-usdt-on-tron-tied-to-illicit-activity"] },
+      { "date": "2026-05-08", "event": "On-chain trackers reported ~$515M USDT frozen across ~371 addresses on Ethereum and TRON in the preceding 30 days (aggregate of many actions, not a single event).", "sources": ["https://news.bitcoin.com/tether-freezes-515-million-usdt-371-addresses-2026/", "https://www.cryptotimes.io/2026/05/08/tether-blacklists-370-addresses-freezes-514-64m-in-usdt-over-past-30-days/"] },
+      { "date": "2026-07-01", "event": "Froze the balances of all 131 ISIS-K TRON wallets named in the OFAC identifier update within hours of designation.", "sources": ["https://www.chainalysis.com/blog/isis-designation-crypto-addresses-july-2026/", "https://www.banklesstimes.com/articles/2026/07/02/tether-blocks-131-isis%E2%80%91k-tron-wallets-in-sweeping-usdt-terror-crackdown/", "https://cryptodaily.co.uk/2026/07/tether-freezes-isis-k-tron-wallets"] }
+    ]
+  },
+  "circle": {
+    "totals": [
+      { "metric": "Blacklisted USDC addresses, third-party on-chain count", "value": "372 addresses; $109 million frozen", "asOf": "2025-10-07", "source": "https://blog.amlbot.com/stablecoin-freezes-2023-2025-a-data-backed-analysis-of-usdt-vs-usdc-by-amlbot/" }
+    ],
+    "policy": "Reactive and judicially anchored: Circle states it denies access to addresses only to comply with applicable laws, regulations, or explicit court orders. CEO Jeremy Allaire reaffirmed in April 2026 that USDC will not be frozen without a court order.",
+    "policySources": ["https://blog.amlbot.com/stablecoin-freezes-2023-2025-a-data-backed-analysis-of-usdt-vs-usdc-by-amlbot/", "https://www.coindesk.com/business/2026/04/13/circle-ceo-says-he-won-t-freeze-usdc-without-a-court-order-even-as-hackers-walk-away-with-millions"],
+    "documentedBlacklistEvents": [
+      { "date": "2022-08-08", "event": "Landmark: within the same news cycle as OFAC's Tornado Cash designation, Circle/Centre blacklisted the sanctioned Tornado Cash addresses (38 banned on Aug 8 per Centre; Dune counts cited 81 total banned addresses at the time), freezing ~75,000 USDC held across the 44 OFAC-listed Tornado addresses.", "sources": ["https://cryptoslate.com/circle-blacklists-all-tornado-cash-eth-addresses-effectively-freezing-usdc/", "https://cointelegraph.com/news/circle-freezes-blacklisted-tornado-cash-smart-contract-addresses", "https://dailyhodl.com/2022/08/09/usdc-maker-circle-moves-to-ban-tornado-cash-addresses-after-us-treasury-blacklists-the-crypto-mixer/"] },
+      { "date": "2023-10", "event": "Froze three Ethereum wallets holding $63 million USDC tied to the July 2023 Multichain hack ($210M stolen overall) at the direction of the DOJ; a New York bankruptcy court later extended the freeze for Multichain liquidators.", "sources": ["https://www.theblock.co/post/377094/multichain-extends-freeze-stolen-usdc"] },
+      { "date": "2025-05", "event": "Froze approximately $57 million USDC under a court order in litigation over the LIBRA memecoin scheme.", "sources": ["https://criminaldefenseattorneytampa.com/asset-seizure-asset-forfeiture/cryptocurrency/circle/"] },
+      { "date": "2026-03-23", "event": "Froze 16 addresses (including a Goated.com wallet and an ICP bridge contract) in a civil case; after public criticism that the action was overbroad, unfroze one wallet (~130,966 USDC) on 2026-03-26.", "sources": ["https://finance.yahoo.com/markets/crypto/articles/circle-first-froze-16-usdc-085427724.html", "https://www.coinspeaker.com/circle-unfreezes-blacklisted-usdc-crypto-wallet-backlash/amp/", "https://blog.amlbot.com/circle-froze-16-business-hot-wallets-including-a-blockchain-bridge-smart-contract/"] },
+      { "date": "2026-04-13", "event": "CEO Jeremy Allaire publicly restated the court-order-only freeze policy amid criticism over delayed responses to thefts.", "sources": ["https://www.coindesk.com/business/2026/04/13/circle-ceo-says-he-won-t-freeze-usdc-without-a-court-order-even-as-hackers-walk-away-with-millions", "https://cryptoslate.com/circle-usdc-freeze-power-scrutiny-wallets-stolen-funds/"] }
+    ]
+  },
+  "gaps": [
+    {
+      "claim": "Tornado Cash response asymmetry: OFAC designated Tornado Cash on 2022-08-08 and Circle blacklisted the sanctioned addresses within the same news cycle, but Tether publicly declined to proactively freeze the same addresses absent a law-enforcement request, and did not adopt any OFAC-SDN freezing policy until 2023-12-09 - roughly 16 months later.",
+      "evidence": "Circle/Centre banned 38 addresses on Aug 8, 2022; Tether's Aug 2022 position was that it would not freeze Tornado addresses without instruction from authorities; Tether's voluntary SDN policy dates to Dec 1/9, 2023.",
+      "sources": ["https://cryptoslate.com/circle-blacklists-all-tornado-cash-eth-addresses-effectively-freezing-usdc/", "https://blockworks.com/news/tether-wont-freeze-sanctioned-tornado-cash-addresses-without-authorities-request", "https://tether.io/news/tether-introduces-new-policy-to-strengthen-ecosystem-security/", "https://www.coindesk.com/business/2023/12/09/tether-freezes-41-crypto-wallets-tied-to-sanctions"]
+    },
+    {
+      "claim": "Garantex enforcement lag of nearly three years: OFAC designated Garantex on 2022-04-05, yet the exchange kept operating and growing until the mass USDT freeze of 2025-03-06.",
+      "evidence": "Garantex daily volumes grew more than 1,000% while under sanctions, from ~$11M/day (2022-03-01) to ~$121.6M/day (2025-03-01); the exchange only halted when Tether froze ~$27-28M USDT in coordination with a US/German/Finnish seizure of its infrastructure.",
+      "sources": ["https://www.chainalysis.com/blog/ofac-sanctions/", "https://www.coindesk.com/policy/2025/03/07/sanctioned-russian-crypto-exchange-garantex-seized-operators-charged-with-money-laundering", "https://cointelegraph.com/news/tether-freezes-27-million-usdt-sanctions-garantex-russia", "https://www.justice.gov/opa/pr/garantex-cryptocurrency-exchange-disrupted-international-operation"]
+    },
+    {
+      "claim": "Most Tether freezes have no corresponding OFAC designation: the OFAC SDN carries 93 USDT-tagged and 181 TRX-tagged address entries (mirror as of 2026-07-02), while third-party on-chain counts put Tether's blacklist at 7,268 addresses (as of 2025-10-07) - i.e., well over 90% of Tether-blacklisted addresses were frozen via law-enforcement requests, court orders, hack response, or Tether's own initiative rather than OFAC listing.",
+      "evidence": "928 total OFAC digital-currency address entries across all asset tags vs 7,268 Tether-blacklisted addresses; Tether's own framing cites 2,300+ law-enforcement cases across 65 countries, not sanctions lists.",
+      "sources": ["https://github.com/0xB10C/ofac-sanctioned-digital-currency-addresses/tree/lists", "https://blog.amlbot.com/stablecoin-freezes-2023-2025-a-data-backed-analysis-of-usdt-vs-usdc-by-amlbot/", "https://tether.io/news/tether-supports-freeze-of-more-than-344-million-in-usdt-in-coordination-with-ofac-and-u-s-law-enforcement/"]
+    },
+    {
+      "claim": "Issuer-vs-issuer scale gap: over 2023-2025 Tether blacklisted ~30x more addresses and ~30x more value than Circle (7,268 addresses / $3.29B vs 372 addresses / $109M), driven by Circle's court-order-only policy - meaning identical illicit flows are frozen if denominated in USDT but can keep moving in USDC until a court acts.",
+      "evidence": "AMLBot/Dune snapshot 2025-10-07 gives the 30x differential; Circle CEO reaffirmed in April 2026 that USDC is not frozen without a court order 'even as hackers walk away with millions'.",
+      "sources": ["https://blog.amlbot.com/stablecoin-freezes-2023-2025-a-data-backed-analysis-of-usdt-vs-usdc-by-amlbot/", "https://www.coindesk.com/business/2026/04/13/circle-ceo-says-he-won-t-freeze-usdc-without-a-court-order-even-as-hackers-walk-away-with-millions"]
+    },
+    {
+      "claim": "Freeze latency is exploitable: illicit actors have withdrawn approximately $78 million since 2017 during the window between a Tether freeze decision and its on-chain execution (multi-signature approval delay).",
+      "evidence": "AMLBot's on-chain analysis of the gap between blacklist-submission and blacklist-execution transactions.",
+      "sources": ["https://blog.amlbot.com/stablecoin-freezes-2023-2025-a-data-backed-analysis-of-usdt-vs-usdc-by-amlbot/"]
+    },
+    {
+      "claim": "eXch was never OFAC-designated despite laundering $200M+ of the Bybit/Lazarus hack: the takedown came from German-led law enforcement seizure, and the service shut itself down effective 2025-05-01 citing fear of an impending OFAC listing that never publicly materialized.",
+      "evidence": "Elliptic documents the $200M+ Bybit laundering volume and eXch's 2025-03-31 statement about takedown attempts and possible OFAC listing; eXch does not appear in the SDN digital-currency address mirror.",
+      "sources": ["https://www.elliptic.co/blog/the-rise-and-fall-of-exch-the-dark-service-used-by-north-korea-to-launder-200-million-stolen-from-bybit", "https://github.com/0xB10C/ofac-sanctioned-digital-currency-addresses/tree/lists"]
+    },
+    {
+      "claim": "Designations can also outrun and then lag the courts: OFAC delisted Tornado Cash on 2025-03-21 after the Fifth Circuit's Van Loon ruling (2024-11-26) held that immutable smart contracts are not sanctionable 'property' - so for ~2.5 years the strictest enforcement (Circle's same-day blacklist) rested on a designation later withdrawn.",
+      "evidence": "OFAC Recent Actions 2025-03-21 removal; Fifth Circuit ruling date and reasoning per Steptoe analysis.",
+      "sources": ["https://ofac.treasury.gov/recent-actions/20250321", "https://www.steptoe.com/en/news-publications/international-compliance-blog/treasury-department-delists-tornado-cash-following-the-fifth-circuits-decision.html"]
+    },
+    {
+      "claim": "Counterpoint - the gap can close to hours when coordinated: on 2026-07-01 OFAC added 134 ISIS-K digital-asset identifiers and Tether froze all 131 TRON wallets within hours; but those wallets had already received over $1.4 million since 2023 and sent over $880,000 before designation, so the pre-designation window remains the dominant leak.",
+      "evidence": "Chainalysis July 2026 analysis of the ISIS-K identifier update; BanklessTimes on the freeze timing.",
+      "sources": ["https://www.chainalysis.com/blog/isis-designation-crypto-addresses-july-2026/", "https://www.banklesstimes.com/articles/2026/07/02/tether-blocks-131-isis%E2%80%91k-tron-wallets-in-sweeping-usdt-terror-crackdown/"]
+    }
+  ],
+  "coverageNotes": [
+    "OFAC address counts come from the 0xB10C GitHub mirror (lists branch, last updated 2026-07-02T05:10:11Z), not directly from treasury.gov sdn.xml; the raw sdn.xml was not parsed in this pass, so any SDN changes between 2026-07-02 and 2026-07-12 are not reflected. Raw per-asset lists are archived locally in enforcement-gap/data/ofac_lists/.",
+    "The 928 'total address entries' figure sums per-asset-tag entries; cross-tag duplicates were checked only for ETH/USDT (4 shared) and TRX/USDT (0 shared), so the unique-address total is at most 924 but was not de-duplicated across all 18 tags.",
+    "Tether publishes no canonical machine-readable blacklist or official address count. The 7,268-address / $3.29B figure is a third-party on-chain count (AMLBot via Dune, snapshot 2025-10-07). Tether's own cumulative figure ($4.4B 'assets' frozen, 2026-04-23) includes non-USDT assets and law-enforcement cooperation beyond blacklisting; the two numbers are NOT directly comparable.",
+    "A widely-circulated '3,800+ addresses / $4.2B+' Tether figure appears in secondary blogs without clear provenance and was deliberately excluded.",
+    "Circle publishes no official blacklist count; the 372-address / $109M figure is third-party (AMLBot via Dune, snapshot 2025-10-07). Live Dune dashboards (dune.com/phabc/usdc-banned-addresses, dune.com/ozark/usdt-and-usdc-blacklist) are JS-rendered and could not be read without a browser, so no fresher count than 2025-10-07 was retrievable in this pass.",
+    "Could not confirm whether Circle removed the Tornado Cash addresses from the USDC blacklist after OFAC's 2025-03-21 delisting; no claim is made either way.",
+    "The May 2026 '371 addresses / ~$515M in 30 days' item is an aggregate reported by press from on-chain trackers, not a Tether announcement; exact window boundaries were not published.",
+    "The 2025-05 Circle LIBRA freeze (~$57M) is sourced to a single secondary page (a law firm's practice page); treat as lower-confidence than the other Circle events.",
+    "eXch's absence from OFAC lists was verified only against the mirror's digital-currency address lists, not the full SDN entity list.",
+    "No wallet addresses, per-hop flows, or intra-window dates were invented anywhere in this file; where a specific day was unavailable (e.g. '2025-06', '2025-08') only the granularity supported by sources is recorded."
+  ]
+}
+</script>
+
+<div class="sheet">
+  <header class="masthead">
+    <div>
+      <div class="caption-line">Working paper &middot; sanctions-vs-issuer reconciliation</div>
+      <h1>Enforcement-Gap Tracker</h1>
+      <p class="subtitle">OFAC SDN digital-currency addresses, reconciled against Tether's USDT freezes and Circle's USDC blacklist. All three lists are public; this sheet dates the gaps and lag between them.</p>
+    </div>
+    <div class="snapshot-stamp">Snapshot<br><span class="num" id="stamp-date"></span></div>
+  </header>
+
+  <div class="banner">
+    <div class="lead">Snapshot as of <span class="num" id="banner-date"></span> &mdash; the live version requires an event indexer.</div>
+    <p>Nothing on this page updates. OFAC counts reflect a mirror last updated <span class="num" id="banner-mirror"></span>; issuer-blacklist totals are third-party snapshots (freshest: 2025-10-07). A real tracker needs an on-chain indexer for Tether <span class="mono">AddedBlackList</span> and Circle <span class="mono">Blacklisted</span> events plus an SDN diff cron. See the coverage notes (&sect; VI) for exactly what this pass could not retrieve.</p>
+    <p id="banner-disclaimer"></p>
+  </div>
+
+  <section id="sec-findings">
+    <h2 class="sec"><span><span class="sec-no">I.</span> Documented gaps</span><span class="sec-note">the thesis &mdash; sourced findings, most with dated lag</span></h2>
+    <p class="sec-intro">All three lists are public. Nobody reconciles them. Read down this ledger and the pattern is consistent: <em>designation, issuer action, and actual enforcement move on different clocks</em>, and the spread between those clocks is where money moves. Each finding below carries its own sources; claim and evidence text is rendered verbatim from the snapshot file.</p>
+    <div id="findings"></div>
+  </section>
+
+  <section id="sec-recon">
+    <h2 class="sec"><span><span class="sec-no">II.</span> The three lists, side by side</span><span class="sec-note">counts are not directly comparable &mdash; see basis column and &sect; VI</span></h2>
+    <div class="tblwrap"><table id="recon-table">
+      <thead><tr><th>List</th><th class="num">Addresses</th><th>Value frozen</th><th>As of</th><th>Basis</th><th>Source</th></tr></thead>
+      <tbody></tbody>
+    </table></div>
+    <p class="tbl-note" id="recon-caveat"></p>
+  </section>
+
+  <section id="sec-ofac">
+    <h2 class="sec"><span><span class="sec-no">III.</span> OFAC SDN digital-currency addresses</span><span class="sec-note" id="ofac-src-note"></span></h2>
+    <div class="tblwrap"><table class="tags" id="ofac-tags">
+      <thead><tr><th>Asset tag</th><th class="num">Entries</th><th>Asset tag</th><th class="num">Entries</th><th>Asset tag</th><th class="num">Entries</th></tr></thead>
+      <tbody></tbody>
+      <tfoot></tfoot>
+    </table></div>
+    <ol class="notes" id="ofac-notes"></ol>
+
+    <h2 class="sec" style="margin-top:2rem"><span><span class="sec-no">III-a.</span> Notable designations, dated</span><span class="sec-note">the timeline the gaps are measured against</span></h2>
+    <div class="tblwrap"><table id="designations">
+      <thead><tr><th>Date</th><th>Entity</th><th>Note</th><th>Source</th></tr></thead>
+      <tbody></tbody>
+    </table></div>
+  </section>
+
+  <section id="sec-tether">
+    <h2 class="sec"><span><span class="sec-no">IV.</span> Tether (USDT)</span><span class="sec-note">proactive since 2023-12; the far larger blacklist</span></h2>
+    <div class="policy" id="tether-policy"></div>
+    <div class="tblwrap"><table id="tether-totals">
+      <thead><tr><th>Metric</th><th>Value</th><th>As of</th><th>Source</th></tr></thead>
+      <tbody></tbody>
+    </table></div>
+    <h3 class="caption-line" style="margin:1.2rem 0 .4rem">Documented freeze events</h3>
+    <div class="tblwrap"><table id="tether-events">
+      <thead><tr><th>Date</th><th>Event</th><th>Sources</th></tr></thead>
+      <tbody></tbody>
+    </table></div>
+  </section>
+
+  <section id="sec-circle">
+    <h2 class="sec"><span><span class="sec-no">V.</span> Circle (USDC)</span><span class="sec-note">court-order-only; the far smaller blacklist</span></h2>
+    <div class="policy" id="circle-policy"></div>
+    <div class="tblwrap"><table id="circle-totals">
+      <thead><tr><th>Metric</th><th>Value</th><th>As of</th><th>Source</th></tr></thead>
+      <tbody></tbody>
+    </table></div>
+    <h3 class="caption-line" style="margin:1.2rem 0 .4rem">Documented blacklist events</h3>
+    <div class="tblwrap"><table id="circle-events">
+      <thead><tr><th>Date</th><th>Event</th><th>Sources</th></tr></thead>
+      <tbody></tbody>
+    </table></div>
+  </section>
+
+  <section id="sec-coverage">
+    <h2 class="sec"><span><span class="sec-no">VI.</span> Coverage notes &mdash; what this snapshot does not know</span><span class="sec-note">rendered verbatim; an honest hole beats a fabricated fill</span></h2>
+    <ol class="notes" id="coverage-notes"></ol>
+  </section>
+
+  <section id="sec-sources">
+    <h2 class="sec"><span><span class="sec-no">VII.</span> Source register</span><span class="sec-note" id="sources-count"></span></h2>
+    <ol class="register" id="source-register"></ol>
+  </section>
+
+  <footer class="colophon">
+    <p>Rendered entirely from <span class="mono">enforcement-gap/data/snapshot.json</span>, which is the source of record; the JSON is embedded in this file byte-for-byte and every figure above is read from it at load. No wallet addresses, per-hop flows, or intra-window dates were invented; where sources gave only month-level precision, only that precision is shown. Static snapshot &mdash; see <span class="mono">README.md</span> for the indexer the live version needs.</p>
+  </footer>
+</div>
+
+<script>
+(function(){
+  "use strict";
+  var D = JSON.parse(document.getElementById("snapshot-data").textContent);
+
+  /* ---------- helpers ---------- */
+  function el(tag, cls, text){
+    var e = document.createElement(tag);
+    if(cls) e.className = cls;
+    if(text !== undefined && text !== null) e.textContent = text;
+    return e;
+  }
+  function domainOf(url){
+    try{
+      var h = new URL(url).hostname.replace(/^www\./,"");
+      return h;
+    }catch(e){ return url; }
+  }
+  function srcLinks(sources, label){
+    var wrap = el("span","srcs");
+    wrap.appendChild(el("span","lbl", label || "Sources"));
+    (sources||[]).forEach(function(u){
+      var a = el("a", null, domainOf(u));
+      a.href = u; a.target = "_blank"; a.rel = "noopener noreferrer";
+      wrap.appendChild(a);
+    });
+    return wrap;
+  }
+  function sourcesOf(obj){
+    if(obj.sources) return obj.sources;
+    if(obj.source) return [obj.source];
+    return [];
+  }
+
+  /* ---------- masthead / banner ---------- */
+  document.getElementById("stamp-date").textContent = D.asOf;
+  document.getElementById("banner-date").textContent = D.asOf;
+  document.getElementById("banner-mirror").textContent = D.ofac.mirrorLastUpdatedUTC;
+  document.getElementById("banner-disclaimer").textContent = "Snapshot file disclaimer: " + D.disclaimer;
+
+  /* ---------- I. findings ---------- */
+  // Short titles + measure callouts are editorial labels for the 8 gap entries
+  // in snapshot.json (in file order). Claim and evidence text below each title
+  // is rendered verbatim from the file. If the file changes shape, labels
+  // fall back to generic numbering.
+  var GAP_LABELS = [
+    { t:"Tornado Cash: Circle froze same-cycle, Tether waited for a policy", m:"lag ≈ 16 months" },
+    { t:"Garantex: designated 2022, still growing until the 2025 freeze",    m:"lag ≈ 3 years" },
+    { t:"Most Tether freezes have no OFAC designation behind them",          m:">90% off-list" },
+    { t:"Same illicit flow: frozen in USDT, still moving in USDC",           m:"≈30× scale gap" },
+    { t:"The multisig delay window is a documented exit",                    m:"≈$78M withdrawn" },
+    { t:"eXch laundered $200M+ of Bybit and was never designated",           m:"no designation" },
+    { t:"The strictest freeze rested on a designation later withdrawn",      m:"≈2.5 yr on delisted basis" },
+    { t:"Counterpoint: coordination can close the gap to hours",             m:"hours — but $1.4M pre-designation" }
+  ];
+  var findingsWrap = document.getElementById("findings");
+  (D.gaps||[]).forEach(function(g, i){
+    var lab = (D.gaps.length === GAP_LABELS.length) ? GAP_LABELS[i] : null;
+    var f = el("div","finding");
+    var head = el("div","f-head");
+    head.appendChild(el("span","f-no","Finding " + String(i+1).padStart(2,"0")));
+    head.appendChild(el("span","f-title", lab ? lab.t : "Documented gap"));
+    if(lab) head.appendChild(el("span","f-measure", lab.m));
+    f.appendChild(head);
+    f.appendChild(el("p","f-claim", g.claim));
+    var ev = el("div","f-evidence");
+    ev.appendChild(el("span","lbl","Evidence"));
+    ev.appendChild(document.createTextNode(g.evidence));
+    f.appendChild(ev);
+    f.appendChild(srcLinks(g.sources));
+    findingsWrap.appendChild(f);
+  });
+
+  /* ---------- II. reconciliation table ---------- */
+  // Rows are drawn from ofac.totalAddressEntriesAcrossAssetTags, tether.totals
+  // and circle.totals. "Addresses" and "value" strings are shown as recorded.
+  var amlbotTether = D.tether.totals.filter(function(t){ return t.metric.indexOf("Blacklisted") === 0; })[0];
+  var issuerTether = D.tether.totals[0];
+  var blocksec     = D.tether.totals.filter(function(t){ return t.metric.indexOf("2025") !== -1; })[0];
+  var amlbotCircle = D.circle.totals[0];
+  var reconRows = [
+    { list:"OFAC SDN — digital-currency address entries (all 18 asset tags)",
+      addr: String(D.ofac.totalAddressEntriesAcrossAssetTags),
+      val:"— (designations, not freezes)",
+      asOf:"mirror " + D.ofac.mirrorLastUpdatedUTC,
+      basis:"per-asset-tag entry count from the 0xB10C sdn.xml mirror; ≤4 cross-tag duplicates checked (see § VI)",
+      srcs:[D.sources[0].url] },
+    { list:"Tether USDT blacklist — third-party on-chain count",
+      addr:"7,268", val:"$3.29 billion ($1.75B on TRON)",
+      asOf: amlbotTether ? amlbotTether.asOf : "",
+      basis:"AMLBot via Dune; Tether publishes no canonical blacklist count",
+      srcs: amlbotTether ? [amlbotTether.source] : [] },
+    { list:"Tether — issuer's own cumulative figure",
+      addr:"—", val: issuerTether.value,
+      asOf: issuerTether.asOf,
+      basis:"includes non-USDT assets and law-enforcement cooperation beyond blacklisting; NOT comparable to the row above",
+      srcs:[issuerTether.source] },
+    { list:"Tether — frozen during calendar 2025",
+      addr:"—", val: blocksec ? blocksec.value : "",
+      asOf: blocksec ? blocksec.asOf : "",
+      basis:"BlockSec on-chain analysis, Ethereum + TRON",
+      srcs: blocksec ? [blocksec.source] : [] },
+    { list:"Circle USDC blacklist — third-party on-chain count",
+      addr:"372", val:"$109 million",
+      asOf: amlbotCircle.asOf,
+      basis:"AMLBot via Dune; Circle publishes no official count",
+      srcs:[amlbotCircle.source] }
+  ];
+  var reconBody = document.querySelector("#recon-table tbody");
+  reconRows.forEach(function(r){
+    var tr = el("tr");
+    tr.appendChild(el("td", null, r.list));
+    tr.appendChild(el("td","num", r.addr));
+    tr.appendChild(el("td", null, r.val));
+    tr.appendChild(el("td","date", r.asOf));
+    tr.appendChild(el("td", null, r.basis));
+    var td = el("td"); td.appendChild(srcLinks(r.srcs,"")); tr.appendChild(td);
+    reconBody.appendChild(tr);
+  });
+  // caveat: the coverage note that governs comparability, verbatim
+  var comparabilityNote = (D.coverageNotes||[]).filter(function(n){ return n.indexOf("NOT directly comparable") !== -1; })[0];
+  if(comparabilityNote) document.getElementById("recon-caveat").textContent = comparabilityNote;
+
+  /* ---------- III. OFAC ---------- */
+  document.getElementById("ofac-src-note").textContent =
+    D.ofac.source + " — last updated " + D.ofac.mirrorLastUpdatedUTC;
+  var tags = Object.keys(D.ofac.addressCountsPerAssetTag);
+  var tagsBody = document.querySelector("#ofac-tags tbody");
+  var perRow = 3;
+  var rows = Math.ceil(tags.length / perRow);
+  for(var r = 0; r < rows; r++){
+    var tr = el("tr");
+    for(var c = 0; c < perRow; c++){
+      var k = tags[c*rows + r];
+      if(k === undefined){
+        tr.appendChild(el("td")); tr.appendChild(el("td","num"));
+      }else{
+        tr.appendChild(el("td","mono", k));
+        tr.appendChild(el("td","num", String(D.ofac.addressCountsPerAssetTag[k])));
+      }
+    }
+    tagsBody.appendChild(tr);
+  }
+  var tagSum = tags.reduce(function(s,k){ return s + D.ofac.addressCountsPerAssetTag[k]; }, 0);
+  var tfoot = document.querySelector("#ofac-tags tfoot");
+  function tfootRow(label, value){
+    var ftr = el("tr");
+    var ftd = el("td", null, label);
+    ftd.colSpan = 5;
+    ftr.appendChild(ftd);
+    ftr.appendChild(el("td","num", String(value)));
+    tfoot.appendChild(ftr);
+  }
+  tfootRow("Sum of per-tag entries above (computed)", tagSum);
+  if(tagSum !== D.ofac.totalAddressEntriesAcrossAssetTags){
+    tfootRow("Total recorded in snapshot.json", D.ofac.totalAddressEntriesAcrossAssetTags);
+    var disc = el("p","tbl-note",
+      "Discrepancy, flagged rather than silently corrected: the per-tag counts above (which match the raw per-asset lists archived in data/ofac_lists/) sum to " +
+      tagSum + ", but snapshot.json records a total of " +
+      D.ofac.totalAddressEntriesAcrossAssetTags +
+      ". The “928” figure quoted in Finding 03 and the coverage notes inherits the recorded total.");
+    disc.style.color = "var(--red)";
+    document.querySelector("#ofac-tags").closest(".tblwrap").after(disc);
+  }
+
+  var ofacNotes = document.getElementById("ofac-notes");
+  (D.ofac.countNotes||[]).forEach(function(n){
+    ofacNotes.appendChild(el("li", null, n));
+  });
+
+  var desigBody = document.querySelector("#designations tbody");
+  (D.ofac.notableDesignations||[]).forEach(function(d){
+    var tr = el("tr");
+    tr.appendChild(el("td","date", d.date));
+    tr.appendChild(el("td", null, d.entity));
+    tr.appendChild(el("td", null, d.note));
+    var td = el("td"); td.appendChild(srcLinks(sourcesOf(d),"")); tr.appendChild(td);
+    desigBody.appendChild(tr);
+  });
+
+  /* ---------- IV / V. issuers ---------- */
+  function fillPolicy(id, label, text, srcs){
+    var box = document.getElementById(id);
+    box.appendChild(el("span","lbl", label));
+    box.appendChild(document.createTextNode(text));
+    box.appendChild(el("br"));
+    box.appendChild(srcLinks(srcs));
+  }
+  fillPolicy("tether-policy","Stated policy", D.tether.policy, D.tether.policySources);
+  fillPolicy("circle-policy","Stated policy", D.circle.policy, D.circle.policySources);
+
+  function fillTotals(tableId, totals){
+    var body = document.querySelector("#" + tableId + " tbody");
+    totals.forEach(function(t){
+      var tr = el("tr");
+      tr.appendChild(el("td", null, t.metric));
+      tr.appendChild(el("td", null, t.value));
+      tr.appendChild(el("td","date", t.asOf));
+      var td = el("td"); td.appendChild(srcLinks([t.source],"")); tr.appendChild(td);
+      body.appendChild(tr);
+    });
+  }
+  fillTotals("tether-totals", D.tether.totals);
+  fillTotals("circle-totals", D.circle.totals);
+
+  function fillEvents(tableId, events){
+    var body = document.querySelector("#" + tableId + " tbody");
+    events.forEach(function(e){
+      var tr = el("tr");
+      tr.appendChild(el("td","date", e.date));
+      tr.appendChild(el("td", null, e.event));
+      var td = el("td"); td.appendChild(srcLinks(sourcesOf(e),"")); tr.appendChild(td);
+      body.appendChild(tr);
+    });
+  }
+  fillEvents("tether-events", D.tether.documentedFreezeEvents);
+  fillEvents("circle-events", D.circle.documentedBlacklistEvents);
+
+  /* ---------- VI. coverage notes ---------- */
+  var cov = document.getElementById("coverage-notes");
+  (D.coverageNotes||[]).forEach(function(n){
+    cov.appendChild(el("li", null, n));
+  });
+
+  /* ---------- VII. source register ---------- */
+  document.getElementById("sources-count").textContent =
+    D.sources.length + " sources, all retrieved " + D.asOf;
+  var reg = document.getElementById("source-register");
+  D.sources.forEach(function(s, i){
+    var li = el("li");
+    li.appendChild(el("span","r-no", String(i+1).padStart(2,"0")));
+    var name = el("span","r-name");
+    var a = el("a", null, s.name);
+    a.href = s.url; a.target = "_blank"; a.rel = "noopener noreferrer";
+    name.appendChild(a);
+    li.appendChild(name);
+    li.appendChild(el("span","r-date","ret. " + s.retrieved));
+    reg.appendChild(li);
+  });
+})();
+</script>
+<p style="max-width:960px;margin:40px auto 56px;padding:0 16px;font:14px/1.5 system-ui,sans-serif;opacity:.75"><a href="https://elsaicequeen.github.io/" style="color:inherit">Back to Anish Majumdar's portfolio</a></p>
+</body>
+</html>
