@@ -1,0 +1,179 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Where USDC stands</title>
+<meta name="description" content="Four findings about USDC's share, spread across chains and peg, computed in the browser from DefiLlama's public stablecoin data.">
+<link rel="icon" href="data:,">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600&family=Martian+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="preconnect" href="https://stablecoins.llama.fi" crossorigin>
+<style>
+:root{
+  color-scheme:light;
+  --paper:#ECEDE8; --ink:#14171C; --muted:#5D6470; --line:#CFD2CA; --grid:#D8DAD2;
+  --accent:#2E46D1; --sel:#DCE1FA; --warn-bg:#F3E7D3; --warn-line:#D9B98A;
+  --usdc:#2E46D1; --usdt:#0E8A6E; --loss:#C2410C; --other:#8A8F98; --band:rgba(46,70,209,.09);
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    color-scheme:dark;
+    --paper:#15171B; --ink:#E6E7E3; --muted:#9097A2; --line:#2C3038; --grid:#262A31;
+    --accent:#8A9BFF; --sel:#2A3160; --warn-bg:#2A2419; --warn-line:#5C4A2C;
+    --usdc:#6F83F2; --usdt:#1F9E80; --loss:#DD6B3A; --other:#6B717C; --band:rgba(111,131,242,.13);
+  }
+}
+:root[data-theme="dark"]{
+  color-scheme:dark;
+  --paper:#15171B; --ink:#E6E7E3; --muted:#9097A2; --line:#2C3038; --grid:#262A31;
+  --accent:#8A9BFF; --sel:#2A3160; --warn-bg:#2A2419; --warn-line:#5C4A2C;
+  --usdc:#6F83F2; --usdt:#1F9E80; --loss:#DD6B3A; --other:#6B717C; --band:rgba(111,131,242,.13);
+}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0; background:var(--paper); color:var(--ink); font:400 1.0625rem/1.6 "Instrument Sans",system-ui,sans-serif}
+::selection{background:var(--sel)}
+a{color:inherit; text-decoration-color:var(--accent); text-decoration-thickness:1.5px; text-underline-offset:3px}
+a:hover{color:var(--accent)}
+:focus-visible{outline:2px solid var(--accent); outline-offset:2px; border-radius:3px}
+.wrap{max-width:880px; margin:0 auto; padding:0 16px}
+.mono{font-family:"Martian Mono",ui-monospace,monospace}
+
+header{padding:40px 0 8px}
+.crumb{margin:0 0 48px; font-size:.95rem; color:var(--muted)}
+h1{font-weight:600; font-size:clamp(2.2rem,5.5vw,3.4rem); line-height:1.02; letter-spacing:-.03em; margin:0 0 18px}
+.lede{font-size:1.2rem; line-height:1.5; margin:0; max-width:34em}
+.status{margin:22px 0 0; font:400 .78rem/1.6 "Martian Mono",ui-monospace,monospace; color:var(--muted)}
+.status.fallback{color:var(--ink); background:var(--warn-bg); border-left:3px solid var(--warn-line); padding:8px 12px}
+
+.finding{padding:56px 0 8px; border-top:1px solid var(--line); margin-top:48px}
+.finding:first-of-type{margin-top:40px}
+.finding .n{font:500 .95rem/1.2 "Instrument Sans",system-ui,sans-serif; color:var(--muted); margin:0 0 10px}
+.finding h2{font-weight:600; font-size:clamp(1.35rem,3.2vw,1.75rem); line-height:1.22; letter-spacing:-.015em; margin:0 0 14px; max-width:30em; text-wrap:balance}
+.finding .detail{margin:0; max-width:38em; color:var(--ink)}
+.finding .detail .num, .finding h2 .num{font-variant-numeric:tabular-nums}
+.pending h2{color:var(--muted)}
+
+figure{margin:28px 0 0}
+.legend{display:flex; flex-wrap:wrap; gap:4px 18px; margin:0 0 8px; padding:0; list-style:none; font-size:.9rem; color:var(--muted)}
+.legend li{display:flex; align-items:center; gap:7px}
+.key-line{width:16px; height:2px; border-radius:1px; background:currentColor}
+.key-box{width:11px; height:11px; border-radius:3px; background:currentColor}
+.chart{width:100%; min-height:120px}
+.chart svg{display:block; overflow:visible; font-variant-numeric:tabular-nums}
+.chart [aria-label="tip"]{--plot-background:var(--paper)}
+.chart .label{font-size:.82rem; color:var(--muted); margin:14px 0 4px}
+figcaption{margin-top:10px; font-size:.86rem; line-height:1.5; color:var(--muted); max-width:44em}
+
+details{margin-top:12px; font-size:.9rem}
+summary{cursor:pointer; color:var(--muted); width:max-content}
+summary:hover{color:var(--ink)}
+.tablewrap{overflow-x:auto; margin-top:8px}
+table{border-collapse:collapse; font-variant-numeric:tabular-nums; min-width:100%}
+th,td{padding:6px 14px 6px 0; border-bottom:1px solid var(--line); text-align:left; white-space:nowrap}
+th{font:500 .74rem/1.3 "Martian Mono",ui-monospace,monospace; color:var(--muted)}
+td.r,th.r{text-align:right}
+
+.methods{border-top:1px solid var(--line); margin-top:64px; padding:40px 0 24px}
+.methods h2{font-size:1.25rem; font-weight:600; margin:0 0 18px}
+.methods dl{margin:0; display:grid; grid-template-columns:minmax(0,11em) minmax(0,1fr); gap:14px 24px; font-size:.95rem}
+.methods dt{font-weight:500}
+.methods dd{margin:0; color:var(--ink)}
+.methods code{font:400 .82em "Martian Mono",ui-monospace,monospace; overflow-wrap:anywhere}
+@media (max-width:620px){.methods dl{grid-template-columns:1fr; gap:4px} .methods dd{margin-bottom:14px}}
+footer{padding:8px 0 56px; font-size:.95rem}
+noscript p{background:var(--warn-bg); padding:10px 12px}
+</style>
+</head>
+<body>
+<header class="wrap">
+  <p class="crumb"><a href="https://elsaicequeen.github.io/">Portfolio</a></p>
+  <h1>Where USDC stands</h1>
+  <p class="lede">Four readings on Circle's dollar stablecoin: its share of the market, where it sits across chains, where it moved this month, and how tightly it held $1. Every sentence and chart below is computed in your browser from DefiLlama's public data when the page loads.</p>
+  <p class="status" id="status" role="status">Fetching DefiLlama data…</p>
+  <noscript><p>This page computes its findings with JavaScript. The underlying snapshot is in <a href="data/latest.json">data/</a>.</p></noscript>
+</header>
+
+<main class="wrap">
+  <section class="finding pending" id="f-share" aria-labelledby="f-share-h">
+    <p class="n">Market share</p>
+    <h2 id="f-share-h">Computing USDC's share of stablecoin supply…</h2>
+    <p class="detail"></p>
+    <figure>
+      <ul class="legend" aria-label="Legend">
+        <li style="color:var(--usdc)"><span class="key-line"></span><span style="color:var(--muted)">USDC</span></li>
+        <li style="color:var(--usdt)"><span class="key-line"></span><span style="color:var(--muted)">USDT</span></li>
+      </ul>
+      <div class="chart" data-chart></div>
+      <figcaption></figcaption>
+      <details><summary>Show the numbers</summary><div class="tablewrap" data-table></div></details>
+    </figure>
+  </section>
+
+  <section class="finding pending" id="f-chains" aria-labelledby="f-chains-h">
+    <p class="n">Concentration</p>
+    <h2 id="f-chains-h">Computing where USDC is held…</h2>
+    <p class="detail"></p>
+    <figure>
+      <div class="chart" data-chart></div>
+      <figcaption></figcaption>
+      <details><summary>Show the numbers</summary><div class="tablewrap" data-table></div></details>
+    </figure>
+  </section>
+
+  <section class="finding pending" id="f-flows" aria-labelledby="f-flows-h">
+    <p class="n">Last 30 days</p>
+    <h2 id="f-flows-h">Computing 30-day supply changes by chain…</h2>
+    <p class="detail"></p>
+    <figure>
+      <ul class="legend" aria-label="Legend">
+        <li style="color:var(--usdc)"><span class="key-box"></span><span style="color:var(--muted)">Supply rose</span></li>
+        <li style="color:var(--loss)"><span class="key-box"></span><span style="color:var(--muted)">Supply fell</span></li>
+      </ul>
+      <div class="chart" data-chart></div>
+      <figcaption></figcaption>
+      <details><summary>Show the numbers</summary><div class="tablewrap" data-table></div></details>
+    </figure>
+  </section>
+
+  <section class="finding pending" id="f-peg" aria-labelledby="f-peg-h">
+    <p class="n">Peg</p>
+    <h2 id="f-peg-h">Computing how closely USDC held $1…</h2>
+    <p class="detail"></p>
+    <figure>
+      <div class="chart" data-chart></div>
+      <figcaption></figcaption>
+      <details><summary>Show the numbers</summary><div class="tablewrap" data-table></div></details>
+    </figure>
+  </section>
+
+  <section class="methods" aria-labelledby="methods-h">
+    <h2 id="methods-h">Method and sources</h2>
+    <dl>
+      <dt>Market share</dt>
+      <dd>Daily circulating supply from DefiLlama: <code>/stablecoincharts/all</code> for every USD-pegged stablecoin, and the daily <code>tokens</code> history from <code>/stablecoin/2</code> (USDC) and <code>/stablecoin/1</code> (USDT). Share is the coin's supply divided by the all-USD total on the same UTC day. The year-ago comparison uses the closest day on or before the same date last year.</dd>
+      <dt>Chains</dt>
+      <dd>USDC's per-chain supply from <code>/stablecoins</code>, current and 30 days earlier (<code>circulatingPrevMonth</code>). Concentration is the Herfindahl index of chain shares; its inverse reads as "this many equal-sized chains". A change in a chain's supply nets mints, burns and bridging together.</dd>
+      <dt>Peg</dt>
+      <dd>Daily prices from <code>/stablecoinprices</code> (one reading per UTC day, the last 365 days). Deviation is (price − 1) × 10,000 in basis points. The 10 bps band is a working alert threshold chosen for this page, not an official one.</dd>
+      <dt>Cross-chain transfers</dt>
+      <dd id="dune-note">Checking the saved Dune status…</dd>
+      <dt>Fallback snapshot</dt>
+      <dd id="snapshot-note">If DefiLlama doesn't answer, the page uses a snapshot baked by <a href="bake/bake.mjs"><code>bake/bake.mjs</code></a> and says so at the top.</dd>
+      <dt>Code</dt>
+      <dd>All computation is in <a href="js/model.js"><code>js/model.js</code></a>; charts use Observable Plot 0.6.17.</dd>
+    </dl>
+  </section>
+</main>
+
+<footer class="wrap">
+  <a href="https://elsaicequeen.github.io/">Back to elsaicequeen.github.io</a>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/d3@7.9.0/dist/d3.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@observablehq/plot@0.6.17/dist/plot.umd.min.js"></script>
+<script type="module" src="js/app.js"></script>
+</body>
+</html>
