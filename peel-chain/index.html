@@ -10,6 +10,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600&family=Martian+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../shared/site-nav.css">
 <style>
 :root{
   --bg:#ECEDE8; --panel:#FAFAF7; --stage:#F4F4F0; --ink:#14171C; --muted:#5D6470; --line:#CFD2CA;
@@ -45,7 +46,7 @@ body{
   background:var(--bg); color:var(--ink);
   font:400 15px/1.5 var(--sans);
   -webkit-font-smoothing:antialiased;
-  display:grid; grid-template-rows:auto auto minmax(0,1fr) auto;
+  display:grid; grid-template-rows:auto auto auto minmax(0,1fr);
   height:100vh; height:100dvh; overflow:hidden;
 }
 a{color:inherit; text-decoration-color:var(--accent); text-decoration-thickness:1.5px; text-underline-offset:3px}
@@ -75,7 +76,6 @@ button{font:inherit; color:inherit}
 .cases a:hover{background:var(--bg)}
 .cases a[aria-current="page"]{background:var(--bg)}
 .cases a[aria-current="page"]::after{content:""; position:absolute; left:0; right:0; bottom:-1px; height:3px; background:var(--accent)}
-.cases .cn{font-family:var(--mono); font-size:.72rem; color:var(--muted); margin-right:6px}
 .cases .ct{font-weight:600}
 .cases .cm{display:block; color:var(--muted); font-size:.85rem; white-space:nowrap; overflow:hidden; text-overflow:ellipsis}
 
@@ -97,15 +97,13 @@ button{font:inherit; color:inherit}
 #selChip span{flex:1; min-width:0; white-space:nowrap; overflow:hidden; text-overflow:ellipsis}
 #selChip button{border:1px solid var(--line); background:var(--bg); border-radius:6px; padding:5px 9px; cursor:pointer; font-size:.82rem; flex:none}
 #stageChapter{display:none}
-#legend{position:absolute; left:12px; bottom:12px; background:var(--panel); border:1px solid var(--line); border-radius:8px; font-size:.82rem; max-width:220px}
-#legend summary{cursor:pointer; padding:7px 11px; font-weight:500; list-style:none}
-#legend summary::-webkit-details-marker{display:none}
-#legend summary::after{content:" +"; color:var(--muted)}
-#legend[open] summary::after{content:" \2212"}
-#legend .rows{padding:0 11px 9px; display:grid; gap:3px}
-#legend .row{display:flex; align-items:center; gap:8px}
+/* key: docked strip above the scrubber, collapsed by default, never over the graph */
+#legend{display:flex; flex-wrap:wrap; gap:4px 16px; padding:0 0 8px; margin:0 0 6px; border-bottom:1px solid var(--line); font-size:.8rem}
+#legend[hidden]{display:none}
+#legend .row{display:flex; align-items:center; gap:6px; white-space:nowrap}
 #legend svg{flex:none}
-body.investigate #legend{display:none}
+#legendBtn{flex:none; font-size:.82rem; color:var(--ink)}
+body.investigate #legend, body.investigate #legendBtn{display:none}
 
 /* ---------- timeline ---------- */
 .timeline{border-top:1px solid var(--line); background:var(--panel); padding:10px 20px 10px}
@@ -120,7 +118,7 @@ body.investigate #legend{display:none}
 #track .chmark{position:absolute; top:50%; width:1px; height:6px; margin-top:-10px; background:var(--muted)}
 #track .chnum{position:absolute; top:2px; transform:translateX(-50%); font-size:.7rem; line-height:1; color:var(--muted); font-family:var(--mono)}
 #track .tick{position:absolute; bottom:0; transform:translateX(-50%); font-family:var(--mono); font-size:.66rem; line-height:1; color:var(--muted); white-space:nowrap}
-.tl-meta{margin-top:4px; color:var(--muted); font-size:.82rem; min-height:1.3em}
+.tl-meta{margin-top:4px; color:var(--muted); font-size:.82rem; min-height:1.3em; display:flex; justify-content:space-between; align-items:baseline; gap:12px}
 .tl-meta .seized{color:var(--recover)}
 
 /* ---------- side panel ---------- */
@@ -129,7 +127,12 @@ body.investigate #legend{display:none}
 .case-head h1{font-size:1.35rem; line-height:1.2; letter-spacing:-.015em; margin:0 0 4px; font-weight:600}
 .case-head .basis{margin:0 0 6px; color:var(--muted); font-size:.9rem}
 .case-head .sub{margin:0; font-size:.95rem}
-.case-head .quick{margin:10px 0 0; display:flex; flex-wrap:wrap; gap:6px 16px; font-size:.9rem}
+.stylenote{margin:10px 0 0; border-left:3px solid var(--theft); padding:1px 0 1px 10px; font-size:.86rem; color:var(--muted)}
+.stylenote .linkbtn{color:var(--ink); font-size:inherit}
+#intro{display:flex; align-items:flex-start; gap:8px; margin:12px 0 0}
+#intro[hidden], body.investigate #intro{display:none}
+#intro .acts{display:flex; flex-wrap:wrap; gap:8px; flex:1; min-width:0}
+#intro .close{margin:2px -6px 0 0}
 .linkbtn{background:none; border:0; padding:0; cursor:pointer; text-decoration:underline; text-decoration-color:var(--accent); text-decoration-thickness:1.5px; text-underline-offset:3px; font-weight:500}
 h2.bh{font-size:1.05rem; margin:0 0 6px; font-weight:600; letter-spacing:-.005em}
 .muted{color:var(--muted)}
@@ -204,26 +207,13 @@ details.block[open] > summary::after{content:"\2212"}
 .panel-foot p{margin:0 0 6px}
 kbd{font-family:var(--mono); font-size:.74rem; border:1px solid var(--line); border-radius:4px; padding:0 4px; background:var(--bg)}
 
-/* ---------- foot line ---------- */
-.footline{display:flex; justify-content:space-between; align-items:baseline; gap:8px 24px; padding:8px 20px; border-top:1px solid var(--line); background:var(--bg); font-size:.82rem; color:var(--muted)}
-.footline p{margin:0; min-width:0}
-.footline a{white-space:nowrap; color:var(--ink); font-weight:500}
-
 /* ---------- dialogs ---------- */
 .dialog{position:fixed; inset:0; z-index:50; display:flex; align-items:center; justify-content:center; background:var(--scrim); padding:16px; opacity:1; transition:opacity .35s ease}
 .dialog[hidden]{display:none}
 .dialog.hide{opacity:0; pointer-events:none}
 .dialog .plate{background:var(--panel); border:1px solid var(--line); border-radius:12px; width:100%; max-width:600px; max-height:100%; overflow-y:auto; padding:28px 30px 24px; box-shadow:0 18px 50px rgba(0,0,0,.25)}
 .plate .basis{margin:0 0 4px; color:var(--muted); font-size:.92rem}
-.plate h2{font-size:1.6rem; line-height:1.15; letter-spacing:-.02em; margin:0 0 8px; font-weight:600}
-.plate .lede{font-size:1.02rem; margin:0 0 16px}
-.stylenote{border:1px solid var(--line); border-left:3px solid var(--theft); border-radius:6px; background:var(--bg); padding:10px 12px; font-size:.9rem; margin:0 0 10px}
-.plate details{font-size:.88rem; margin:0 0 18px; color:var(--muted)}
-.plate details summary{cursor:pointer; color:var(--ink); font-weight:500}
-.plate details p{margin:8px 0 0}
 .tc-actions{display:flex; flex-wrap:wrap; gap:8px; margin:0 0 16px}
-.tc-other{font-size:.88rem; color:var(--muted); margin:0; border-top:1px solid var(--line); padding-top:12px}
-.tc-other a{color:var(--ink)}
 #verdict .plate{max-width:520px}
 #vGrade{font-size:3rem; font-weight:600; line-height:1; margin:4px 0 6px; letter-spacing:-.03em}
 #vPct{font-family:var(--mono); font-size:.82rem; color:var(--muted); margin:0 0 14px}
@@ -243,9 +233,8 @@ kbd{font-family:var(--mono); font-size:.74rem; border:1px solid var(--line); bor
   .top-controls{gap:6px}
   .seg button{padding:6px 9px; font-size:.86rem}
   .cases .ct{display:block; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; font-size:.92rem}
-  .cases a{padding:9px 8px 10px}
-  .cases .cm{display:none}
-  .cases .cn{display:block; margin:0}
+  .cases a{padding:8px 12px 9px}
+  .cases .cm{font-size:.8rem}
   .workspace{display:block}
   .stage-col{display:block}
   .stage{height:48svh; min-height:300px; max-height:540px}
@@ -256,10 +245,15 @@ kbd{font-family:var(--mono); font-size:.74rem; border:1px solid var(--line); bor
   #selChip.show{display:flex}
   #stageChapter{display:block; position:absolute; left:12px; right:60px; top:12px; background:var(--panel); border:1px solid var(--line); border-radius:8px; padding:6px 10px; font-size:.85rem; white-space:nowrap; overflow:hidden; text-overflow:ellipsis}
   #stageChapter:empty, body.investigate #stageChapter, #selChip.show ~ #stageChapter{display:none}
-  #legend{max-width:calc(100% - 24px)}
-  .footline{flex-direction:column; padding:12px 16px 20px}
   .dialog .plate{padding:22px 18px 18px}
-  .plate h2{font-size:1.35rem}
+}
+@media (max-width: 600px){
+  .cases{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .cases a:nth-child(2){border-right:0}
+  .cases a:nth-child(-n+2){border-bottom:1px solid var(--line)}
+  .cases .cm{white-space:normal}
+  /* the shared project nav scrolls sideways at phone width; wrap it here so no link is clipped */
+  .site-nav ul{flex-wrap:wrap; overflow:visible; row-gap:0}
 }
 @media (prefers-reduced-motion: reduce){
   *,*::before,*::after{transition:none !important; animation:none !important; scroll-behavior:auto !important}
@@ -267,6 +261,18 @@ kbd{font-family:var(--mono); font-size:.74rem; border:1px solid var(--line); bor
 </style>
 </head>
 <body>
+<nav class="site-nav" aria-label="Projects">
+  <div class="sn-in">
+    <a class="sn-home" href="../">Anish Majumdar</a>
+    <ul>
+      <li><a href="../peel-chain/" aria-current="page">Peel Chain</a></li>
+      <li><a href="../usdc/">USDC</a></li>
+      <li><a href="../haircut/">Haircut</a></li>
+      <li><a href="../chain-hop/">Chain-Hop</a></li>
+      <li><a href="../enforcement-gap/">Enforcement gap</a></li>
+    </ul>
+  </div>
+</nav>
 <a class="skip" href="#panel">Skip to case details</a>
 
 <header class="top">
@@ -301,9 +307,9 @@ kbd{font-family:var(--mono); font-size:.74rem; border:1px solid var(--line); bor
           <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M1.5 5.5v-4h4M10.5 1.5h4v4M14.5 10.5v4h-4M5.5 14.5h-4v-4"/></svg>
         </button>
       </div>
-      <details id="legend" open><summary>Key</summary><div class="rows" id="legendRows"></div></details>
     </section>
     <div class="timeline">
+      <div id="legend" role="group" aria-label="Key" hidden></div>
       <div class="tl-row">
         <button id="playBtn" type="button" aria-label="Play walkthrough"></button>
         <div id="dateRead" aria-live="off"></div>
@@ -313,7 +319,7 @@ kbd{font-family:var(--mono); font-size:.74rem; border:1px solid var(--line); bor
           <div class="head" id="head"></div>
         </div>
       </div>
-      <div class="tl-meta" id="btcRead"></div>
+      <div class="tl-meta"><span id="btcRead"></span><button type="button" class="linkbtn" id="legendBtn" aria-expanded="false" aria-controls="legend">Show key</button></div>
     </div>
   </div>
 
@@ -322,7 +328,14 @@ kbd{font-family:var(--mono); font-size:.74rem; border:1px solid var(--line); bor
       <h1 id="caseTitle"></h1>
       <p class="basis" id="caseBasis"></p>
       <p class="sub" id="caseSub"></p>
-      <p class="quick"><button type="button" class="linkbtn" id="reopenIntro">Case introduction</button><button type="button" class="linkbtn" id="openSources">Sources and method</button></p>
+      <p class="stylenote">Intermediate hops are stylised to show the technique; headline facts follow the cited public record. <button type="button" class="linkbtn" id="openSources">Full method note</button></p>
+      <div id="intro">
+        <div class="acts">
+          <button type="button" class="btn primary" id="introPlay">Start the walkthrough</button>
+          <button type="button" class="btn" id="introInv">Investigate with labels hidden</button>
+        </div>
+        <button type="button" class="close" id="introClose" aria-label="Dismiss these shortcuts">&times;</button>
+      </div>
     </div>
 
     <section class="block" id="chapterBox" aria-live="polite">
@@ -388,27 +401,6 @@ kbd{font-family:var(--mono); font-size:.74rem; border:1px solid var(--line); bor
       <p>Pan by dragging, zoom with the wheel, a pinch or the buttons on the graph.</p>
     </div>
   </aside>
-</div>
-
-<footer class="footline">
-  <p id="footNote"></p>
-  <a href="https://elsaicequeen.github.io/">Back to Anish Majumdar's portfolio</a>
-</footer>
-
-<div id="titlecard" class="dialog" role="dialog" aria-modal="true" aria-labelledby="tcH">
-  <div class="plate">
-    <p class="basis" id="tcBasis"></p>
-    <h2 id="tcH"></h2>
-    <p class="lede" id="tcTitle"></p>
-    <p class="stylenote" id="tcStyle"></p>
-    <details><summary>Full method note</summary><p id="tcDisc"></p></details>
-    <div class="tc-actions">
-      <button type="button" class="btn primary" id="tcPlay">Start the walkthrough</button>
-      <button type="button" class="btn" id="tcSkip">Explore the full graph</button>
-      <button type="button" class="btn" id="tcInv">Investigate with labels hidden</button>
-    </div>
-    <p class="tc-other" id="tcOther"></p>
-  </div>
 </div>
 
 <div id="verdict" class="dialog" role="dialog" aria-modal="true" aria-labelledby="vHead" hidden>
@@ -511,7 +503,6 @@ if (!DATA || !Array.isArray(DATA.entities) || !DATA.entities.length){
   throw new Error('peel-chain: case data missing');
 }
 const INFO = CASE_INFO[CASE_ID];
-const STYLE_NOTE = 'Headline facts follow the cited public record. Intermediate wallet addresses, hop counts, per-hop splits and exact dates inside documented windows are stylised to show the technique, not reproduce every transaction. ' + INFO.units;
 
 /* ------------------------------ utilities ------------------------------ */
 const DAY = 86400000;
@@ -1434,10 +1425,15 @@ function buildLegend(){
     [sw('<path d="M1 7 H17" stroke="'+ink+'" stroke-width="1.5" stroke-dasharray="5 3"/>'), 'Chain-hop'],
     [sw('<path d="M1 7 H17" stroke="'+ink+'" stroke-width="1.5" stroke-dasharray="1.5 3"/>'), 'Cash-out flow']
   ];
-  document.getElementById('legendRows').innerHTML = rows.map(r => '<div class="row">' + r[0] + '<span>' + r[1] + '</span></div>').join('');
+  document.getElementById('legend').innerHTML = rows.map(r => '<div class="row">' + r[0] + '<span>' + r[1] + '</span></div>').join('');
 }
 buildLegend();
-if (window.matchMedia('(max-width: 900px)').matches) document.getElementById('legend').open = false;
+document.getElementById('legendBtn').addEventListener('click', ev => {
+  const lg = document.getElementById('legend');
+  lg.hidden = !lg.hidden;
+  ev.currentTarget.setAttribute('aria-expanded', String(!lg.hidden));
+  ev.currentTarget.textContent = lg.hidden ? 'Show key' : 'Hide key';
+});
 
 /* --------------------------------- mode -------------------------------- */
 const tabE = document.getElementById('tabExhibit'), tabI = document.getElementById('tabInvestigate');
@@ -1472,7 +1468,7 @@ function buildCaseNav(){
   navEl.innerHTML = CASE_ORDER.map(id => {
     const ci = CASE_INFO[id];
     return '<a href="' + esc(caseHref(id)) + '"' + (id === CASE_ID ? ' aria-current="page"' : '') + '>'
-      + '<span class="cn">' + id + '</span><span class="ct">' + esc(ci.name) + '</span>'
+      + '<span class="ct">' + esc(ci.name) + '</span>'
       + '<span class="cm">' + esc(ci.year + ' · ' + ci.amount) + '</span></a>';
   }).join('');
 }
@@ -1481,7 +1477,6 @@ document.title = INFO.title + ' · Peel Chain';
 document.getElementById('caseTitle').textContent = INFO.title;
 document.getElementById('caseBasis').textContent = INFO.basis;
 document.getElementById('caseSub').textContent = DATA.meta.title || '';
-document.getElementById('footNote').textContent = STYLE_NOTE;
 document.getElementById('srcDisc').textContent = DATA.meta.disclaimer || '';
 (function buildSources(){
   const GOV = /(^|\.)(justice\.gov|ic3\.gov|treasury\.gov|fbi\.gov|uscourts\.gov)$/;
@@ -1515,47 +1510,24 @@ function trapFocus(dlg, ev){
   else if (!ev.shiftKey && document.activeElement === last){ ev.preventDefault(); first.focus(); }
 }
 
-/* ------------------------------ title card ----------------------------- */
-const tc = document.getElementById('titlecard');
-(function titleCard(){
-  document.getElementById('tcBasis').textContent = INFO.basis;
-  document.getElementById('tcH').textContent = INFO.title;
-  document.getElementById('tcTitle').textContent = DATA.meta.title || '';
-  document.getElementById('tcStyle').textContent = 'Demonstrative reconstruction, not evidence. ' + STYLE_NOTE;
-  document.getElementById('tcDisc').textContent = DATA.meta.disclaimer || '';
-  const others = CASE_ORDER.filter(id => id !== CASE_ID);
-  document.getElementById('tcOther').innerHTML = 'Other cases: ' + others.map(id =>
-    '<a href="?case=' + id + '">' + esc(CASE_INFO[id].title) + '</a>').join(', ');
-})();
-function openTitleCard(){
-  lastFocus = document.activeElement;
-  tc.hidden = false; tc.classList.remove('hide');
-  setPlaying(false);
-  document.getElementById('tcPlay').focus();
-}
-function dismissTitle(after){
-  tc.classList.add('hide');
-  setTimeout(() => { tc.hidden = true; }, reduced() ? 0 : 350);
-  if (after) after();
-}
-tc.addEventListener('keydown', ev => {
-  trapFocus(tc, ev);
-  if (ev.key === 'Escape'){ dismissTitle(() => { simT = tMax; cv.focus({preventScroll:true}); }); }
+/* ------------------------- intro shortcuts (non-blocking) ------------------ */
+const introEl = document.getElementById('intro');
+function dismissIntro(){ introEl.hidden = true; }
+document.getElementById('introClose').addEventListener('click', () => {
+  dismissIntro();
+  document.getElementById('openSources').focus({preventScroll:true});
 });
-document.getElementById('tcPlay').addEventListener('click', () => dismissTitle(() => {
+document.getElementById('introPlay').addEventListener('click', () => {
+  dismissIntro();
   if (mode !== 'exhibit') setMode('exhibit');
   simT = tMin; userMovedCamera = false; fitView(false); setPlaying(true);
   playBtn.focus({preventScroll:true});
-}));
-document.getElementById('tcSkip').addEventListener('click', () => dismissTitle(() => {
-  if (mode !== 'exhibit') setMode('exhibit');
-  simT = tMax; fitView(false); cv.focus({preventScroll:true});
-}));
-document.getElementById('tcInv').addEventListener('click', () => dismissTitle(() => {
+});
+document.getElementById('introInv').addEventListener('click', () => {
+  dismissIntro();
   setMode('investigate'); fitView(false);
   document.getElementById('panel').focus({preventScroll:true});
-}));
-document.getElementById('reopenIntro').addEventListener('click', openTitleCard);
+});
 
 /* ================== investigate mode: tag, grade, reveal ================ */
 // score = 100 * (weights of correctly tagged entities) / (total weight).
@@ -1927,12 +1899,9 @@ window.PeelChain = {
   }
 };
 
-if (params.get('mode') === 'investigate'){
-  tc.hidden = true;
-  setMode('investigate');
-} else {
-  requestAnimationFrame(() => document.getElementById('tcPlay').focus({preventScroll:true}));
-}
+// First load shows the whole graph straight away; the walkthrough starts on request.
+if (params.get('mode') === 'investigate'){ dismissIntro(); setMode('investigate'); }
+else simT = tMax;
 updateCasefile();
 requestAnimationFrame(t => { lastFrame = t; draw(t); });
 </script>

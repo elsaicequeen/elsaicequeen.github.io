@@ -24,6 +24,6 @@
 .site-nav a:focus-visible{outline:2px solid var(--sn-accent); outline-offset:2px; border-radius:3px}
 @media (max-width:720px){
   .site-nav .sn-in{flex-wrap:wrap; gap:0 18px; padding-top:10px}
-  .site-nav ul{margin:0; width:100%}
-  .site-nav ul a{padding:10px 0}
+  .site-nav ul{margin:0; width:100%; flex-wrap:wrap; overflow:visible; gap:0 16px}
+  .site-nav ul a{padding:8px 0}
 }
