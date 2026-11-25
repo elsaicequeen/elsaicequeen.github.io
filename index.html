@@ -108,6 +108,8 @@ h2{font-weight:600; font-size:1.5rem; letter-spacing:-.015em; margin:0 0 8px}
 .did{margin:0 0 14px; padding-left:1.15em; max-width:42em}
 .did li{margin:0 0 9px; padding-left:4px}
 .did li::marker{color:var(--muted)}
+.scope{margin:0 0 6px; font-size:1.1rem; font-weight:500; max-width:38em}
+.job-body h4{font-weight:600; font-size:.98rem; color:var(--muted); margin:20px 0 8px}
 .did li.sub{margin-left:1.2em; list-style-type:circle}
 .did .ask{margin-left:4px; font-size:.95rem}
 footer{color:var(--muted); padding:40px 0 80px; font-size:.98rem}
@@ -157,14 +159,32 @@ footer{color:var(--muted); padding:40px 0 80px; font-size:.98rem}
       <p class="t">Founder’s Office, Assistant Manager <span class="y">2026–now</span></p>
       <p class="t">Specialist, Web3 <span class="y">2024–2026</span></p>
     </div>
-    <ul class="did">
-      <li>Split a weekly volume drop into trader count, orders per trader and order size: 57.7% came from fewer traders. Reconciled the split to cohorts and checked it against six other venues on matched days. <button class="ask" data-preset="volume">Run the breakdown</button></li>
-      <li>Showed that while the fee rose in steps from 0.57% to 1.50%, the heaviest 1% of traders made 53–68% of monthly volume and had cheaper venues to move to. Recommended holdout tests before any further fee change. <button class="ask" data-preset="fees">See the fee steps</button></li>
-      <li>Built the listing desk’s AI-assisted workflow: an agent prepares each pass, deterministic checks screen the contract, and a person approves every production write. Hands-on review went from 4–5 hours to about 1 hour a day, by my estimate. <button class="ask" data-preset="desk">See who decides what</button></li>
-      <li>Found order times stored in local time but labelled UTC, which had put the growth plan’s peak-activity window 5.5 hours off. Fixed it and documented the timestamp basis.</li>
-      <li>Showed that 51% of a token’s lifetime volume comes in its first 30 days (4,353 tokens), which made the case for listing passes every 6 hours.</li>
-      <li>Wrote the recurring business-review SQL and an operating dashboard across four product lines, with metric definitions, freshness checks and alert thresholds.</li>
-    </ul>
+    <div class="job-body">
+      <p class="scope">Ran token listings and discovery for the Web3 trading product, and the analysis leadership used to steer it.</p>
+      <h4>Listings and risk</h4>
+      <ul class="did">
+        <li>Ran the listing desk across six networks: 1,465 reviewed listings of 1,320 tokens from May to November 2026, each with an exact contract check, a contract-risk screen and sign-off before going live.</li>
+        <li>Turned four listing incidents into permanent guards: exact-contract audits, privileged-transfer checks, and full-sell and refund tests before scaling.</li>
+        <li>Moved the desk onto an AI agent, with a person approving every production write, and wrote the runbook it runs on. Hands-on review dropped from 4–5 hours a day to about 1. <button class="ask" data-preset="desk">See who decides what</button></li>
+      </ul>
+      <h4>Growth and launches</h4>
+      <ul class="did">
+        <li>Spotted the Robinhood Chain opportunity in July, wrote the business case and go-to-market plan, built the launch-readiness console, then ran listings and curation after launch (343 contracts).</li>
+        <li>Created the High Velocity and Fresh Picks discovery categories and ran the Hot Right Now surface on market and on-chain demand signals.</li>
+      </ul>
+      <h4>Analysis</h4>
+      <ul class="did">
+        <li>Diagnosed a weekly volume decline: 57.7% came from fewer traders, not less trading per trader. Reconciled to cohorts and benchmarked against six venues on matched days. <button class="ask" data-preset="volume">Run the breakdown</button></li>
+        <li>Led the fee analysis as the fee stepped from 0.57% to 1.50%: the heaviest 1% of traders made 53–68% of monthly volume and had cheaper venues to move to. Recommended holdout tests before any further change. <button class="ask" data-preset="fees">See the fee steps</button></li>
+        <li>Wrote a four-volume retrospective of the Web3 and US stock perps businesses, 2019 to 2026, from the warehouse, 25,985 Jira issues and the design docs, with reproducible SQL behind every table.</li>
+        <li>Built the business-review SQL and the operating dashboard across Web3, US stock perps, recurring-investment plans and trading.</li>
+      </ul>
+      <h4>Founder’s Office</h4>
+      <ul class="did">
+        <li>Built the research and writing workflows for two senior executives: voice guides, primary-source checks and review before publishing.</li>
+        <li>Ran an AI-safety evaluation of the founder’s consumer scam-checker: a 93-case test corpus and a report with 19 findings.</li>
+      </ul>
+    </div>
   </article>
 
   <article class="job">
@@ -172,11 +192,16 @@ footer{color:var(--muted); padding:40px 0 80px; font-size:.98rem}
       <h3>QuantixLabs</h3>
       <p class="t">Web3 specialist consultant, part-time <span class="y">2026–now</span></p>
     </div>
-    <ul class="did">
-      <li>Built a login-protected research console where management can check every strategy tested, the live book and audit verdicts without asking an analyst.</li>
-      <li>Found a lookahead bug in the team’s backtest, then built an integrity gate and a walk-forward harness. Every test was pre-registered, and strategies that failed were dropped.</li>
-      <li>Wrote allocation memos for 10 investors, including a one-year Monte Carlo explained for non-specialists.</li>
-    </ul>
+    <div class="job-body">
+      <p class="scope">Research, validation and oversight for a crypto trading team, grown to cover product strategy, engineering specs and internal tools.</p>
+      <ul class="did">
+        <li>Oversee the live real-money book: reconciled fills against order logs, caught stalled strategies, duplicate instances and an orphaned position, and rebuilt the full ledger back to April.</li>
+        <li>Run pre-registered pass/kill tests before any strategy gets capital. Six failed and were killed, including four options strategies tested on 1.15M real Deribit trades.</li>
+        <li>Found a lookahead bug in the team’s backtest and built the integrity gate, walk-forward harness and daily health checks that now guard it.</li>
+        <li>Led product and go-to-market research: competitors, pricing, product tiers and fiat on-ramp options.</li>
+        <li>Built the Research Console that management uses to check every strategy, the live book and audit verdicts, and wrote allocation memos for 10 investors.</li>
+      </ul>
+    </div>
   </article>
 
   <article class="job">
@@ -185,8 +210,7 @@ footer{color:var(--muted); padding:40px 0 80px; font-size:.98rem}
       <p class="t">Investment analyst, part-time <span class="y">2024–2026</span></p>
     </div>
     <ul class="did">
-      <li>Managed a US$1.5M crypto portfolio.</li>
-      <li>Built DuneSQL and Python risk dashboards, and traced fund flows with Arkham for monitoring and reporting.</li>
+      <li>Managed a US$1.5M crypto portfolio, with DuneSQL and Python risk dashboards and fund-flow tracing in Arkham for monitoring and reporting.</li>
     </ul>
   </article>
 
@@ -220,8 +244,8 @@ footer{color:var(--muted); padding:40px 0 80px; font-size:.98rem}
       <p class="t">Data analyst <span class="y">2019–2023</span></p>
     </div>
     <ul class="did">
-      <li>Cleaned and analysed census and official statistics at sub-district level across six districts, in Excel and SQL.</li>
-      <li>Built the spreadsheets and databases behind district data hubs that local businesses used to plan marketing.</li>
+      <li>Designed and maintained the databases behind data hubs for six districts, which local businesses used on their own to plan marketing.</li>
+      <li>Cleaned and analysed census and official statistics at sub-district level, in Excel and SQL.</li>
     </ul>
   </article>
 </section>
