@@ -5,6 +5,12 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Anish Majumdar</title>
 <meta name="description" content="Anish Majumdar: data analyst since 2019, in crypto since 2023. Query my work in the browser.">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Anish Majumdar, data analyst">
+<meta property="og:description" content="Data analyst since 2019, in crypto since 2023. Work history, on-chain projects and a live SQL console.">
+<meta property="og:url" content="https://elsaicequeen.github.io/">
+<meta name="twitter:card" content="summary">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%232E46D1'/%3E%3Ctext x='16' y='22' font-family='Arial,sans-serif' font-size='16' font-weight='700' text-anchor='middle' fill='%23fff'%3EAM%3C/text%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600&family=Martian+Mono:wght@400;500&display=swap" rel="stylesheet">
@@ -38,7 +44,10 @@ a:hover{color:var(--accent)}
 @media (max-width:900px){.hero{grid-template-columns:1fr; gap:36px; padding-top:48px}}
 .who h1{font-weight:600; font-size:clamp(2.5rem,5vw,3.75rem); line-height:1; letter-spacing:-.035em; margin:0 0 22px}
 .intro{font-size:1.25rem; line-height:1.5; margin:0; max-width:24em}
-.contact{list-style:none; padding:0; margin:26px 0 0; display:flex; flex-wrap:wrap; gap:6px 22px; font-weight:500}
+.now{margin:14px 0 0; color:var(--muted); max-width:30em}
+.contact{list-style:none; padding:0; margin:26px 0 0; display:flex; flex-wrap:wrap; align-items:center; gap:10px 22px; font-weight:500}
+.contact .cv{display:inline-block; background:var(--accent); color:var(--accent-ink); text-decoration:none; border-radius:7px; padding:9px 14px; font-weight:600}
+.contact .cv:hover{color:var(--accent-ink); filter:brightness(1.08)}
 .stack{margin:32px 0 0; padding:20px 0 0; border-top:1px solid var(--line); display:grid; grid-template-columns:auto 1fr; gap:8px 18px; font-size:.96rem}
 .stack dt{color:var(--muted)}
 .stack dd{margin:0}
@@ -113,6 +122,33 @@ h2{font-weight:600; font-size:1.5rem; letter-spacing:-.015em; margin:0 0 8px}
 .did li.sub{margin-left:1.2em; list-style-type:circle}
 .did .ask{margin-left:4px; font-size:.95rem}
 footer{color:var(--muted); padding:40px 0 80px; font-size:.98rem}
+
+/* phones: the three result columns fit without sideways scrolling */
+@media (max-width:600px){
+  .out th{padding:10px 10px 6px; white-space:normal; word-break:break-word; font-size:.72rem}
+  .out td{padding:10px; font-size:.98rem}
+  .out td.bar{min-width:0; width:38%}
+  .out td.bar .fill{left:10px}
+  .out td.bar span{padding-left:6px}
+  .out td.num, .out td.bar span{font-size:.92rem}
+  .job{padding:24px 0}
+}
+
+/* printing or saving as PDF: light paper, no interactive console */
+@media print{
+  :root, :root[data-theme="dark"]{--paper:#fff; --ink:#111; --muted:#555; --line:#ccc; --accent:#2E46D1; --accent-ink:#fff}
+  body{font-size:10.5pt; background:#fff; color:#111}
+  .console, .ask, .actions, .notes .lead{display:none}
+  .hero{display:block; padding:0 0 12px}
+  .who h1{font-size:24pt; margin-bottom:8px}
+  .contact li:first-child{display:none}
+  .notes{padding:16px 0 0}
+  .job, .note{padding:12px 0; gap:4px 28px}
+  .note, .did li{break-inside:avoid}
+  h2, h3, h4, .scope{break-after:avoid}
+  .figure{font-size:16pt}
+  footer{padding:12px 0}
+}
 </style>
 </head>
 <body>
@@ -122,10 +158,12 @@ footer{color:var(--muted); padding:40px 0 80px; font-size:.98rem}
   <div class="who">
     <h1>Anish Majumdar</h1>
     <p class="intro">Data analyst since 2019, in crypto since 2023. I check why a number moved before anyone builds a plan on it.</p>
+    <p class="now">Now in the Founder’s Office at CoinDCX, and a part-time consultant to QuantixLabs.</p>
     <ul class="contact">
+      <li><a class="cv" href="cv/Anish_Majumdar_CV.pdf">Download CV (PDF)</a></li>
       <li><a href="mailto:anish.majumdar123@gmail.com">anish.majumdar123@gmail.com</a></li>
       <li><a href="https://www.linkedin.com/in/anish-majumdar-615633187">LinkedIn</a></li>
-      <li><a href="cv/Anish_Majumdar_CV.pdf">CV (PDF)</a></li>
+      <li><a href="https://github.com/elsaicequeen">GitHub</a></li>
     </ul>
     <dl class="stack">
       <dt>Data</dt><dd>SQL (Spark SQL, Trino, DuckDB, DuneSQL), Python with pandas, Databricks, Superset, Mixpanel</dd>
